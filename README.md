@@ -45,6 +45,12 @@ invitados se descuentan al funcionario según su tramo.
 avisadas, menú normal, hipocalórico y vegano, almuerzos de invitados, raciones planificadas y
 consumo habitual como referencia.
 
+**Menú del mes:** el funcionario elige el menú de cada mes hasta el día 25 del mes anterior;
+«Mi casino» muestra el mes actual, el siguiente y, si este ya cerró, el próximo que se puede
+elegir, y aclara que sin elección el menú es Normal. Para casos justificados (ingreso nuevo,
+indicación médica) el Jefe Casino registra un **cambio de menú por excepción** en Personas
+habilitadas, para el mes actual o el siguiente, con motivo y registro de quién y cuándo.
+
 **Avisos de ausencia de hoy (Jefe Casino, en Detalle de ingresos):** si una persona avisó por
 error que no almorzaría, el Jefe Casino anula su aviso y la terminal vuelve a aceptar su RUT.
 La anulación queda registrada con la hora y quién la hizo.

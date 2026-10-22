@@ -391,7 +391,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   <div><h2>Personas habilitadas</h2><p class="lead">Solo quien está habilitado puede obtener ticket. El Jefe Casino habilita, suspende y asigna el tramo a quienes no tienen grado.</p></div>
   <div class="row spread">
     <input id="habBuscar" placeholder="Buscar por nombre, RUT o unidad" style="flex:1;max-width:360px">
-    <div class="row"><button class="btn" id="btnNuevo">Agregar persona</button><button class="btn" id="btnMasiva">Carga masiva</button></div>
+    <div class="row"><button class="btn" id="btnNuevo">Agregar persona</button><button class="btn" id="btnMasiva">Carga masiva</button><button class="btn" id="btnMenuExc">Cambio de menú por excepción</button></div>
   </div>
   <form class="panel" id="nuevoForm" hidden>
     <h3>Agregar persona</h3>
@@ -412,6 +412,18 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <textarea id="masivaTxt" rows="4">16.459.212-K;Ejemplo Persona Uno;Gerencia de Finanzas;Dotación;13
 9.877.512-9;Ejemplo Persona Dos;Fiscalía;PLAZO FIJO;</textarea>
     <div class="row" style="margin-top:8px"><button class="btn primary" type="submit">Validar e importar</button><span id="masivaMsg" class="small"></span></div>
+  </form>
+  <form class="panel" id="menuExcForm" novalidate hidden style="display:grid;gap:10px">
+    <div><h3>Cambio de menú por excepción</h3><p class="small muted" style="margin:2px 0 0">Para casos justificados fuera del plazo del funcionario, como un ingreso nuevo o una indicación médica. No registre diagnósticos: basta el motivo general.</p></div>
+    <div class="row" style="align-items:end">
+      <label class="f">RUT<input id="meRut" placeholder="12.345.678-5" style="width:160px" autocomplete="off"></label>
+      <label class="f">Mes<select id="meMes"></select></label>
+      <label class="f">Menú<select id="meMenu"></select></label>
+      <label class="f">Motivo<select id="meMotivo"><option>Ingreso nuevo</option><option>Indicación médica</option><option>Otro</option></select></label>
+      <button class="btn primary" type="submit">Registrar cambio</button>
+    </div>
+    <span id="meMsg" class="small"></span>
+    <div class="tablebox"><table><thead><tr><th>Registrado</th><th>Persona</th><th>Mes</th><th>Cambio</th><th>Motivo</th></tr></thead><tbody id="meBody"></tbody></table></div>
   </form>
   <div class="tablebox"><table><thead><tr><th>Nombre</th><th>RUT</th><th>Unidad</th><th>Calidad</th><th>Grado</th><th>Tramo</th><th>Habilitado</th></tr></thead><tbody id="habBody"></tbody></table></div>
 </section>
@@ -577,6 +589,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <tr><td>Consumo por unidad y resumen anual</td><td>Sí</td><td>Sí</td></tr>
     <tr><td>Terminal, reimpresión, anulación y registro manual</td><td>Sí</td><td>No</td></tr>
     <tr><td>Anulación el mismo día de un aviso de ausencia hecho por error</td><td>Sí</td><td>No</td></tr>
+    <tr><td>Cambio de menú por excepción (ingreso nuevo, indicación médica)</td><td>Sí</td><td>No</td></tr>
     <tr><td>Registro y anulación de cierres del casino</td><td>Sí, con alerta a la Jefa de Bienestar</td><td>Sí, con alerta al Jefe Casino</td></tr>
     <tr><td>Nómina de habilitados y configuración</td><td>Sí</td><td>No</td></tr>
     <tr><td>Planificación de raciones (menús, ausencias e invitados)</td><td>Sí</td><td>No</td></tr>
@@ -723,7 +736,7 @@ const descC=c=>`${fechasC(c)}, ${horarioC(c)} · ${c.motivo}${c.detalle?` (${c.d
 /* registros: {n, fecha, hora, key, origen, estado, motivo} — año en curso hasta hoy */
 /* ---- Solicitudes del funcionario: menú del mes, ausencias e invitados ---- */
 const MENUS=["Normal","Hipocalórico","Vegano"];
-const MENU={},AUS=[],INV=[],AUS_ANUL=[];
+const MENU={},AUS=[],INV=[],AUS_ANUL=[],MENU_EXC=[];
 const hkey=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
 const ymOf=f=>f.slice(0,7);
 const ymNext=ym=>{const[y,m]=ym.split("-").map(Number);return m===12?`${y+1}-01`:`${y}-${pad(m+1)}`};
@@ -790,6 +803,7 @@ function seedSolicitudes(){
   AUS.push({key:P[4].key,fecha:dias[3],creado:cre});INV.push({key:P[4].key,fecha:dias[6],cant:2,creado:cre});
   INV.push({key:P[1].key,fecha:dias[0],cant:3,creado:cre});
   AUS.push({key:P[8].key,fecha:TODAY,creado:`${fmtD(proxHabilesAntes(TODAY))} 19:20`});
+  {const cm0=ymOf(TODAY),k=P[11].key+"|"+cm0;const ant=MENU[k]||"Normal";MENU[k]="Hipocalórico";MENU_EXC.push({key:P[11].key,ym:cm0,de:ant,a:"Hipocalórico",motivo:"Indicación médica",cuando:"14-10-2026 10:20",por:"Rodrigo Salinas Vera"})}
   INV.push({key:P[2].key,fecha:TODAY,cant:2,creado:`${fmtD(proxHabilesAntes(TODAY))} 16:40`});
 }
 function avgDia(f){const w=D(f).getDay();const cnt=new Map();
@@ -817,7 +831,7 @@ function seedYear(){
   asignarIds();
 }
 /* Misma semilla: cada reinicio entrega exactamente los mismos datos de ejemplo */
-function seedAll(){seed=7;AUS_ANUL.length=0;seedPersonas();seedCierres();seedSolicitudes();seedYear();seedMenuSem()}
+function seedAll(){seed=7;AUS_ANUL.length=0;MENU_EXC.length=0;seedPersonas();seedCierres();seedSolicitudes();seedYear();seedMenuSem()}
 seedAll();
 const todays=()=>R.filter(r=>r.fecha===TODAY);
 const nextN=()=>todays().length+1;
@@ -974,8 +988,21 @@ function renderHab(){
 }
 $("#habBuscar").addEventListener("input",renderHab);
 $("#habBody").addEventListener("change",e=>{if(e.target.dataset.trm!==undefined){const p=P[e.target.dataset.trm];p.tramoManual=Number(e.target.value)||null;renderHab();toast(p.tramoManual?`${p.nombre}: tramo ${p.tramoManual} asignado`:"Tramo quitado");return}const i=e.target.dataset.hab;if(i!==undefined){P[i].hab=e.target.checked;renderHab();renderDemo();toast(P[i].hab?"Persona habilitada":"Habilitación suspendida")}});
-$("#btnNuevo").onclick=()=>{$("#nuevoForm").hidden=!$("#nuevoForm").hidden;$("#masivaForm").hidden=true};
-$("#btnMasiva").onclick=()=>{$("#masivaForm").hidden=!$("#masivaForm").hidden;$("#nuevoForm").hidden=true};
+$("#btnNuevo").onclick=()=>{$("#nuevoForm").hidden=!$("#nuevoForm").hidden;$("#masivaForm").hidden=true;$("#menuExcForm").hidden=true};
+$("#btnMasiva").onclick=()=>{$("#masivaForm").hidden=!$("#masivaForm").hidden;$("#nuevoForm").hidden=true;$("#menuExcForm").hidden=true};
+$("#btnMenuExc").onclick=()=>{const f=$("#menuExcForm");f.hidden=!f.hidden;$("#nuevoForm").hidden=true;$("#masivaForm").hidden=true;if(!f.hidden)renderMenuExc()};
+function renderMenuExc(){const cm=ymOf(TODAY),nm=ymNext(cm);const lab=ym=>`${cap(MES[+ym.slice(5)-1])} ${ym.slice(0,4)}`;const v=$("#meMes").value;
+  $("#meMes").innerHTML=[cm,nm].map(ym=>`<option value="${ym}">${lab(ym)}${ym===cm?" (mes actual)":""}</option>`).join("");if(v)$("#meMes").value=v;
+  if(!$("#meMenu").options.length)$("#meMenu").innerHTML=MENUS.map(m=>`<option>${m}</option>`).join("");
+  $("#meBody").innerHTML=MENU_EXC.slice().reverse().map(x=>{const p=byKey(x.key);return`<tr><td class="mono">${esc(x.cuando)}</td><td>${esc(p.nombre)} <span class="muted small">${fmtRut(p.key)}</span></td><td>${lab(x.ym)}</td><td>${esc(x.de)} → <b>${esc(x.a)}</b></td><td>${esc(x.motivo)}</td></tr>`}).join("")||'<tr><td colspan="5" class="muted">Sin cambios por excepción.</td></tr>'}
+$("#meRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)});
+$("#menuExcForm").addEventListener("submit",e=>{e.preventDefault();const m=$("#meMsg");const v=$("#meRut").value;
+  if(!rutOk(v)){m.innerHTML='<span style="color:var(--bad)">RUT no válido.</span>';return}
+  const p=byKey(cleanRut(v));if(!p){m.innerHTML='<span style="color:var(--bad)">No está en la nómina de habilitados.</span>';return}
+  const ym=$("#meMes").value,nuevo=$("#meMenu").value,k=p.key+"|"+ym,ant=MENU[k]||"Normal";
+  if(ant===nuevo){m.innerHTML=`<span style="color:var(--warn)">${esc(p.nombre)} ya tiene menú ${nuevo.toLowerCase()} en ${MES[+ym.slice(5)-1]}.</span>`;return}
+  MENU[k]=nuevo;MENU_EXC.push({key:p.key,ym,de:ant,a:nuevo,motivo:$("#meMotivo").value,cuando:`${fmtD(TODAY)} ${hhmm(now())}`,por:USR.casino.n});
+  m.innerHTML=`<span style="color:var(--ok)">Menú de ${esc(p.nombre)} cambiado a ${nuevo.toLowerCase()} para ${MES[+ym.slice(5)-1]}. Rige desde hoy en la terminal y la planificación.</span>`;$("#meRut").value="";renderMenuExc()});
 $("#nTipo").addEventListener("change",e=>{const sinG=["Honorarios","Plazo fijo"].includes(e.target.value);$("#nGrado").closest("label").hidden=sinG;$("#nTramoL").hidden=!sinG});
 $("#nRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)});
 const CALIDADES=["Dotación","Plazo fijo","Honorarios"];
@@ -1279,10 +1306,11 @@ function renderMi(){
   $("#miKpi").innerHTML=[["Almuerzos este mes",sumCant(mes),`${new Set(mes.map(r=>r.fecha)).size} días con asistencia`],["A descontar este mes",clp(sumaM(mes)),"por planilla, al cierre del mes"],["Almuerzos en el año",sumCant(anioK),`desde enero de ${YEAR}`],["Menú de este mes",menuDe(p,TODAY),`${cap(MES[+cm.slice(5)-1])} ${cm.slice(0,4)}`]]
     .map(([a,b,c])=>`<div class="stat"><span>${a}</span><b>${b}</b><small>${c}</small></div>`).join("");
   // menú
-  const opt=ym=>{const ed=menuEditable(ym);const v=MENU[p.key+"|"+ym]||"Normal";
+  const opt=ym=>{const ed=menuEditable(ym);const v=MENU[p.key+"|"+ym]||"Normal";const ex=MENU_EXC.filter(x=>x.key===p.key&&x.ym===ym).pop();const def=!MENU[p.key+"|"+ym];
     return `<div class="menu-mes"><b>${cap(MES[+ym.slice(5)-1])} ${ym.slice(0,4)}</b><div class="seg" role="group">${MENUS.map(m=>`<button type="button" data-menu="${ym}|${m}" aria-pressed="${v===m}" ${ed?"":"disabled"}>${m}</button>`).join("")}</div>
-    <small class="muted">${ed?`Puede cambiarlo hasta el ${fmtD(menuLimite(ym))}.`:`Plazo cerrado el ${fmtD(menuLimite(ym))}.`}</small></div>`};
-  $("#miMenu").innerHTML=opt(cm)+opt(nm);
+    <small class="muted">${ex?`Cambiado por el Jefe Casino el ${esc(ex.cuando.slice(0,10))} (${esc(ex.motivo.toLowerCase())}). `:""}${def?"Sin elección: menú normal por defecto. ":""}${ed?`Puede cambiarlo hasta el ${fmtD(menuLimite(ym))}.`:`Plazo cerrado el ${fmtD(menuLimite(ym))}.`}</small></div>`};
+  let ab=nm;while(!menuEditable(ab))ab=ymNext(ab);const mesesM=[cm,nm];if(ab!==nm)mesesM.push(ab);
+  $("#miMenu").innerHTML=mesesM.map(opt).join("")+`<p class="small muted" style="margin:0">Si no elige, su menú es <b>Normal</b>. Para un cambio fuera de plazo por un caso justificado (ingreso nuevo, indicación médica), solicítelo al Jefe Casino.</p>`;
   // avisos
   const min=avisoMin();["#miAusF","#miInvF"].forEach(s=>{$(s).min=min;if(!$(s).value||$(s).value<min)$(s).value=min});$("#miAusH").min=min;if($("#miAusH").value&&$("#miAusH").value<min)$("#miAusH").value="";
   renderMiSem(p);
@@ -1407,7 +1435,7 @@ function reiniciar(){
   repMes=today.getMonth()===0?`${YEAR}-01`:`${YEAR}-${pad(today.getMonth())}`;
   ["#manMsg","#nMsg","#masivaMsg"].forEach(x=>{const e=$(x);if(e)e.textContent=""});$("#nMsg").textContent="Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT.";
   ["#manRut","#habBuscar","#nRut","#nNombre","#nUnidad"].forEach(x=>{const e=$(x);if(e)e.value=""});
-  ["#nuevoForm","#masivaForm","#copyBox"].forEach(x=>$(x).hidden=true);$("#tkCopia").checked=false;
+  ["#nuevoForm","#masivaForm","#copyBox","#menuExcForm"].forEach(x=>$(x).hidden=true);["#meRut"].forEach(x=>$(x).value="");$("#meMsg").textContent="";$("#tkCopia").checked=false;
   anulandoC=null;$("#ciMsg").textContent="";$("#ciDetalle").value="";$("#ciDesde").value=TODAY;$("#ciHasta").value=TODAY;$("#ciTipo").value="completo";
   planSel=null;["#miAusMsg","#miInvMsg"].forEach(x=>$(x).textContent="");["#miAusF","#miInvF"].forEach(x=>$(x).value="");
   renderDemo();show(current,false);toast("Maqueta reiniciada con los datos de ejemplo");
