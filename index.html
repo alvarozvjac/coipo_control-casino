@@ -262,6 +262,10 @@ ul.avisos li{display:flex;justify-content:space-between;align-items:center;gap:1
 table.msem td:first-child{white-space:nowrap}.min-msg{margin:0;padding:12px 14px;text-align:center;font-style:italic;color:var(--muted);border-top:1px solid var(--line)}table.msem{min-width:860px}table.msem td,table.msem th{vertical-align:top}table.msem td{font-size:13.5px;line-height:1.4}
 table.msem th.mio{color:var(--accent)}table.msem td.mio{background:var(--accent-soft);font-weight:600}table.msem tr.hoy td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 table.msem.edit textarea{width:100%;min-width:130px;font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;resize:vertical;background:var(--surface);color:var(--ink)}
+table.plan{table-layout:fixed;width:100%}table.plan th{white-space:normal;line-height:1.25;vertical-align:bottom;padding:9px 8px;hyphens:manual}table.plan td{padding:9px 8px;font-variant-numeric:tabular-nums}table.plan td:first-child{white-space:nowrap}
+@media (max-width:640px){table.plan th{font-size:10px;letter-spacing:.02em;padding:7px 4px}table.plan td{font-size:12.5px;padding:7px 4px}table.plan col:first-child{width:22%}}
+table.plan .sm{display:none}
+@media (max-width:640px){table.plan .lg{display:none}table.plan .sm{display:inline}table.plan td:first-child{white-space:normal}.plan-ley{display:block!important}}
 table.plan tbody tr{cursor:pointer}table.plan tbody tr:hover td{background:var(--sunken)}table.plan tr.sel td{background:var(--accent-soft)}
 dl.cfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:0}
 .cmp td:first-child{font-weight:700;white-space:nowrap}
@@ -546,7 +550,8 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 </section>
 <section class="view" id="v-plan" data-label="Planificación" hidden>
   <div><h2>Planificación de raciones</h2><p class="lead">Próximos 10 días hábiles. Como cada funcionario debe avisar cuando no almorzará, las raciones planificadas son las personas habilitadas sin aviso de ausencia, según su menú, más los almuerzos de invitados. Elija un día para ver el detalle.</p></div>
-  <div class="tablebox"><table class="plan"><thead><tr><th>Día</th><th class="num">Habilitados</th><th class="num">Ausencias avisadas</th><th class="num">Menú normal</th><th class="num">Menú hipocalórico</th><th class="num">Almuerzos de invitados</th><th class="num">Raciones planificadas</th><th class="num">Consumo habitual</th></tr></thead><tbody id="planBody"></tbody></table></div>
+  <div class="tablebox"><table class="plan"><colgroup><col style="width:15%"><col span="7"></colgroup><thead><tr><th>Día</th><th class="num"><span class="lg">Habili&shy;tados</span><span class="sm">Hab.</span></th><th class="num"><span class="lg">Ausencias avisadas</span><span class="sm">Aus.</span></th><th class="num"><span class="lg">Menú normal</span><span class="sm">Norm.</span></th><th class="num"><span class="lg">Menú hipo&shy;calórico</span><span class="sm">Hipo.</span></th><th class="num"><span class="lg">Invitados</span><span class="sm">Inv.</span></th><th class="num"><span class="lg">Raciones planificadas</span><span class="sm">Rac.</span></th><th class="num"><span class="lg">Consumo habitual</span><span class="sm">Hab. día</span></th></tr></thead><tbody id="planBody"></tbody></table></div>
+  <p class="small muted plan-ley" style="display:none;margin:0">Hab.: habilitados · Aus.: ausencias avisadas · Norm. e Hipo.: menú normal e hipocalórico · Inv.: almuerzos de invitados · Rac.: raciones planificadas · Hab. día: consumo habitual.</p>
   <div class="grid2">
     <div class="panel"><h3>No almorzarán · <span id="planDiaT"></span></h3><ul class="tight" id="planAus"></ul></div>
     <div class="panel"><h3>Almuerzos con invitados</h3><ul class="tight" id="planInv"></ul></div>
@@ -1350,7 +1355,7 @@ function renderPlan(){
   const filas=dias.map(f=>{const cerr=diaCerrado(f);const base=Math.round(avgDia(f));const ausK=new Set(AUS.filter(x=>x.fecha===f).map(x=>x.key));const inv=INV.filter(x=>x.fecha===f);const extra=inv.reduce((a,x)=>a+x.cant-1,0);
     const pres=hab.filter(p=>!ausK.has(p.key));const hipo=pres.filter(p=>menuDe(p,f)==="Hipocalórico").length;const norm=pres.length-hipo+extra;
     return{f,cerr,hab:hab.length,aus:hab.filter(p=>ausK.has(p.key)).length,extra,hipo,norm,tot:hipo+norm,inv,base}});
-  $("#planBody").innerHTML=filas.map(x=>`<tr class="${x.f===planSel?"sel":""}" data-plan="${x.f}" tabindex="0"><td>${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short",day:"numeric",month:"short"}))}</td>${x.cerr?'<td colspan="7"><span class="pill bad">Casino cerrado</span></td>':`<td class="num">${x.hab}</td><td class="num">−${x.aus}</td><td class="num">${x.norm}</td><td class="num">${x.hipo}</td><td class="num">${x.extra?"+"+x.extra:"0"}</td><td class="num"><b>${x.tot}</b></td><td class="num muted">${x.base}</td>`}</tr>`).join("");
+  $("#planBody").innerHTML=filas.map(x=>`<tr class="${x.f===planSel?"sel":""}" data-plan="${x.f}" tabindex="0"><td><span class="lg">${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short",day:"numeric",month:"short"}))}</span><span class="sm">${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short"}).replace(".",""))} ${D(x.f).getDate()}/${D(x.f).getMonth()+1}</span></td>${x.cerr?'<td colspan="7"><span class="pill bad">Casino cerrado</span></td>':`<td class="num">${x.hab}</td><td class="num">−${x.aus}</td><td class="num">${x.norm}</td><td class="num">${x.hipo}</td><td class="num">${x.extra?"+"+x.extra:"0"}</td><td class="num"><b>${x.tot}</b></td><td class="num muted">${x.base}</td>`}</tr>`).join("");
   const s=filas.find(x=>x.f===planSel);
   $("#planDiaT").textContent=cap(D(planSel).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}));
   const ausL=AUS.filter(x=>x.fecha===planSel).map(x=>byKey(x.key));
