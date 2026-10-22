@@ -248,6 +248,12 @@ select.sel-warn{border-color:var(--warn);color:var(--warn);font-weight:700}
 .badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--bad);color:var(--surface);font-size:12px;font-weight:700;margin-left:4px}
 .col.cerr .bar{height:100%!important;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--bad) 35%,transparent) 0 4px,transparent 4px 9px)!important;border:1px dashed var(--bad);border-bottom:0}
 .col.cerr .bar::before{content:""}
+.who-big{font-size:24px;font-weight:700;color:var(--ink);margin:2px 0}
+.kp-note{display:block;font-family:var(--f-ui);font-size:11px;font-weight:400;color:var(--muted)}
+.menu-mes{display:grid;gap:6px}.menu-mes .seg button:disabled{cursor:not-allowed;opacity:.6}
+ul.avisos{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+ul.avisos li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;flex-wrap:wrap}
+table.plan tbody tr{cursor:pointer}table.plan tbody tr:hover td{background:var(--sunken)}table.plan tr.sel td{background:var(--accent-soft)}
 dl.cfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:0}
 .cmp td:first-child{font-weight:700;white-space:nowrap}
 .cmp td{vertical-align:top}
@@ -259,7 +265,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 <header class="top"><div class="wrap">
   <div class="brand"><h1>Casino Institucional</h1><p>Control de ingreso · Servicio de Bienestar · CONAF</p></div>
   <div class="usr">
-    <div class="probar"><span>Maqueta · probar como</span><div class="chips" id="perfilChips"><button type="button" data-perfil="casino">Jefe Casino</button><button type="button" data-perfil="bienestar">Jefa de Bienestar</button></div></div>
+    <div class="probar"><span>Maqueta · probar como</span><div class="chips" id="perfilChips"><button type="button" data-perfil="casino">Jefe Casino</button><button type="button" data-perfil="bienestar">Jefa de Bienestar</button><button type="button" data-perfil="funcionario">Funcionario</button></div></div>
     <div class="who"><b id="whoName"></b><span id="whoRol"></span></div>
   </div>
 </div></header>
@@ -274,41 +280,12 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <div class="side">
       <div class="printer"><div class="slot"></div><div class="row spread" style="width:100%"><span class="small" id="printerLbl" style="font-weight:700">Vista previa · propuesta de ticket</span><span class="small muted">Papel térmico 80 mm</span></div><div id="ticketOut"></div></div>
       <div class="panel">
-        <h3>Simulador del lector</h3>
-        <p class="muted small" style="margin:4px 0 8px">«Poner dedo» simula que esa persona apoya su dedo en el lector. «RUT + PIN» carga su RUT en la vía alternativa. En producción el PIN es personal y nadie lo puede ver.</p>
-        <div class="tablebox"><table class="demo"><thead><tr><th>Persona</th><th>Probar</th></tr></thead><tbody id="demoList"></tbody></table></div>
+        <h3>Simulador del teclado numérico</h3>
+        <p class="muted small" style="margin:4px 0 8px">«Digitar RUT» escribe el RUT de esa persona en la terminal y lo registra. También puede usar el teclado de su computador: números, * para la K y Enter.</p>
+        <div class="tablebox"><table class="demo"><thead><tr><th>Persona</th><th>RUT</th><th>Probar</th></tr></thead><tbody id="demoList"></tbody></table></div>
       </div>
     </div>
   </div>
-</section>
-
-<!-- ENROLAMIENTO -->
-<section class="view" id="v-enrolamiento" data-label="Enrolamiento de huellas" hidden>
-  <div><h2>Enrolamiento de huellas</h2><p class="lead">Lo realiza el Jefe Casino. Por cada persona: lee el consentimiento, captura dos dedos y guarda. Si la persona no consiente o el lector no logra leer su huella, queda con RUT + PIN.</p></div>
-  <div class="stats" id="enrStats"></div>
-  <div class="progress" aria-label="Avance del enrolamiento"><div id="enrBar"></div></div>
-  <div class="panel" style="display:grid;gap:14px">
-    <div class="row" style="align-items:end">
-      <label class="f" style="flex:1;min-width:240px">Persona<select id="enrSel"></select></label>
-      <label class="f">Enrolado por<input id="enrQuien" value="Jefe Casino" style="width:180px"></label>
-    </div>
-    <div id="enrPaso" hidden style="display:grid;gap:14px">
-      <div class="consent">
-        <p><b>Consentimiento para el tratamiento de la huella dactilar</b> <span class="pill warn">texto de ejemplo, por validar con Fiscalía</span></p>
-        <p>Autorizo a la Corporación Nacional Forestal a registrar una plantilla cifrada de mi huella dactilar con el único fin de validar mi identidad en el Casino Institucional para el cobro del almuerzo por planilla. No se guarda la imagen de la huella ni se usa para control de asistencia u otro fin.</p>
-        <p>La plantilla se elimina cuando deje de estar habilitado o revoque este consentimiento, lo que puedo hacer en cualquier momento ante el Jefe Casino o el Servicio de Bienestar. Si no consiento o revoco, mantengo el acceso al casino con RUT y PIN.</p>
-      </div>
-      <label class="row" style="gap:8px;font-weight:700"><input type="checkbox" id="enrConsent"> La persona leyó y firmó el consentimiento</label>
-      <div class="dedos" id="enrDedos"></div>
-      <div class="row">
-        <button class="btn primary" id="enrGuardar" type="button">Guardar enrolamiento</button>
-        <button class="btn" id="enrNoConsiente" type="button">No consiente: usar RUT + PIN</button>
-        <button class="btn" id="enrLectura" type="button">Lector no logra leer: usar RUT + PIN</button>
-      </div>
-    </div>
-    <span id="enrMsg" class="small"></span>
-  </div>
-  <div class="tablebox"><table><thead><tr><th>Nombre</th><th>RUT</th><th>Unidad</th><th>Estado</th><th>Enrolamiento</th><th>Acción</th></tr></thead><tbody id="enrBody"></tbody></table></div>
 </section>
 
 <!-- ESTADISTICAS -->
@@ -350,10 +327,10 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 <section class="view" id="v-detalle" data-label="Detalle de ingresos" hidden>
   <div><h2>Detalle de ingresos al casino</h2><p class="lead">Cada ingreso con nombre completo, RUT, hora y forma de validación. Los tickets del día se pueden reimprimir o anular con motivo.</p></div>
   <div class="panel">
-    <div class="row spread"><h3>Registro manual de contingencia</h3><span class="muted small">Para usar si la terminal o el lector fallan. Queda marcado como manual.</span></div>
+    <div class="row spread"><h3>Registro manual de contingencia</h3><span class="muted small">Para usar si la terminal o la impresora fallan. Queda marcado como manual.</span></div>
     <form id="manualForm" class="row" style="margin-top:10px;align-items:end">
       <label class="f">RUT<input id="manRut" placeholder="12.345.678-5" autocomplete="off" style="width:170px"></label>
-      <label class="f">Motivo<select id="manMotivo"><option>Falla del lector de huella</option><option>Falla de terminal</option><option>Olvidó PIN</option><option>PIN bloqueado</option><option>Otro</option></select></label>
+      <label class="f">Motivo<select id="manMotivo"><option>Falla de terminal</option><option>Falla de impresora</option><option>Corte de energía o de red</option><option>Otro</option></select></label>
       <button class="btn primary" type="submit">Registrar y emitir ticket</button>
       <span id="manMsg" class="small"></span>
     </form>
@@ -366,7 +343,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <div class="row" style="gap:6px"><button class="btn small" data-rango="hoy">Hoy</button><button class="btn small" data-rango="semana">Esta semana</button><button class="btn small" data-rango="mes">Este mes</button></div>
   </div>
   <div class="row spread"><span id="detCount" class="small muted"></span><button class="btn" id="detCopiar">Copiar detalle</button></div>
-  <div class="tablebox"><table><thead><tr><th>Fecha</th><th>Hora</th><th>N° ticket</th><th>Nombre completo</th><th>RUT</th><th>Unidad</th><th>Validación</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="detBody"></tbody></table></div>
+  <div class="tablebox"><table><thead><tr><th>Fecha</th><th>Hora</th><th>N° ticket</th><th class="num">Almuerzos</th><th>Nombre completo</th><th>RUT</th><th>Unidad</th><th>Validación</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="detBody"></tbody></table></div>
 </section>
 
 <!-- CIERRES -->
@@ -391,7 +368,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 
 <!-- HABILITADOS -->
 <section class="view" id="v-habilitados" data-label="Personas habilitadas" hidden>
-  <div><h2>Personas habilitadas</h2><p class="lead">Solo quien está habilitado puede obtener ticket. El Jefe Casino habilita, deshabilita, restablece PIN, desbloquea y asigna el tramo a quienes no tienen grado. El enrolamiento de huellas se hace en su propia sección.</p></div>
+  <div><h2>Personas habilitadas</h2><p class="lead">Solo quien está habilitado puede obtener ticket. El Jefe Casino habilita, suspende y asigna el tramo a quienes no tienen grado.</p></div>
   <div class="row spread">
     <input id="habBuscar" placeholder="Buscar por nombre, RUT o unidad" style="flex:1;max-width:360px">
     <div class="row"><button class="btn" id="btnNuevo">Agregar persona</button><button class="btn" id="btnMasiva">Carga masiva</button></div>
@@ -407,7 +384,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <label class="f" id="nTramoL" hidden>Tramo<select id="nTramo"><option value="">Asignar después</option><option value="1">Tramo 1</option><option value="2">Tramo 2</option><option value="3">Tramo 3</option></select></label>
       <button class="btn primary" type="submit">Guardar</button>
     </div>
-    <p class="small muted" id="nMsg" style="margin:8px 0 0">Al guardar, la persona queda pendiente de enrolamiento de huella y recibe un PIN provisorio para la vía alternativa.</p>
+    <p class="small muted" id="nMsg" style="margin:8px 0 0">Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT.</p>
   </form>
   <form class="panel" id="masivaForm" hidden>
     <h3>Carga masiva</h3>
@@ -416,7 +393,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 9.877.512-9;Ejemplo Persona Dos;Fiscalía;Planta;8</textarea>
     <div class="row" style="margin-top:8px"><button class="btn primary" type="submit">Validar e importar</button><span id="masivaMsg" class="small"></span></div>
   </form>
-  <div class="tablebox"><table><thead><tr><th>Nombre</th><th>RUT</th><th>Unidad</th><th>Calidad</th><th>Grado</th><th>Tramo</th><th>Habilitado</th><th>Huella</th><th>PIN</th><th>Acciones</th></tr></thead><tbody id="habBody"></tbody></table></div>
+  <div class="tablebox"><table><thead><tr><th>Nombre</th><th>RUT</th><th>Unidad</th><th>Calidad</th><th>Grado</th><th>Tramo</th><th>Habilitado</th></tr></thead><tbody id="habBody"></tbody></table></div>
 </section>
 
 <!-- REPORTES -->
@@ -456,10 +433,11 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <label class="f">Hora de inicio<input id="cIni" type="time" value="12:30"></label>
       <label class="f">Hora de término<input id="cFin" type="time" value="15:00"></label>
       <label class="f">Límite por persona y día<input id="cLimite" type="number" min="1" max="3" value="1"></label>
-      <label class="f">Intentos de PIN antes de bloquear<input id="cIntentos" type="number" min="2" max="6" value="3"></label>
+      <label class="f">Plazo del menú: día del mes anterior<input id="cMenuDia" type="number" min="1" max="31" value="25"></label>
+      <label class="f">Avisos con días hábiles de anticipación<input id="cAviso" type="number" min="0" max="10" value="1"></label>
       <label class="f">Hora simulada (solo maqueta)<input id="cSim" type="time" value="13:05"></label>
     </dl>
-    <p class="small muted" style="margin:14px 0 0">Los cambios se aplican de inmediato en la terminal. La hora simulada permite probar la regla de horario sin esperar al mediodía.</p>
+    <p class="small muted" style="margin:14px 0 0">Los cambios se aplican de inmediato en la terminal. Los plazos del menú y de los avisos son valores de ejemplo: los define Bienestar. La hora simulada permite probar la regla de horario sin esperar al mediodía.</p>
   </div>
   <div class="panel" style="display:grid;gap:12px">
     <div><h3>Valor del almuerzo por tramo</h3><p class="small muted" style="margin:2px 0 0">El tramo se define por el grado del funcionario. Quienes no tienen grado (honorarios, Código del Trabajo) reciben el tramo que asigna el Jefe Casino en «Personas habilitadas».</p></div>
@@ -484,7 +462,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <div class="panel"><h3 style="margin-bottom:12px">Contenido, de arriba hacia abajo</h3>
       <ol class="campos">
         <li><div><b>Encabezado</b><span>Institución y lugar del servicio.</span></div></li>
-        <li><div><b>Servicio</b><span>«ALMUERZO» en mayúsculas, para reconocer el ticket a distancia.</span></div></li>
+        <li><div><b>Almuerzos y menú</b><span>Cantidad de almuerzos («1 ALMUERZO», «2 ALMUERZOS» cuando hay invitados) y el menú elegido para el mes, normal o hipocalórico.</span></div></li>
         <li><div><b>Nombre completo</b><span>En letra destacada, para que el personal del casino confirme que quien entrega el ticket es su titular.</span></div></li>
         <li><div><b>Hora y fecha de emisión</b><span>La hora en el tamaño mayor del ticket. Impide reutilizar un ticket de otro día.</span></div></li>
       </ol></div>
@@ -501,19 +479,64 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   </div>
 </section>
 
+<!-- MI CASINO (Funcionario) -->
+<section class="view" id="v-micasino" data-label="Mi casino" hidden>
+  <div><h2>Mi casino</h2><p class="lead" id="miLead"></p></div>
+  <div class="stats" id="miKpi"></div>
+  <div class="grid2">
+    <div class="panel" style="display:grid;gap:12px;align-content:start">
+      <div><h3>Menú del mes</h3><p class="small muted" style="margin:2px 0 0">Elija el menú que solicitará durante cada mes.</p></div>
+      <div id="miMenu" style="display:grid;gap:12px"></div>
+    </div>
+    <div class="panel" style="display:grid;gap:12px;align-content:start">
+      <div><h3>Días en que no almorzaré</h3><p class="small muted" style="margin:2px 0 0">Avisar ayuda al casino a preparar las raciones justas.</p></div>
+      <form id="miAusForm" class="row" style="align-items:end"><label class="f">Día<input type="date" id="miAusF"></label><button class="btn primary" type="submit">Registrar aviso</button></form>
+      <span id="miAusMsg" class="small"></span>
+      <ul class="avisos" id="miAusList"></ul>
+    </div>
+  </div>
+  <div class="panel" style="display:grid;gap:12px">
+    <div><h3>Almuerzo con invitados</h3><p class="small muted" style="margin:2px 0 0">Indique el día y cuántos almuerzos necesitará a su nombre, incluido el suyo.</p></div>
+    <form id="miInvForm" class="row" style="align-items:end">
+      <label class="f">Día<input type="date" id="miInvF"></label>
+      <label class="f">Almuerzos a mi nombre<select id="miInvC"><option value="2">2 almuerzos</option><option value="3">3 almuerzos</option><option value="4">4 almuerzos</option><option value="5">5 almuerzos</option></select></label>
+      <button class="btn primary" type="submit">Registrar invitación</button>
+    </form>
+    <span id="miInvMsg" class="small"></span>
+    <p class="small muted" id="miInvNota" style="margin:0"></p>
+    <ul class="avisos" id="miInvList"></ul>
+  </div>
+  <div class="grid2">
+    <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Mis asistencias por mes</h3>
+      <div class="tablebox"><table><thead><tr><th>Mes</th><th class="num">Días</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="miMeses"></tbody></table></div></div>
+    <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Detalle de este mes</h3>
+      <div class="tablebox"><table><thead><tr><th>Fecha</th><th>Hora</th><th class="num">Almuerzos</th><th>Menú</th><th class="num">Monto</th></tr></thead><tbody id="miDet"></tbody></table></div></div>
+  </div>
+</section>
+
+<!-- PLANIFICACION (Jefe Casino) -->
+<section class="view" id="v-plan" data-label="Planificación" hidden>
+  <div><h2>Planificación de raciones</h2><p class="lead">Próximos 10 días hábiles, según el consumo habitual de cada día de la semana, el menú elegido por los funcionarios, los avisos de ausencia y los invitados. Elija un día para ver el detalle.</p></div>
+  <div class="tablebox"><table class="plan"><thead><tr><th>Día</th><th class="num">Menú normal</th><th class="num">Menú hipocalórico</th><th class="num">Ausencias avisadas</th><th class="num">Almuerzos de invitados</th><th class="num">Raciones estimadas</th></tr></thead><tbody id="planBody"></tbody></table></div>
+  <div class="grid2">
+    <div class="panel"><h3>No almorzarán · <span id="planDiaT"></span></h3><ul class="tight" id="planAus"></ul></div>
+    <div class="panel"><h3>Almuerzos con invitados</h3><ul class="tight" id="planInv"></ul></div>
+  </div>
+  <p class="small muted" style="margin:0">La estimación parte del promedio de los últimos 8 días iguales de la semana, descuenta las ausencias avisadas y suma los almuerzos adicionales de invitados (que se cuentan como menú normal). Es una referencia, no una reserva.</p>
+</section>
+
 <!-- ALCANCE -->
 <section class="view" id="v-alcance" data-label="Alcance y equipamiento" hidden>
   <div><h2>Alcance de la solución UIA frente a la propuesta cotizada</h2>
-  <p class="lead">Se mantiene el flujo de la propuesta comercial de GeoVictoria (agosto 2026): habilitar personas, validar identidad, emitir ticket y reportar. Se mantiene la identificación por huella, pero con un lector propio conectado a un computador de CONAF, sin licencia ni arriendo. Quien no consienta el uso de su huella, o cuya huella no se lea bien, ingresa con RUT y PIN.</p></div>
+  <p class="lead">Se mantiene el flujo de la propuesta comercial de GeoVictoria (agosto 2026): habilitar personas, validar identidad, emitir ticket y reportar. Por acuerdo del equipo UIA, la persona se identifica digitando su RUT en un teclado numérico conectado a un notebook de CONAF, sin licencia ni arriendo. No se usa huella. La validación con RUT y PIN queda para una versión futura.</p></div>
   <div class="tablebox"><table class="cmp"><thead><tr><th>Elemento</th><th>Propuesta GeoVictoria</th><th>Solución UIA (fase 1)</th></tr></thead><tbody>
-    <tr><td>Identificación</td><td>Reloj biométrico: huella, facial o tarjeta</td><td>Huella: el lector busca entre todas las huellas enroladas, sin digitar nada. Alternativa: RUT + PIN de 4 dígitos, con bloqueo tras intentos fallidos</td></tr>
+    <tr><td>Identificación</td><td>Reloj biométrico: huella, facial o tarjeta</td><td>RUT digitado en un teclado numérico USB. El personal del casino verifica el nombre impreso en el ticket. RUT + PIN en una versión futura</td></tr>
     <tr><td>Licencia</td><td>3,5 UF mensual, tramo 51 a 100 usuarios</td><td>Sin licencia; plataforma interna de CONAF</td></tr>
-    <tr><td>Equipamiento</td><td>Box Comedor: arriendo 2,9 UF mensual, o compra 23 UF (reloj 8 UF, impresora 7 UF, gabinete 8 UF)</td><td>Compra única: computador o mini PC con pantalla, lector de huella USB, teclado numérico e impresora térmica. Requiere el software del fabricante del lector instalado en el equipo. Costo por cotizar con Informática</td></tr>
+    <tr><td>Equipamiento</td><td>Box Comedor: arriendo 2,9 UF mensual, o compra 23 UF (reloj 8 UF, impresora 7 UF, gabinete 8 UF)</td><td>Compra única: notebook, teclado numérico USB e impresora térmica de 80 mm</td></tr>
     <tr><td>Instalación</td><td>2 UF, pago único; punto de red y enchufe a 1,5 m</td><td>UIA y Depto. de Informática; se requiere el mismo punto de red y enchufe</td></tr>
     <tr><td>Servicios</td><td>Hasta 6 tipos (desayuno, almuerzo, once, cena)</td><td>Solo almuerzo. Escalable a otros servicios en una fase posterior</td></tr>
     <tr><td>Reglas</td><td>Horario, ubicación, turno y límites</td><td>Horario, ubicación y límite diario</td></tr>
-    <tr><td>Enrolamiento</td><td>No detallado en la propuesta</td><td>Módulo propio para el Jefe Casino: consentimiento, captura de dos dedos y seguimiento del avance</td></tr>
-    <tr><td>Ticket</td><td>Nombre, identificador, servicio, hora, fecha, empresa y dirección</td><td>Mismos campos, con RUT parcialmente oculto y N° correlativo</td></tr>
+    <tr><td>Ticket</td><td>Nombre, identificador, servicio, hora, fecha, empresa y dirección</td><td>Encabezado, servicio, nombre completo, hora y fecha de emisión</td></tr>
     <tr><td>Reportes</td><td>Totales, consolidado, detallado y por marca</td><td>Estadísticas diarias, semanales, mensuales y anuales; detalle de ingresos; descuento mensual por trabajador; consumo por unidad y resumen anual</td></tr>
     <tr><td>Integración</td><td>Sincronización con GeoVictoria Asistencia</td><td>Fuera de la fase 1. La nómina se carga desde planilla</td></tr>
   </tbody></table></div>
@@ -525,7 +548,8 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <tr><td>Consumo por unidad y resumen anual</td><td>Sí</td><td>Sí</td></tr>
     <tr><td>Terminal, reimpresión, anulación y registro manual</td><td>Sí</td><td>No</td></tr>
     <tr><td>Registro y anulación de cierres del casino</td><td>Sí, con alerta a la Jefa de Bienestar</td><td>Sí, con alerta al Jefe Casino</td></tr>
-    <tr><td>Nómina de habilitados, enrolamiento y configuración</td><td>Sí</td><td>No</td></tr>
+    <tr><td>Nómina de habilitados y configuración</td><td>Sí</td><td>No</td></tr>
+    <tr><td>Planificación de raciones (menús, ausencias e invitados)</td><td>Sí</td><td>No</td></tr>
   </tbody></table></div></div>
   <div class="grid2">
     <div class="panel"><h3>Puntos por validar con Bienestar</h3><ul class="tight">
@@ -533,19 +557,17 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <li>Valor vigente de cada tramo y grados que comprende, y desde qué fuente se obtiene el grado de cada funcionario (Remuneraciones).</li>
       <li>Horario del servicio y si hay más de un turno.</li>
       <li>Quiénes tienen derecho: honorarios, personal de regiones en comisión, visitas.</li>
-      <li>Texto del consentimiento y necesidad de evaluación de impacto, con Fiscalía.</li>
-      <li>Agenda del enrolamiento masivo: 2 a 3 minutos por persona, en 2 o 3 jornadas.</li>
-      <li>Modelo de lector compatible con los equipos y políticas de Informática.</li>
-      <li>Cómo se entrega el PIN a quienes usen la vía alternativa.</li>
+      <li>Qué tecla del teclado numérico representa la K del RUT (la maqueta usa *).</li>
+      <li>Cómo verificará el personal del casino que el nombre del ticket corresponde a quien lo entrega.</li>
       <li>Formato que requiere Remuneraciones para el descuento.</li>
+      <li>Plazos para elegir el menú del mes y para avisar ausencias e invitados (la maqueta usa el día 25 y 1 día hábil).</li>
+      <li>Cómo ingresará el funcionario a «Mi casino» (por ejemplo, RUT y código al correo, como en el sistema de reservas).</li>
       <li>Deber de reserva del Jefe Casino sobre los datos de los comensales y registro de quién consulta el detalle.</li>
     </ul></div>
-    <div class="panel"><h3>Resguardos de la fase 1</h3><ul class="tight">
-      <li>La huella es un dato sensible (Ley N° 21.719): se trata solo con consentimiento expreso y por escrito.</li>
-      <li>Se guarda solo la plantilla cifrada, nunca la imagen, y se elimina al revocar o dejar de estar habilitado.</li>
-      <li>No se reutilizan las huellas de GeoVictoria Asistencia: fueron recogidas para otra finalidad.</li>
-      <li>Quien no consiente mantiene el acceso con RUT + PIN, sin perjuicio alguno.</li>
-      <li>El PIN se almacena cifrado y es de uso personal e intransferible.</li>
+    <div class="panel"><h3>Resguardos de esta versión</h3><ul class="tight">
+      <li>No se tratan datos biométricos: solo RUT, nombre, fecha y hora del almuerzo.</li>
+      <li>El nombre completo en el ticket permite al personal del casino detectar el uso de un RUT ajeno.</li>
+      <li>Quien vea un almuerzo que no tomó puede reclamarlo antes del cierre mensual, y el Jefe Casino lo anula con motivo.</li>
       <li>Toda anulación y registro manual exige motivo y queda trazada.</li>
       <li>Cada perfil ve solo lo necesario: la Jefa de Bienestar ve cifras agregadas y el detalle por trabajador solo en el reporte de descuento.</li>
       <li>Se registran solo los datos necesarios para el cobro, conforme a la Ley N° 21.719.</li>
@@ -619,7 +641,7 @@ function seedPersonas(){
 }
 const byKey=k=>P.find(p=>p.key===k);
 
-const CFG0={servicio:"Almuerzo",ubic:"Casino Institucional · Oficina Central",ini:"12:30",fin:"15:00",limite:1,intentos:3,sim:"13:05",
+const CFG0={servicio:"Almuerzo",ubic:"Casino Institucional · Oficina Central",ini:"12:30",fin:"15:00",limite:1,intentos:3,menuDia:25,avisoDias:1,sim:"13:05",
   tramos:[{n:1,desde:3,hasta:11,valor:3000},{n:2,desde:12,hasta:14,valor:2500},{n:3,desde:15,hasta:21,valor:2000}]};
 const copiaCfg=()=>({...CFG0,tramos:CFG0.tramos.map(t=>({...t}))});
 const cfg=copiaCfg();
@@ -627,7 +649,7 @@ const cfg=copiaCfg();
 const tramoDe=p=>{if(!p)return null;if(p.grado!=null){const t=cfg.tramos.find(t=>p.grado>=t.desde&&p.grado<=t.hasta);return t?t.n:null}return p.tramoManual||null};
 const valorDe=p=>{const t=tramoDe(p);return t?cfg.tramos[t-1].valor:0};
 /* Cada almuerzo guarda el valor vigente al emitirse; si la persona no tenía tramo, se calcula con el actual */
-const montoR=r=>r.valor||valorDe(byKey(r.key));
+const montoR=r=>(r.valor||valorDe(byKey(r.key)))*(r.cant||1);
 const sumaM=rows=>rows.reduce((a,r)=>a+montoR(r),0);
 const TRAMO_TXT=t=>t?`Tramo ${t}`:"Sin tramo";
 const now=()=>{const d=new Date();if(cfg.sim){const[h,m]=cfg.sim.split(":");d.setHours(+h,+m,new Date().getSeconds())}return d};
@@ -664,6 +686,41 @@ const horarioC=c=>c.tipo==="completo"?"día completo":`de ${c.hIni} a ${c.hFin}`
 const descC=c=>`${fechasC(c)}, ${horarioC(c)} · ${c.motivo}${c.detalle?` (${c.detalle})`:""}`;
 
 /* registros: {n, fecha, hora, key, origen, estado, motivo} — año en curso hasta hoy */
+/* ---- Solicitudes del funcionario: menú del mes, ausencias e invitados ---- */
+const MENUS=["Normal","Hipocalórico"];
+const MENU={},AUS=[],INV=[];
+const hkey=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
+const ymOf=f=>f.slice(0,7);
+const ymNext=ym=>{const[y,m]=ym.split("-").map(Number);return m===12?`${y+1}-01`:`${y}-${pad(m+1)}`};
+const ymPrev=ym=>{const[y,m]=ym.split("-").map(Number);return m===1?`${y-1}-12`:`${y}-${pad(m-1)}`};
+const menuDe=(p,f)=>MENU[p.key+"|"+ymOf(f)]||"Normal";
+const invDe=(p,f)=>INV.find(x=>x.key===p.key&&x.fecha===f);
+const ausDe=(p,f)=>AUS.find(x=>x.key===p.key&&x.fecha===f);
+const cantR=r=>r.cant||1;
+const sumCant=rows=>rows.reduce((a,r)=>a+cantR(r),0);
+/* Plazos (valores de ejemplo; los define Bienestar) */
+const menuLimite=ym=>{const pv=ymPrev(ym);const last=new Date(+pv.slice(0,4),+pv.slice(5),0).getDate();return `${pv}-${pad(Math.min(cfg.menuDia,last))}`};
+const menuEditable=ym=>TODAY<=menuLimite(ym);
+const avisoMin=()=>cfg.avisoDias>0?habilesDesde(TODAY,cfg.avisoDias):TODAY;
+function proxHabilesAntes(f){const d=D(f);do{d.setDate(d.getDate()-1)}while(!habil(d));return ymd(d)}
+function proxHabiles(n){const out=[];const d=D(TODAY);while(out.length<n){d.setDate(d.getDate()+1);if(habil(d))out.push(ymd(d))}return out}
+function seedSolicitudes(){
+  for(const k in MENU)delete MENU[k];AUS.length=0;INV.length=0;
+  const cm=ymOf(TODAY),nm=ymNext(cm);
+  P.forEach(p=>{[ymPrev(ymPrev(cm)),ymPrev(cm),cm].forEach(ym=>{if(hkey(p.key+ym)%5===0)MENU[p.key+"|"+ym]="Hipocalórico"});
+    if(hkey(p.key+nm)%4===0)MENU[p.key+"|"+nm]="Hipocalórico"});
+  MENU[P[4].key+"|"+cm]="Hipocalórico";
+  const dias=proxHabiles(10);const cre=`${fmtD(TODAY)} 09:12`;
+  P.forEach((p,i)=>{if(i<12&&i!==4)return;dias.forEach(f=>{const h=hkey(p.key+f);
+    if(h%23===0)AUS.push({key:p.key,fecha:f,creado:cre});else if(h%61===0)INV.push({key:p.key,fecha:f,cant:2+h%2,creado:cre})})});
+  AUS.push({key:P[4].key,fecha:dias[3],creado:cre});INV.push({key:P[4].key,fecha:dias[6],cant:2,creado:cre});
+  INV.push({key:P[1].key,fecha:dias[0],cant:3,creado:cre});
+  INV.push({key:P[2].key,fecha:TODAY,cant:2,creado:`${fmtD(proxHabilesAntes(TODAY))} 16:40`});
+}
+function avgDia(f){const w=D(f).getDay();const cnt=new Map();
+  R.forEach(r=>{if(r.estado==="Válido"&&r.fecha<TODAY&&D(r.fecha).getDay()===w)cnt.set(r.fecha,(cnt.get(r.fecha)||0)+cantR(r))});
+  const fs=[...cnt.keys()].sort().slice(-8);return fs.length?fs.reduce((a,x)=>a+cnt.get(x),0)/fs.length:0}
+
 const R=[];
 function seedYear(){
   R.length=0;
@@ -673,24 +730,25 @@ function seedYear(){
     const day=[];P.forEach(p=>{if(p.hab&&rnd()<p0+p.af)day.push({min:clampMin(p.pref+gauss()*16+(w===5?-12:0)+(m===1?8:0)),p})});
     const cerradoDia=!!diaCerrado(f);
     day.sort((a,b)=>a.min-b.min).filter(x=>!cerradoDia&&!cierreEn(f,hm(x.min))).forEach((x,i)=>{const o=rnd();const an=rnd()<0.006;
-      R.push({n:i+1,fecha:f,hora:hm(x.min),key:x.p.key,valor:valorDe(x.p),origen:o<0.03?"Manual":(x.p.bio==="enrolada"&&o>0.09)?"Huella":"RUT + PIN",estado:an?"Anulado":"Válido",motivo:an?"Ticket emitido por error":(o<0.03?"Falla del lector de huella":undefined)})});
+      R.push({n:i+1,fecha:f,hora:hm(x.min),key:x.p.key,valor:valorDe(x.p),cant:hkey(x.p.key+f)%97===0?2:1,menu:menuDe(x.p,f),origen:o<0.03?"Manual":"Terminal",estado:an?"Anulado":"Válido",motivo:an?"Ticket emitido por error":(o<0.03?"Falla de terminal":undefined)})});
   }
   const demo=new Set([0,1,2,4,6,7,8,9,10,11].map(i=>P[i].key));
   const hoy=[[3,"12:44"],[5,"12:52"]].map(([i,h])=>({p:P[i],h}));
   P.forEach(p=>{if(!demo.has(p.key)&&!hoy.some(x=>x.p===p)&&p.hab&&rnd()<0.72+p.af){const mm=clampMin(p.pref+gauss()*13);if(mm<785)hoy.push({p,h:hm(mm)})}});
-  hoy.sort((a,b)=>a.h<b.h?-1:1).forEach((x,i)=>R.push({n:i+1,fecha:TODAY,hora:x.h,key:x.p.key,valor:valorDe(x.p),origen:x.p.bio==="enrolada"?"Huella":"RUT + PIN",estado:"Válido"}));
-  R.push({n:R.filter(r=>r.fecha===TODAY).length+1,fecha:TODAY,hora:"13:01",key:P[7].key,origen:"Huella",estado:"Anulado",motivo:"Ticket emitido por error, persona no almorzó"});
+  hoy.sort((a,b)=>a.h<b.h?-1:1).forEach((x,i)=>R.push({n:i+1,fecha:TODAY,hora:x.h,key:x.p.key,valor:valorDe(x.p),cant:1,menu:menuDe(x.p,TODAY),origen:"Terminal",estado:"Válido"}));
+  R.push({n:R.filter(r=>r.fecha===TODAY).length+1,fecha:TODAY,hora:"13:01",key:P[7].key,origen:"Terminal",estado:"Anulado",motivo:"Ticket emitido por error, persona no almorzó"});
 }
 /* Misma semilla: cada reinicio entrega exactamente los mismos datos de ejemplo */
-function seedAll(){seed=7;seedPersonas();seedCierres();seedYear()}
+function seedAll(){seed=7;seedPersonas();seedCierres();seedSolicitudes();seedYear()}
 seedAll();
 const todays=()=>R.filter(r=>r.fecha===TODAY);
 const nextN=()=>todays().length+1;
 const valid=(a,b)=>R.filter(r=>r.estado==="Válido"&&r.fecha>=a&&r.fecha<=b);
 
 /* ---- Perfiles y pestañas ---- */
-const PERF={casino:{nombre:"Jefe Casino",views:["terminal","ticket","estadisticas","detalle","reportes","cierres","habilitados","enrolamiento","configuracion","alcance"]},
-            bienestar:{nombre:"Jefa de Bienestar",views:["estadisticas","reportes","cierres","ticket","alcance"]}};
+const PERF={casino:{nombre:"Jefe Casino",views:["terminal","ticket","estadisticas","detalle","plan","reportes","cierres","habilitados","configuracion","alcance"]},
+            bienestar:{nombre:"Jefa de Bienestar",views:["estadisticas","reportes","cierres","ticket","alcance"]},
+            funcionario:{nombre:"Funcionario",views:["micasino"]}};
 let perfil="casino";try{const s=localStorage.getItem("casino.perfil");if(PERF[s])perfil=s}catch(e){}
 const views=[...document.querySelectorAll("section.view")];
 const tabs=$("#tabs");let current=null;
@@ -698,8 +756,8 @@ function buildTabs(){tabs.innerHTML="";PERF[perfil].views.forEach(id=>{const v=$
 function show(id,push){if(!PERF[perfil].views.includes(id))id=PERF[perfil].views[0];current=id;
   views.forEach(v=>v.hidden=v.id!=="v-"+id);tabs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.id===id));
   if(push)try{history.replaceState(null,"","#"+id)}catch(e){}
-  ({estadisticas:renderEst,detalle:renderDet,reportes:renderRepo,habilitados:renderHab,terminal:renderScreen,enrolamiento:renderEnr,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres})[id]?.();renderAlertas()}
-const USR={casino:{n:"Rodrigo Salinas Vera",r:"Jefe Casino"},bienestar:{n:"María Fernanda Ortiz Lagos",r:"Jefa de Bienestar"}};
+  ({estadisticas:renderEst,detalle:renderDet,reportes:renderRepo,habilitados:renderHab,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan})[id]?.();renderAlertas()}
+const USR={casino:{n:"Rodrigo Salinas Vera",r:"Jefe Casino"},bienestar:{n:"María Fernanda Ortiz Lagos",r:"Jefa de Bienestar"},get funcionario(){return{n:P[4].nombre,r:"Funcionario/a"}}};
 function pintarPerfil(){$("#perfilChips").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.perfil===perfil));$("#whoName").textContent=USR[perfil].n;$("#whoRol").textContent=USR[perfil].r}
 pintarPerfil();
 $("#perfilChips").addEventListener("click",e=>{const b=e.target.closest("[data-perfil]");if(!b||b.dataset.perfil===perfil)return;perfil=b.dataset.perfil;pintarPerfil();try{localStorage.setItem("casino.perfil",perfil)}catch(_){}
@@ -723,204 +781,119 @@ $("#copyClose").onclick=()=>$("#copyBox").hidden=true;
 
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
 
-/* ---- Terminal ---- */
-const T={step:"huella",rut:"",pin:"",person:null,result:null,err:null,scan:false,fallosHuella:0};
+/* ---- Terminal: identificación solo con RUT digitado en teclado numérico (la validación con PIN queda para una versión futura) ---- */
+const T={step:"rut",rut:"",result:null,err:null};
 let resetTimer=null;
 function hhmm(d){return pad(d.getHours())+":"+pad(d.getMinutes())}
 function inHours(){const h=hhmm(now());return h>=cfg.ini&&h<=cfg.fin}
-const FP=`<svg viewBox="0 0 64 64" width="92" height="92" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M20 14a24 24 0 0 1 30 4"/><path d="M14 24a22 22 0 0 1 4-6"/><path d="M52 24c2 4 3 9 2 14"/><path d="M22 52c-4-6-6-13-5-20a15 15 0 0 1 29 0c1 5 0 10-1 14"/><path d="M27 56c-3-6-4-13-3-20a8 8 0 0 1 16 1c0 6-1 11-3 16"/><path d="M33 58c-2-7-2-14-1-20"/><path d="M45 52c1-3 2-6 2-9"/></svg>`;
-function steps(){const pinMode=T.step==="rut"||T.step==="pin";
-  if(pinMode)return `<div class="steps"><span class="${T.step==="rut"?"on":""}">1 · RUT</span><span class="${T.step==="pin"?"on":""}">2 · PIN</span><span>3 · Ticket</span></div>`;
-  return `<div class="steps"><span class="${T.step==="huella"?"on":""}">1 · Huella</span><span class="${T.step==="res"?"on":""}">2 · Ticket</span></div>`}
+function steps(){return `<div class="steps"><span class="${T.step==="rut"?"on":""}">1 · RUT</span><span class="${T.step==="res"?"on":""}">2 · Ticket</span></div>`}
 function renderScreen(){
   const s=$("#screen");const d=now();
   const fecha=d.toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"});
   let body="";
   const head=`<div class="head"><div><div class="clock" id="clk">${hhmm(d)}</div><div class="svc">${esc(fecha)} · ${esc(cfg.servicio)} ${cfg.ini}–${cfg.fin}</div></div>${steps()}</div>`;
   const ciT=cierreEn(TODAY,hhmm(d));
-  if(T.step==="huella"&&ciT){
+  if(T.step==="rut"&&ciT){
     body=`<div class="msg warn"><b>Casino cerrado</b><p>${esc(descC(ciT))}.</p><p>No se registran almuerzos mientras dure el cierre.</p></div>`;
-  }else if(T.step==="huella"){
-    body=`<div class="fpzone ${T.scan?"scan":""} ${T.err?"err":""}">${FP}<p class="prompt">${T.scan?"Leyendo huella…":"Coloque su dedo en el lector"}</p>
-      <p class="muted small" style="margin:0">Use el mismo dedo que registró en el enrolamiento.</p></div>
-    ${T.err?`<div class="msg bad"><b>${esc(T.err)}</b>${T.fallosHuella>=2?"<p>Si el lector no reconoce su huella, ingrese con RUT y PIN.</p>":""}</div>`:""}
-    <button class="btn" data-k="PINMODE" style="padding:14px;font-size:17px">Ingresar con RUT y PIN</button>
-    <p class="small muted" style="margin:0">CONAF trata su huella y el registro de almuerzo solo para el cobro por planilla, con su consentimiento (Ley N° 21.719). Si no desea usar su huella, ingrese con RUT y PIN.</p>`;
   }else if(T.step==="rut"){
-    body=`<p class="prompt">Digite su RUT y luego su PIN</p>
+    body=`<p class="prompt">Digite su RUT y presione Enter</p>
     <div class="display ${T.rut?"":"ph"} ${T.err?"err":""}" id="disp">${T.rut?esc(fmtRut(T.rut)):"Sin puntos ni guion"}</div>
     ${T.err?`<div class="msg bad"><b>${esc(T.err)}</b></div>`:""}
-    ${keypad(true)}
-    <div class="actions"><button class="btn" data-k="HUELLA">Volver a huella</button><button class="btn primary" data-k="OK" ${cleanRut(T.rut).length>=8?"":"disabled"}>Continuar</button></div>`;
-  }else if(T.step==="pin"){
-    body=`<div class="who">RUT ingresado<b class="mono">${esc(fmtRut(T.rut))}</b></div>
-    <p class="prompt" style="text-align:center">Ahora ingrese su PIN de 4 dígitos</p>
-    <div class="pins">${[0,1,2,3].map(i=>`<i class="${i<T.pin.length?"f":""}"></i>`).join("")}</div>
-    ${T.err?`<div class="msg bad"><b>${esc(T.err)}</b></div>`:""}
-    ${keypad(false)}
-    <div class="actions"><button class="btn" data-k="BACK">Cambiar RUT</button><button class="btn" data-k="CLR">Borrar PIN</button></div>`;
+    ${keypad()}
+    <div class="actions"><button class="btn" data-k="CLR">Borrar todo</button><button class="btn primary" data-k="OK" ${cleanRut(T.rut).length>=8?"":"disabled"}>Registrar almuerzo</button></div>
+    <p class="small muted" style="margin:0">Si su RUT termina en K, use la tecla K (marcada con * en el teclado numérico). CONAF registra su RUT, la fecha y la hora solo para el cobro del almuerzo por planilla (Ley N° 21.719).</p>`;
   }else{
     const r=T.result;
-    body=`<div class="msg ${r.kind}"><b>${esc(r.title)}</b><p>${r.text}</p></div>
+    body=`<div class="msg ${r.kind}"><b>${esc(r.title)}</b>${r.nombre?`<p class="who-big">${esc(r.nombre)}</p>`:""}<p>${r.text}</p></div>
     <button class="btn primary" data-k="NEW" style="padding:14px;font-size:17px">Siguiente persona</button>
     <p class="small muted" style="margin:0">La pantalla vuelve al inicio en unos segundos.</p>`;
   }
   s.innerHTML=head+body;
 }
-function keypad(withK){const k=["1","2","3","4","5","6","7","8","9",withK?"K":"","0","⌫"];
-  return `<div class="keypad">${k.map(x=>`<button data-k="${x||"none"}" ${x?"":"disabled"} class="${x==="⌫"?"fn":""}" aria-label="${x==="⌫"?"Borrar último":x}">${x}</button>`).join("")}</div>`}
+function keypad(){const k=["7","8","9","4","5","6","1","2","3","K","0","⌫"];
+  return `<div class="keypad">${k.map(x=>`<button data-k="${x}" class="${x==="⌫"?"fn":""}" aria-label="${x==="⌫"?"Borrar último":x}">${x==="K"?'K<small class="kp-note">tecla *</small>':x}</button>`).join("")}</div>`}
 $("#screen").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(b&&!b.disabled)press(b.dataset.k)});
+/* Teclado numérico físico: dígitos, * = K, Enter = registrar, Retroceso = borrar, Supr o punto = borrar todo */
 document.addEventListener("keydown",e=>{if($("#v-terminal").hidden||e.target.matches("input,textarea,select"))return;
-  if(T.step==="huella"||T.step==="res"){if(e.key==="Enter"&&T.step==="res"){press("NEW");e.preventDefault()}return}
+  if(T.step==="res"){if(e.key==="Enter"){press("NEW");e.preventDefault()}return}
   const k=e.key.toUpperCase();
-  if(/^[0-9]$/.test(k)||k==="K")press(k);else if(e.key==="Backspace")press("⌫");else if(e.key==="Enter")press("OK");else if(e.key==="Escape")press(T.step==="pin"?"BACK":"HUELLA");else return;e.preventDefault()});
+  if(/^[0-9]$/.test(k))press(k);else if(k==="K"||k==="*")press("K");else if(e.key==="Backspace")press("⌫");
+  else if(e.key==="Enter")press("OK");else if(e.key==="Delete"||e.key==="."||e.key==="Escape")press("CLR");else return;e.preventDefault()});
 function press(k){
   if(T.step==="res"){if(k==="NEW")resetT();return}
   T.err=null;
-  if(T.step==="huella"){if(k==="PINMODE"){T.step="rut";T.rut=""}}
-  else if(T.step==="rut"){
-    if(k==="⌫")T.rut=T.rut.slice(0,-1);
-    else if(k==="HUELLA"){T.step="huella";T.rut=""}
-    else if(k==="OK")return checkRut();
-    else if(/^[0-9K]$/.test(k)&&T.rut.length<9){if(k==="K"&&T.rut.length<7)return;if(T.rut.endsWith("K"))return;T.rut+=k}
-  }else if(T.step==="pin"){
-    if(k==="⌫")T.pin=T.pin.slice(0,-1);
-    else if(k==="CLR")T.pin="";
-    else if(k==="BACK"){T.step="rut";T.pin="";T.person=null}
-    else if(/^[0-9]$/.test(k)&&T.pin.length<4){T.pin+=k;if(T.pin.length===4){renderScreen();return setTimeout(checkPin,180)}}
-  }
+  if(k==="⌫")T.rut=T.rut.slice(0,-1);
+  else if(k==="CLR")T.rut="";
+  else if(k==="OK"){if(cleanRut(T.rut).length>=8)return checkRut()}
+  else if(/^[0-9K]$/.test(k)&&T.rut.length<9){if(k==="K"&&T.rut.length<7)return;if(T.rut.endsWith("K"))return;T.rut+=k}
   renderScreen();
 }
-function result(kind,title,text){if(kind!=="ok")noEmite(title);T.step="res";T.result={kind,title,text};renderScreen();clearTimeout(resetTimer);resetTimer=setTimeout(resetT,kind==="ok"?9000:7000)}
-function resetT(){clearTimeout(resetTimer);Object.assign(T,{step:"huella",rut:"",pin:"",person:null,result:null,err:null,scan:false,fallosHuella:0});renderScreen()}
-/* Reglas comunes a ambas vías: habilitación, horario y límite diario */
+function result(kind,title,text,nombre){if(kind!=="ok")noEmite(title,!nombre&&kind==="bad");T.step="res";T.result={kind,title,text,nombre};renderScreen();clearTimeout(resetTimer);resetTimer=setTimeout(resetT,kind==="ok"?9000:7000)}
+function resetT(){clearTimeout(resetTimer);Object.assign(T,{step:"rut",rut:"",result:null,err:null});renderScreen()}
+/* Reglas: cierre, habilitación, horario y límite diario */
 function reglas(p){
   const ci=cierreEn(TODAY,hhmm(now()));if(ci){result("warn","Casino cerrado",`${esc(horarioC(ci)==="día completo"?"Cerrado todo el día":"Cerrado "+horarioC(ci))} por ${esc(ci.motivo.toLowerCase())}. No se registran almuerzos mientras dure el cierre.`);return false}
-  if(!p.hab){result("bad","Habilitación suspendida","Su habilitación para el casino está suspendida. Consulte con el Jefe Casino.");return false}
+  if(!p.hab){result("bad","Habilitación suspendida","Su habilitación para el casino está suspendida. Consulte con el Jefe Casino.",p.nombre);return false}
   if(!inHours()){result("warn","Fuera del horario del servicio",`El ${esc(cfg.servicio.toLowerCase())} se registra entre ${cfg.ini} y ${cfg.fin} horas.`);return false}
   const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");
-  if(ya.length>=cfg.limite){result("warn","Ya registró su almuerzo hoy",`Su ticket se emitió a las ${ya[0].hora}.`);return false}
+  if(ya.length>=cfg.limite){result("warn","Ya registró su almuerzo hoy",`Su ticket se emitió a las ${ya[0].hora}.`,p.nombre);return false}
   return true}
-/* Simulación del lector: identificación 1:N contra las plantillas enroladas */
-function leerHuella(key){
-  if(T.step!=="huella"){resetT()}
-  T.err=null;T.scan=true;renderScreen();setLbl("Leyendo huella…","pend");
-  setTimeout(()=>{T.scan=false;
-    const p=key&&key!=="NOMATCH"&&key!=="MALA"?byKey(key):null;
-    if(key==="MALA"){T.fallosHuella++;noEmite("no se pudo leer la huella",true);T.err="No se pudo leer la huella. Limpie el dedo y vuelva a apoyarlo.";return renderScreen()}
-    if(!p||p.bio!=="enrolada"){T.fallosHuella++;noEmite("huella no reconocida",true);T.err="Huella no reconocida.";return renderScreen()}
-    T.fallosHuella=0;previewPersona(p,"Huella reconocida · validando reglas");
-    if(!reglas(p))return;
-    const r=emit(p,"Huella");
-    result("ok","Almuerzo registrado",`${esc(p.nombre)}, retire su ticket. ¡Buen provecho!`);
-  },700);
-}
 function checkRut(){
-  if(!rutOk(T.rut)){T.err="El RUT no es válido. Revise el dígito verificador.";return renderScreen()}
-  T.person=byKey(cleanRut(T.rut))||null;if(T.person)previewPersona(T.person,"Vista previa · falta validar el PIN");T.step="pin";T.pin="";renderScreen();
-}
-/* El PIN se pide siempre. Las reglas se evalúan solo después de autenticar, para no revelar datos de un RUT ajeno */
-function checkPin(){
-  const p=T.person;
-  if(!p){noEmite("RUT o PIN incorrecto",true);T.pin="";T.step="rut";T.err="RUT o PIN incorrecto. Si no está habilitado, consulte con el Jefe Casino.";return renderScreen()}
-  if(p.bloq)return result("warn","PIN bloqueado","Se superó el número de intentos permitidos. El Jefe Casino puede registrarlo de forma manual y restablecer su PIN.");
-  if(T.pin!==p.pin){p.fallos++;T.pin="";
-    if(p.fallos>=cfg.intentos){p.bloq=true;renderDemo();return result("bad","PIN bloqueado","Se superó el número de intentos. Acérquese al Jefe Casino.")}
-    noEmite("PIN incorrecto");T.err=`RUT o PIN incorrecto. Le quedan ${cfg.intentos-p.fallos} intento${cfg.intentos-p.fallos===1?"":"s"}.`;return renderScreen()}
-  p.fallos=0;
+  if(!rutOk(T.rut)){T.err="El RUT no es válido. Revise el dígito verificador.";noEmite("RUT mal digitado",true);return renderScreen()}
+  const p=byKey(cleanRut(T.rut));
+  if(!p)return result("bad","RUT no habilitado para el casino","Su RUT no figura en la nómina de personas habilitadas. Consulte con el Jefe Casino.");
+  previewPersona(p,"RUT reconocido · validando reglas");
   if(!reglas(p))return;
-  const r=emit(p,"RUT + PIN");
-  result("ok","Almuerzo registrado",`${esc(p.nombre)}, retire su ticket. ¡Buen provecho!`);
+  const r=emit(p,"Terminal");
+  result("ok",r.cant>1?`${r.cant} almuerzos registrados`:"Almuerzo registrado",`${r.cant>1?`Retire su ticket por ${r.cant} almuerzos (usted y sus invitados)`:"Retire su ticket"}. Menú ${r.menu.toLowerCase()}. ¡Buen provecho!`,p.nombre);
 }
-function emit(p,origen,motivo){const r={n:nextN(),fecha:TODAY,hora:hhmm(now()),key:p.key,valor:valorDe(p),origen,estado:"Válido",motivo};R.push(r);printTicket(r);return r}
+function emit(p,origen,motivo){const iv=invDe(p,TODAY);const a=ausDe(p,TODAY);if(a)AUS.splice(AUS.indexOf(a),1);
+  const r={n:nextN(),fecha:TODAY,hora:hhmm(now()),key:p.key,valor:valorDe(p),cant:iv?iv.cant:1,menu:menuDe(p,TODAY),origen,estado:"Válido",motivo};R.push(r);printTicket(r);return r}
 function ticketHTML(r,o={}){const p=o.persona||byKey(r.key);const f=D(r.fecha);
   const fecha=cap(f.toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long",year:"numeric"}));
   const F=(k,html)=>o.anot?`<div class="tk-f" data-n="${k}">${html}</div>`:html;
   return `<div class="ticket ${o.cls||""} ${o.anot?"anot":""}">
    ${F(1,`<div class="c"><div class="tk-org">CONAF</div><div>Corporación Nacional Forestal</div><div>${esc(cfg.ubic)}</div></div>`)}<hr>
    ${o.copia?`<div class="c tk-copia">*** COPIA · reimpresa a las ${o.copiaHora||hhmm(now())} ***</div><hr>`:""}
-   ${F(2,`<div class="c tk-svc">${esc(cfg.servicio.toUpperCase())}</div>`)}
+   ${F(2,`<div class="c tk-svc">${r.cant||1} ${esc(cfg.servicio.toUpperCase())}${(r.cant||1)>1?"S":""}</div><div class="c">Menú ${esc((r.menu||"Normal").toLowerCase())}</div>`)}
    ${F(3,`<div class="c tk-name">${esc(p.nombre)}</div>`)}
    ${F(4,`<div class="c tk-hora">${r.hora}</div><div class="c">${esc(fecha)}</div>`)}
   </div>`}
 /* Impresora: muestra siempre la propuesta de ticket con la persona elegida en el simulador */
-const LEY=`<ol class="tk-ley"><li>Encabezado</li><li>Servicio</li><li>Nombre completo</li><li>Hora y fecha de emisión</li></ol>`;
-let tkPerson=null,tkHora="12:41",tkCopia=false;
+const LEY=`<ol class="tk-ley"><li>Encabezado</li><li>Almuerzos y menú</li><li>Nombre completo</li><li>Hora y fecha de emisión</li></ol>`;
+let tkPerson=null,tkHora="12:41",tkCopia=false,tkCant=1,tkMenu="Normal";
 function setLbl(t,estado){const l=$("#printerLbl");l.textContent=t;l.className="small tk-lbl "+(estado||"")}
 function setPrinter(lbl,estado){setLbl(lbl,estado);
-  const r={n:0,fecha:TODAY,hora:tkPerson?tkHora:"--:--",key:tkPerson?tkPerson.key:"",origen:"Huella"};
+  const r={n:0,fecha:TODAY,hora:tkPerson?tkHora:"--:--",key:tkPerson?tkPerson.key:"",cant:tkCant,menu:tkMenu,origen:"Terminal"};
   $("#ticketOut").innerHTML=ticketHTML(r,{persona:tkPerson||{nombre:"Persona no identificada"},anot:true,copia:tkCopia,copiaHora:hhmm(now()),cls:estado==="ok"?"in":estado==="no"?"tk-no":""})+LEY}
-function previewPersona(p,lbl){tkPerson=p;tkHora=hhmm(now());tkCopia=false;setPrinter(lbl,"pend")}
+function previewPersona(p,lbl){tkPerson=p;tkHora=hhmm(now());tkCopia=false;const iv=invDe(p,TODAY);tkCant=iv?iv.cant:1;tkMenu=menuDe(p,TODAY);setPrinter(lbl,"pend")}
 function noEmite(motivo,sinPersona){if(sinPersona){tkPerson=null;tkCopia=false}setPrinter("No se emite ticket · "+motivo,"no")}
-function printTicket(r,copia){tkPerson=byKey(r.key);tkHora=r.hora;tkCopia=!!copia;setPrinter(copia?"Copia reimpresa":"Ticket emitido","ok")}
-function previewTicket(){tkPerson=P[0];tkHora="12:41";tkCopia=false;setPrinter("Vista previa · propuesta de ticket","")}
+function printTicket(r,copia){tkPerson=byKey(r.key);tkHora=r.hora;tkCopia=!!copia;tkCant=r.cant||1;tkMenu=r.menu||"Normal";setPrinter(copia?"Copia reimpresa":"Ticket emitido","ok")}
+function previewTicket(){tkPerson=P[0];tkHora="12:41";tkCopia=false;tkCant=1;tkMenu="Normal";setPrinter("Vista previa · propuesta de ticket","")}
 setInterval(()=>{const c=$("#clk");if(c)c.textContent=hhmm(now())},15000);
 
-/* Panel de simulación */
-const BIO={enrolada:'<span class="pill ok">Huella enrolada</span>',pendiente:'<span class="pill warn">Enrolamiento pendiente</span>',sin:'<span class="pill neu">Sin consentimiento · usa PIN</span>',lectura:'<span class="pill neu">Lectura deficiente · usa PIN</span>'};
+/* Panel de simulación: digita el RUT de una persona de prueba en el teclado */
 function renderDemo(){
-  $("#demoList").innerHTML=P.slice(0,12).map(p=>{const i=P.indexOf(p);
-    const est=!p.hab?'<span class="pill neu">suspendida</span>':p.bloq?'<span class="pill bad">PIN bloqueado</span>':"";
-    const acc=p.bio==="enrolada"?`<button class="btn small primary" data-dedo="${p.key}">Poner dedo</button>`:"";
-    return `<tr><td>${esc(p.nombre)} ${est}<div class="small muted">${p.bio==="enrolada"?"Huella enrolada":p.bio==="pendiente"?"Enrolamiento pendiente":"Usa RUT + PIN"}</div></td>
-     <td><div class="row" style="gap:6px;flex-wrap:nowrap">${acc}<button class="btn small" data-rutpin="${p.key}" title="Cargar RUT; PIN ${p.pin}">RUT + PIN</button></div><div class="small muted mono">PIN ${p.pin}</div></td></tr>`}).join("")+
-   `<tr><td>Persona sin huella registrada</td><td><button class="btn small" data-dedo="NOMATCH">Poner dedo</button></td></tr>
-    <tr><td>Dedo húmedo o mal apoyado</td><td><button class="btn small" data-dedo="MALA">Poner dedo</button></td></tr>`}
-$("#demoList").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
-  if(b.dataset.dedo){if($("#v-terminal").hidden)show("terminal",true);leerHuella(b.dataset.dedo)}
-  if(b.dataset.rutpin){show("terminal",true);resetT();T.step="rut";T.rut=b.dataset.rutpin;renderScreen();previewPersona(byKey(b.dataset.rutpin),"Vista previa · falta validar RUT y PIN")}});
-
-/* ---- Enrolamiento ---- */
-let enr={key:null,consent:false,dedos:[null,null]};
-function renderEnr(){
-  const hab=P.filter(p=>p.hab);const c=k=>hab.filter(p=>p.bio===k).length;
-  const pct=Math.round(c("enrolada")/hab.length*100);
-  $("#enrStats").innerHTML=[["Huellas enroladas",`${c("enrolada")} de ${hab.length}`],["Pendientes",c("pendiente")],["Usan RUT + PIN",c("sin")+c("lectura")],["Avance",pct+"%"]].map(([a,b])=>`<div class="stat"><span>${a}</span><b>${b}</b></div>`).join("");
-  $("#enrBar").style.width=pct+"%";
-  const pend=P.filter(p=>p.hab&&p.bio==="pendiente");
-  $("#enrSel").innerHTML=`<option value="">Seleccione una persona pendiente…</option>`+pend.map(p=>`<option value="${p.key}" ${enr.key===p.key?"selected":""}>${esc(p.nombre)} · ${fmtRut(p.key)}</option>`).join("");
-  const sel=enr.key&&byKey(enr.key);
-  $("#enrPaso").hidden=!sel;
-  if(sel){
-    $("#enrConsent").checked=enr.consent;
-    $("#enrDedos").innerHTML=["Índice derecho","Índice izquierdo"].map((d,i)=>{const q=enr.dedos[i];
-      return `<div class="dedo ${q?"ok":""}"><div class="fpmini">${FP}</div><b>${d}</b><span class="small ${q?"":"muted"}">${q?`3 lecturas · calidad ${q}%`:"Sin capturar"}</span>
-      <button type="button" class="btn small ${q?"":"primary"}" data-cap="${i}" ${enr.consent?"":"disabled"}>${q?"Repetir captura":"Capturar"}</button></div>`}).join("");
-    $("#enrGuardar").disabled=!(enr.consent&&enr.dedos[0]&&enr.dedos[1]);
-  }
-  $("#enrBody").innerHTML=P.filter(p=>p.hab).map(p=>`<tr><td>${esc(p.nombre)}</td><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.unidad)}</td><td>${BIO[p.bio]}</td><td>${p.enrFecha?esc(p.enrFecha):'<span class="muted">—</span>'}</td>
-    <td>${p.bio==="pendiente"?`<button class="btn small primary" data-enr="${p.key}">Enrolar</button>`:p.bio==="enrolada"?`<button class="btn small danger" data-borrar="${p.key}">Revocar y eliminar huella</button>`:`<button class="btn small" data-enr="${p.key}">Enrolar ahora</button>`}</td></tr>`).join("");
-}
-$("#enrSel").addEventListener("change",e=>{enr={key:e.target.value||null,consent:false,dedos:[null,null]};$("#enrMsg").textContent="";renderEnr()});
-$("#enrConsent").addEventListener("change",e=>{enr.consent=e.target.checked;renderEnr()});
-$("#enrDedos").addEventListener("click",e=>{const b=e.target.closest("[data-cap]");if(!b)return;const i=+b.dataset.cap;
-  b.disabled=true;b.textContent="Leyendo…";setTimeout(()=>{enr.dedos[i]=78+Math.floor(Math.random()*20);renderEnr()},600)});
-$("#enrGuardar").addEventListener("click",()=>{const p=byKey(enr.key);p.bio="enrolada";p.enrFecha=new Date().toLocaleDateString("es-CL")+" · "+($("#enrQuien").value||"Jefe Casino");
-  $("#enrMsg").innerHTML=`<span style="color:var(--ok)">Huella de ${esc(p.nombre)} enrolada. Ya puede usar el lector.</span>`;enr={key:null,consent:false,dedos:[null,null]};renderEnr();renderDemo()});
-$("#enrNoConsiente").addEventListener("click",()=>{const p=byKey(enr.key);p.bio="sin";p.enrFecha=null;
-  $("#enrMsg").innerHTML=`<span style="color:var(--warn)">${esc(p.nombre)} queda con RUT + PIN. No se capturó ninguna huella.</span>`;enr={key:null,consent:false,dedos:[null,null]};renderEnr();renderDemo()});
-$("#enrLectura").addEventListener("click",()=>{const p=byKey(enr.key);p.bio="lectura";p.enrFecha=null;
-  $("#enrMsg").innerHTML=`<span style="color:var(--warn)">${esc(p.nombre)} queda con RUT + PIN por lectura deficiente.</span>`;enr={key:null,consent:false,dedos:[null,null]};renderEnr();renderDemo()});
-$("#enrBody").addEventListener("click",e=>{const b=e.target;
-  if(b.dataset.enr){const p=byKey(b.dataset.enr);p.bio="pendiente";enr={key:p.key,consent:false,dedos:[null,null]};$("#enrMsg").textContent="";renderEnr();$("#enrPaso").scrollIntoView({block:"nearest"})}
-  if(b.dataset.borrar){const p=byKey(b.dataset.borrar);p.bio="sin";p.enrFecha=null;renderEnr();renderDemo();toast("Huella eliminada. La persona sigue habilitada con RUT + PIN.")}});
-
+  $("#demoList").innerHTML=P.slice(0,12).map(p=>{
+    const est=!p.hab?' <span class="pill neu">suspendida</span>':todays().some(r=>r.key===p.key&&r.estado==="Válido")?' <span class="pill warn">ya almorzó</span>':invDe(p,TODAY)?` <span class="pill ok">${invDe(p,TODAY).cant} almuerzos hoy</span>`:"";
+    return `<tr><td>${esc(p.nombre)}${est}</td><td class="mono">${fmtRut(p.key)}</td><td><button class="btn small primary" data-rut="${p.key}">Digitar RUT</button></td></tr>`}).join("")+
+   `<tr><td>RUT que no está en la nómina</td><td class="mono">${fmtRut("21654321"+dv(21654321))}</td><td><button class="btn small" data-rut="${"21654321"+dv(21654321)}">Digitar RUT</button></td></tr>
+    <tr><td>RUT mal digitado</td><td class="mono">${fmtRut("152348712")}</td><td><button class="btn small" data-rut="152348712">Digitar RUT</button></td></tr>`}
+$("#demoList").addEventListener("click",e=>{const b=e.target.closest("button[data-rut]");if(!b)return;
+  if($("#v-terminal").hidden)show("terminal",true);resetT();
+  const k=b.dataset.rut;let i=0;
+  const tick=()=>{if(i<k.length){T.rut+=k[i++];renderScreen();setTimeout(tick,60)}else{checkRut();renderDemo()}};tick()});
 /* ---- Habilitados ---- */
 function renderHab(){
   const q=$("#habBuscar").value.trim().toLowerCase();const qr=cleanRut(q);
   const list=P.filter(p=>!q||p.nombre.toLowerCase().includes(q)||p.unidad.toLowerCase().includes(q)||(qr&&p.key.includes(qr)));
   $("#habBody").innerHTML=list.map(p=>{const i=P.indexOf(p);
-    const pin=p.bloq?'<span class="pill bad">Bloqueado</span>':p.prov?'<span class="pill warn">Provisorio</span>':'<span class="pill ok">Activo</span>';
     return `<tr><td>${esc(p.nombre)}</td><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.unidad)}</td><td>${esc(p.tipo)}</td><td class="num">${p.grado??"—"}</td>
     <td>${p.grado!=null?`<span class="pill neu">Tramo ${tramoDe(p)??"?"}</span>`:`<select id="trm${i}" data-trm="${i}" class="${p.tramoManual?"":"sel-warn"}" aria-label="Tramo de ${esc(p.nombre)}"><option value="">Asignar…</option>${cfg.tramos.map(t=>`<option value="${t.n}" ${p.tramoManual===t.n?"selected":""}>Tramo ${t.n}</option>`).join("")}</select>`}</td>
-    <td><label class="row" style="gap:6px"><input type="checkbox" id="hab${i}" data-hab="${i}" ${p.hab?"checked":""}> ${p.hab?"Sí":"No"}</label></td><td>${BIO[p.bio]}</td><td>${pin}</td>
-    <td><div class="row" style="gap:6px">${p.bloq?`<button class="btn small" data-desb="${i}">Desbloquear</button>`:""}<button class="btn small" data-reset="${i}">Restablecer PIN</button></div></td></tr>`}).join("")||`<tr><td colspan="10" class="muted">Sin resultados.</td></tr>`;
+    <td><label class="row" style="gap:6px"><input type="checkbox" id="hab${i}" data-hab="${i}" ${p.hab?"checked":""}> ${p.hab?"Sí":"No"}</label></td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Sin resultados.</td></tr>`;
 }
 $("#habBuscar").addEventListener("input",renderHab);
 $("#habBody").addEventListener("change",e=>{if(e.target.dataset.trm!==undefined){const p=P[e.target.dataset.trm];p.tramoManual=Number(e.target.value)||null;renderHab();toast(p.tramoManual?`${p.nombre}: tramo ${p.tramoManual} asignado`:"Tramo quitado");return}const i=e.target.dataset.hab;if(i!==undefined){P[i].hab=e.target.checked;renderHab();renderDemo();toast(P[i].hab?"Persona habilitada":"Habilitación suspendida")}});
-$("#habBody").addEventListener("click",e=>{const b=e.target;
-  if(b.dataset.desb){const p=P[b.dataset.desb];p.bloq=false;p.fallos=0;renderHab();renderDemo();toast("PIN desbloqueado")}
-  if(b.dataset.reset){const p=P[b.dataset.reset];p.pin=String(1000+Math.floor(Math.random()*9000));p.prov=true;p.bloq=false;p.fallos=0;renderHab();renderDemo();toast("PIN provisorio generado: "+p.pin+" (visible solo en la maqueta)")}});
 $("#btnNuevo").onclick=()=>{$("#nuevoForm").hidden=!$("#nuevoForm").hidden;$("#masivaForm").hidden=true};
 $("#btnMasiva").onclick=()=>{$("#masivaForm").hidden=!$("#masivaForm").hidden;$("#nuevoForm").hidden=true};
 $("#nTipo").addEventListener("change",e=>{const sinG=["Honorarios","Código del Trabajo"].includes(e.target.value);$("#nGrado").closest("label").hidden=sinG;$("#nTramoL").hidden=!sinG});
@@ -930,7 +903,7 @@ function addPerson(rut,nombre,unidad,tipo,grado,tramo){const key=cleanRut(rut);i
 $("#nuevoForm").addEventListener("submit",e=>{e.preventDefault();const sinG=["Honorarios","Código del Trabajo"].includes($("#nTipo").value);if(!sinG&&!$("#nGrado").value){$("#nMsg").innerHTML='<span style="color:var(--bad)">Indique el grado: define el tramo del almuerzo.</span>';return}
   const err=addPerson($("#nRut").value,$("#nNombre").value.trim(),$("#nUnidad").value.trim(),$("#nTipo").value,sinG?null:$("#nGrado").value,$("#nTramo").value);
   const m=$("#nMsg");if(err){m.innerHTML=`<span style="color:var(--bad)">No se pudo guardar: ${err}.</span>`;return}
-  m.innerHTML=`<span style="color:var(--ok)">Persona agregada con PIN provisorio ${P.at(-1).pin}.</span>`;["#nRut","#nNombre","#nUnidad"].forEach(s=>$(s).value="");renderHab();renderDemo()});
+  m.innerHTML=`<span style="color:var(--ok)">Persona agregada y habilitada.</span>`;["#nRut","#nNombre","#nUnidad"].forEach(s=>$(s).value="");renderHab();renderDemo()});
 $("#masivaForm").addEventListener("submit",e=>{e.preventDefault();let ok=0;const errs=[];
   $("#masivaTxt").value.split(/\n/).map(l=>l.trim()).filter(Boolean).forEach((l,i)=>{const c=l.split(/\t|;/).map(x=>x.trim());const er=addPerson(c[0]||"",c[1],c[2],c[3],c[4]||null,null);if(er)errs.push(`fila ${i+1}: ${er}`);else ok++});
   $("#masivaMsg").innerHTML=`<span style="color:var(--ok)">${ok} importada${ok===1?"":"s"}.</span> ${errs.length?`<span style="color:var(--bad)">${esc(errs.join(" · "))}</span>`:""}`;renderHab();renderDemo()});
@@ -961,7 +934,7 @@ function chart(el,items,unit){const nice=niceMax(Math.max(...items.map(i=>i.v)))
   el.innerHTML=`<div class="chart"><div class="yax"><span style="top:0">${nice.toLocaleString("es-CL")}</span><span style="top:50%">${(nice/2).toLocaleString("es-CL")}</span><span style="top:100%">0</span></div>
   <div style="min-width:0"><div class="cols">${items.map(i=>`<div class="col ${i.hl?"hl":""} ${i.fut?"fut":""} ${i.cerr?"cerr":""}" title="${esc(i.label)}: ${i.cerr?"casino cerrado":i.fut?"sin datos aún":i.v+" "+unit}"><div class="bar" style="height:${i.v/nice*100}%" data-v="${few&&i.v?i.v:""}"></div></div>`).join("")}</div>
   <div class="xax">${items.map((i,k)=>`<span>${(!few&&k%2)||(i.t!==undefined&&i.t%30)?"":esc(i.label)}</span>`).join("")}</div></div></div>`}
-function kpis(rows){const dias=new Set(rows.map(r=>r.fecha)).size;return{n:rows.length,dias,pers:new Set(rows.map(r=>r.key)).size,prom:dias?rows.length/dias:0,monto:sumaM(rows),hue:rows.length?rows.filter(r=>r.origen==="Huella").length/rows.length:0}}
+function kpis(rows){const dias=new Set(rows.map(r=>r.fecha)).size;return{n:sumCant(rows),dias,pers:new Set(rows.map(r=>r.key)).size,prom:dias?rows.length/dias:0,monto:sumaM(rows),hue:rows.length?rows.filter(r=>r.origen==="Terminal").length/rows.length:0}}
 /* Afluencia: ingresos por franja de 15 min. En semana, mes y año se usa el promedio por día de servicio, para comparar períodos de distinto largo */
 const DSEM=["Lunes","Martes","Miércoles","Jueves","Viernes"];
 const f1=v=>v.toLocaleString("es-CL",{minimumFractionDigits:1,maximumFractionDigits:1});
@@ -1059,7 +1032,7 @@ function renderEst(){
     ["Uso del beneficio",`${habN?Math.round(k.pers/habN*100):0}%`,est.tipo==="dia"?`${k.pers} de ${habN} habilitados almorzaron ${enCurso?"hasta ahora":"ese día"}`:`${k.pers} de ${habN} habilitados almorzaron al menos una vez · ${k.pers?(k.n/k.pers).toLocaleString("es-CL",{maximumFractionDigits:1}):0} almuerzos por persona`],
     racionesCard(rows,enCurso),
     ["Monto a descontar",clp(k.monto),cfg.tramos.map(t=>`T${t.n}: ${rows.filter(r=>tramoDe(byKey(r.key))===t.n).length.toLocaleString("es-CL")}`).join(" · ")+" almuerzos"],
-    ["Validados por huella",Math.round(k.hue*100)+"%","el resto, RUT + PIN o manual"]
+    ["Registrados en la terminal",Math.round(k.hue*100)+"%","el resto, registro manual del Jefe Casino"]
   ].map(([a,b,c])=>`<div class="stat"><span>${a}</span><b>${b}</b><small>${c}</small></div>`).join("");
   $("#estChartT").textContent={dia:"Ingresos cada 15 minutos",semana:"Almuerzos por día",mes:"Almuerzos por día hábil",anio:"Almuerzos por mes"}[est.tipo];
   $("#estChartN").textContent=enCurso&&est.tipo!=="dia"?(est.tipo==="anio"?"En naranjo, el mes en curso":"En naranjo, el día en curso"):"";
@@ -1089,15 +1062,15 @@ function renderDet(){
     const acc=r.estado!=="Válido"?`<span class="small muted">${esc(r.motivo||"")}</span>`:!hoy?'<span class="small muted">—</span>':anulando===i?
       `<form class="inline-confirm" data-i="${i}"><input id="anMot${i}" placeholder="Motivo de anulación" required><button class="btn small danger">Confirmar</button><button type="button" class="btn small" data-cancel>Cancelar</button></form>`:
       `<div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn small" data-copia="${i}">Reimprimir</button><button class="btn small danger" data-anular="${i}">Anular</button></div>`;
-    return `<tr class="${r.estado==="Anulado"?"anulado":""}"><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="mono">${String(r.n).padStart(4,"0")}</td><td>${esc(p.nombre)}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.unidad)}</td>
+    return `<tr class="${r.estado==="Anulado"?"anulado":""}"><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="mono">${String(r.n).padStart(4,"0")}</td><td class="num">${cantR(r)}</td><td>${esc(p.nombre)}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.unidad)}</td>
     <td>${r.origen==="Manual"?`<span class="pill warn" title="${esc(r.motivo||"")}">Manual</span>`:`<span class="pill neu">${esc(r.origen)}</span>`}</td>
-    <td>${r.estado==="Válido"?'<span class="pill ok">Válido</span>':'<span class="pill bad">Anulado</span>'}</td><td>${acc}</td></tr>`}).join("")||`<tr><td colspan="9" class="muted">Sin registros para los filtros elegidos.</td></tr>`;
+    <td>${r.estado==="Válido"?'<span class="pill ok">Válido</span>':'<span class="pill bad">Anulado</span>'}</td><td>${acc}</td></tr>`}).join("")||`<tr><td colspan="10" class="muted">Sin registros para los filtros elegidos.</td></tr>`;
 }
 ["detDesde","detHasta"].forEach(id=>$("#"+id).addEventListener("change",e=>{det[id==="detDesde"?"desde":"hasta"]=e.target.value||TODAY;if(det.desde>det.hasta)[det.desde,det.hasta]=[det.hasta,det.desde];renderDet()}));
 $("#detQ").addEventListener("input",e=>{det.q=e.target.value;renderDet()});
 $("#detEstado").addEventListener("change",e=>{det.estado=e.target.value;renderDet()});
 document.querySelectorAll("[data-rango]").forEach(b=>b.onclick=()=>{const r=b.dataset.rango;det.hasta=TODAY;det.desde=r==="hoy"?TODAY:periodo(r,TODAY).a;renderDet()});
-$("#detCopiar").onclick=()=>{const rows=detRows();copiar(["Fecha\tHora\tN° ticket\tNombre completo\tRUT\tUnidad\tValidación\tEstado\tMotivo"].concat(rows.map(r=>{const p=byKey(r.key);return[fmtD(r.fecha),r.hora,r.n,p.nombre,fmtRut(r.key),p.unidad,r.origen,r.estado,r.motivo||""].join("\t")})).join("\n"),`${rows.length.toLocaleString("es-CL")} registros copiados. Péguelos en Excel.`)};
+$("#detCopiar").onclick=()=>{const rows=detRows();copiar(["Fecha\tHora\tN° ticket\tAlmuerzos\tNombre completo\tRUT\tUnidad\tValidación\tEstado\tMotivo"].concat(rows.map(r=>{const p=byKey(r.key);return[fmtD(r.fecha),r.hora,r.n,cantR(r),p.nombre,fmtRut(r.key),p.unidad,r.origen,r.estado,r.motivo||""].join("\t")})).join("\n"),`${rows.length.toLocaleString("es-CL")} registros copiados. Péguelos en Excel.`)};
 $("#detBody").addEventListener("click",e=>{const b=e.target;
   if(b.dataset.copia){printTicket(R[+b.dataset.copia],true);toast("Copia enviada a la impresora del casino")}
   else if(b.dataset.anular){anulando=+b.dataset.anular;renderDet();$("#anMot"+anulando)?.focus()}
@@ -1115,7 +1088,7 @@ $("#manRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)}
 /* ---- Reportes (Jefe Casino emite y envía; Jefa de Bienestar consulta y copia) ---- */
 let repMes=`${YEAR}-${pad(today.getMonth())}`;if(today.getMonth()===0)repMes=`${YEAR}-01`;
 $("#repMesSel").innerHTML=Array.from({length:today.getMonth()+1},(_,m)=>`<option value="${YEAR}-${pad(m+1)}">${cap(MES[m])} ${YEAR}</option>`).reverse().join("");
-function mesRows(ym){const val=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido");const m=new Map();val.forEach(r=>{const o=m.get(r.key)||{n:0,monto:0,vals:new Set()};o.n++;o.monto+=montoR(r);o.vals.add(montoR(r));m.set(r.key,o)});
+function mesRows(ym){const val=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido");const m=new Map();val.forEach(r=>{const o=m.get(r.key)||{n:0,monto:0,vals:new Set()};o.n+=cantR(r);o.monto+=montoR(r);o.vals.add(montoR(r)/cantR(r));m.set(r.key,o)});
   return{val,rows:[...m].map(([k,o])=>({p:byKey(k),n:o.n,monto:o.monto,vals:[...o.vals]})).sort((a,b)=>a.p.nombre.localeCompare(b.p.nombre,"es"))}}
 function renderRepo(){
   const ym=repMes;const enCurso=ym===TODAY.slice(0,7);
@@ -1127,17 +1100,17 @@ function renderRepo(){
   $("#repEstado").innerHTML=`<div>${estado}</div><div class="row">${acc}</div>`;
   const total=rows.reduce((a,x)=>a+x.monto,0);const sinT=rows.filter(x=>!tramoDe(x.p));
   const porT=cfg.tramos.map(t=>{const rr=rows.filter(x=>tramoDe(x.p)===t.n);return`T${t.n}: ${rr.length}`}).join(" · ");
-  $("#repStats").innerHTML=[["Almuerzos del mes",val.length.toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Personas habilitadas antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
+  $("#repStats").innerHTML=[["Almuerzos del mes",sumCant(val).toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Personas habilitadas antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
     .map(([a,b,c],i)=>`<div class="stat ${i===2&&sinT.length?"stat-warn":""}"><span>${a}</span><b>${b}</b>${c?`<small>${c}</small>`:""}</div>`).join("");
   $("#repBody").innerHTML=rows.map(({p,n,monto,vals})=>{const t=tramoDe(p);return`<tr class="${t?"":"row-warn"}"><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.nombre)}</td><td>${esc(p.unidad)}</td><td class="num">${p.grado??"—"}</td><td>${t?`Tramo ${t}`:'<span class="pill warn">Sin tramo</span>'}</td><td class="num">${n}</td><td class="num">${!monto?"—":vals.length>1?"varios":clp(vals[0])}</td><td class="num"><b>${monto?clp(monto):"—"}</b></td></tr>`}).join("")||`<tr><td colspan="8" class="muted">Sin consumo en el mes.</td></tr>`;
-  $("#repFoot").innerHTML=`<tr><td colspan="5"><b>Total</b></td><td class="num"><b>${val.length.toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(total)}</b></td></tr>`;
+  $("#repFoot").innerHTML=`<tr><td colspan="5"><b>Total</b></td><td class="num"><b>${sumCant(val).toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(total)}</b></td></tr>`;
   // por unidad del mes
-  const u=new Map();val.forEach(r=>{const p=byKey(r.key);const o=u.get(p.unidad)||{n:0,s:new Set(),m:0};o.n++;o.m+=montoR(r);o.s.add(p.key);u.set(p.unidad,o)});
+  const u=new Map();val.forEach(r=>{const p=byKey(r.key);const o=u.get(p.unidad)||{n:0,s:new Set(),m:0};o.n+=cantR(r);o.m+=montoR(r);o.s.add(p.key);u.set(p.unidad,o)});
   $("#uniLabel").textContent=cap(MES[+ym.slice(5)-1])+" "+ym.slice(0,4);
   $("#uniBody").innerHTML=[...u].sort((a,b)=>b[1].n-a[1].n).map(([n,o])=>`<tr><td>${esc(n)}</td><td class="num">${o.n}</td><td class="num">${o.s.size}</td><td class="num">${clp(o.m)}</td></tr>`).join("")||`<tr><td colspan="4" class="muted">Sin consumo.</td></tr>`;
   // anual
   $("#anuLabel").textContent=`Año ${YEAR}, enero a ${MES[today.getMonth()]}`;
-  const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=R.filter(r=>r.fecha.startsWith(k)&&r.estado==="Válido");return{k,m,n:v.length,pers:new Set(v.map(r=>r.key)).size,monto:sumaM(v)}});
+  const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=R.filter(r=>r.fecha.startsWith(k)&&r.estado==="Válido");return{k,m,n:sumCant(v),pers:new Set(v.map(r=>r.key)).size,monto:sumaM(v)}});
   $("#anuBody").innerHTML=meses.map(o=>`<tr><td>${cap(MES[o.m])}</td><td class="num">${o.n.toLocaleString("es-CL")}</td><td class="num">${o.pers}</td><td class="num">${clp(o.monto)}</td></tr>`).join("");
   const tot=meses.reduce((s,o)=>s+o.n,0);
   $("#anuFoot").innerHTML=`<tr><td><b>Total</b></td><td class="num"><b>${tot.toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(meses.reduce((a,o)=>a+o.monto,0))}</b></td></tr>`;
@@ -1150,7 +1123,7 @@ $("#uniCopiar").onclick=()=>copiar(["Unidad\tAlmuerzos\tPersonas\tMonto"].concat
 $("#anuCopiar").onclick=()=>copiar(["Mes\tAlmuerzos\tPersonas\tMonto"].concat([...$("#anuBody").querySelectorAll("tr")].map(tr=>[...tr.children].map(td=>td.textContent).join("\t"))).join("\n"));
 
 /* ---- Propuesta de ticket ---- */
-function renderTk(){const r={n:6,fecha:TODAY,hora:"12:41",key:P[0].key,origen:"Huella"};
+function renderTk(){const r={n:6,fecha:TODAY,hora:"12:41",key:P[0].key,cant:2,menu:"Normal",origen:"Terminal"};
   $("#tkMuestra").innerHTML=ticketHTML(r,{anot:true,copia:$("#tkCopia").checked,copiaHora:"13:20"})}
 $("#tkCopia").addEventListener("change",renderTk);
 
@@ -1187,6 +1160,68 @@ $("#ciBody").addEventListener("click",e=>{const b=e.target;
 $("#ciBody").addEventListener("submit",e=>{e.preventDefault();const c=CIERRES.find(x=>x.id===+e.target.dataset.c);const mot=$("#anC"+c.id).value.trim();if(!mot)return;
   c.estado="Anulado";c.anulPor=perfil;c.motivoAnul=mot;anulandoC=null;const para=alertar(c,"anuló");renderCierres();renderAlertas();toast(`Cierre anulado. Se envió una alerta ${para}.`)});
 
+/* ---- Mi casino (perfil Funcionario) ---- */
+const YO=()=>P[4];
+function renderMi(){
+  const p=YO();const cm=ymOf(TODAY),nm=ymNext(cm);const t=tramoDe(p);
+  $("#miLead").textContent=`${p.nombre} · ${p.unidad} · ${t?`tramo ${t}, ${clp(valorDe(p))} por almuerzo`:"sin tramo asignado"}`;
+  const mes=R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(cm));
+  const anio=R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(String(YEAR)));
+  $("#miKpi").innerHTML=[["Almuerzos este mes",sumCant(mes),`${new Set(mes.map(r=>r.fecha)).size} días con asistencia`],["A descontar este mes",clp(sumaM(mes)),"por planilla, al cierre del mes"],["Almuerzos en el año",sumCant(anio),`desde enero de ${YEAR}`],["Menú de este mes",menuDe(p,TODAY),`${cap(MES[+cm.slice(5)-1])} ${cm.slice(0,4)}`]]
+    .map(([a,b,c])=>`<div class="stat"><span>${a}</span><b>${b}</b><small>${c}</small></div>`).join("");
+  // menú
+  const opt=ym=>{const ed=menuEditable(ym);const v=MENU[p.key+"|"+ym]||"Normal";
+    return `<div class="menu-mes"><b>${cap(MES[+ym.slice(5)-1])} ${ym.slice(0,4)}</b><div class="seg" role="group">${MENUS.map(m=>`<button type="button" data-menu="${ym}|${m}" aria-pressed="${v===m}" ${ed?"":"disabled"}>${m}</button>`).join("")}</div>
+    <small class="muted">${ed?`Puede cambiarlo hasta el ${fmtD(menuLimite(ym))}.`:`Plazo cerrado el ${fmtD(menuLimite(ym))}.`}</small></div>`};
+  $("#miMenu").innerHTML=opt(cm)+opt(nm);
+  // avisos
+  const min=avisoMin();["#miAusF","#miInvF"].forEach(s=>{$(s).min=min;if(!$(s).value||$(s).value<min)$(s).value=min});
+  const fut=x=>x.key===p.key&&x.fecha>=TODAY;
+  const quitar=(tipo,x)=>x.fecha>=min?`<button class="btn small" data-quitar="${tipo}|${x.fecha}">Quitar</button>`:'<span class="small muted">fuera de plazo</span>';
+  $("#miAusList").innerHTML=AUS.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))}</span>${quitar("aus",x)}</li>`).join("")||'<li class="muted">No hay avisos registrados.</li>';
+  $("#miInvList").innerHTML=INV.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))} · <b>${x.cant} almuerzos</b> (${clp(x.cant*valorDe(p))})</span>${quitar("inv",x)}</li>`).join("")||'<li class="muted">No hay invitaciones registradas.</li>';
+  $("#miInvNota").textContent=`Se descuentan de su planilla todos los almuerzos de ese día, a ${clp(valorDe(p))} cada uno. El ticket indicará la cantidad de almuerzos.`;
+  // asistencias
+  const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=anio.filter(r=>r.fecha.startsWith(k));return{m,v}}).reverse();
+  $("#miMeses").innerHTML=meses.map(({m,v})=>`<tr><td>${cap(MES[m])}</td><td class="num">${new Set(v.map(r=>r.fecha)).size}</td><td class="num">${sumCant(v)}</td><td class="num">${clp(sumaM(v))}</td></tr>`).join("");
+  $("#miDet").innerHTML=mes.slice().reverse().map(r=>`<tr><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="num">${cantR(r)}</td><td>${esc(r.menu||menuDe(p,r.fecha))}</td><td class="num">${clp(montoR(r))}</td></tr>`).join("")||'<tr><td colspan="5" class="muted">Aún no registra almuerzos este mes.</td></tr>';
+}
+$("#miMenu").addEventListener("click",e=>{const b=e.target.closest("[data-menu]");if(!b||b.disabled)return;const[ym,m]=b.dataset.menu.split("|");MENU[YO().key+"|"+ym]=m;renderMi();toast(`Menú ${m.toLowerCase()} registrado para ${MES[+ym.slice(5)-1]}`)});
+function validarDia(f,msgSel){const m=$(msgSel);
+  if(!f){m.innerHTML='<span style="color:var(--bad)">Elija una fecha.</span>';return false}
+  if(f<avisoMin()){m.innerHTML=`<span style="color:var(--bad)">El aviso debe hacerse con al menos ${cfg.avisoDias} día${cfg.avisoDias===1?"":"s"} hábil${cfg.avisoDias===1?"":"es"} de anticipación (desde el ${fmtD(avisoMin())}).</span>`;return false}
+  if(!habil(D(f))){m.innerHTML='<span style="color:var(--bad)">Ese día no hay servicio de casino (fin de semana o feriado).</span>';return false}
+  if(diaCerrado(f)){m.innerHTML='<span style="color:var(--warn)">El casino estará cerrado ese día.</span>';return false}
+  return true}
+$("#miAusForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#miAusF").value,p=YO(),m=$("#miAusMsg");if(!validarDia(f,"#miAusMsg"))return;
+  if(ausDe(p,f)){m.innerHTML='<span style="color:var(--warn)">Ya avisó ese día.</span>';return}
+  if(invDe(p,f)){m.innerHTML='<span style="color:var(--bad)">Ese día tiene invitados registrados; quite la invitación primero.</span>';return}
+  AUS.push({key:p.key,fecha:f,creado:`${new Date().toLocaleDateString("es-CL")} ${hhmm(new Date())}`});m.innerHTML=`<span style="color:var(--ok)">Aviso registrado para el ${fmtD(f)}.</span>`;renderMi()});
+$("#miInvForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#miInvF").value,c=+$("#miInvC").value,p=YO(),m=$("#miInvMsg");if(!validarDia(f,"#miInvMsg"))return;
+  if(ausDe(p,f)){m.innerHTML='<span style="color:var(--bad)">Avisó que no almorzará ese día; quite el aviso primero.</span>';return}
+  const ex=invDe(p,f);if(ex)ex.cant=c;else INV.push({key:p.key,fecha:f,cant:c,creado:`${new Date().toLocaleDateString("es-CL")} ${hhmm(new Date())}`});
+  m.innerHTML=`<span style="color:var(--ok)">${c} almuerzos registrados a su nombre para el ${fmtD(f)}.</span>`;renderMi()});
+$("#v-micasino").addEventListener("click",e=>{const b=e.target.closest("[data-quitar]");if(!b)return;const[t,f]=b.dataset.quitar.split("|");const L=t==="aus"?AUS:INV;
+  const i=L.findIndex(x=>x.key===YO().key&&x.fecha===f);if(i>=0)L.splice(i,1);renderMi();toast(t==="aus"?"Aviso quitado":"Invitación quitada")});
+
+/* ---- Planificación (Jefe Casino) ---- */
+let planSel=null;
+function renderPlan(){
+  const dias=proxHabiles(10);if(!planSel||!dias.includes(planSel))planSel=dias[0];
+  const hab=P.filter(p=>p.hab);
+  const filas=dias.map(f=>{const cerr=diaCerrado(f);const base=avgDia(f);const aus=AUS.filter(x=>x.fecha===f).length;const inv=INV.filter(x=>x.fecha===f);const extra=inv.reduce((a,x)=>a+x.cant-1,0);
+    const share=hab.filter(p=>menuDe(p,f)==="Hipocalórico").length/Math.max(1,hab.length);const pres=Math.max(0,base-aus);
+    const hipo=Math.round(pres*share),norm=Math.round(pres)-hipo+extra;return{f,cerr,aus,extra,hipo,norm,tot:hipo+norm,inv}});
+  $("#planBody").innerHTML=filas.map(x=>`<tr class="${x.f===planSel?"sel":""}" data-plan="${x.f}" tabindex="0"><td>${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short",day:"numeric",month:"short"}))}</td>${x.cerr?'<td colspan="5"><span class="pill bad">Casino cerrado</span></td>':`<td class="num">${x.norm}</td><td class="num">${x.hipo}</td><td class="num">${x.aus}</td><td class="num">${x.extra?"+"+x.extra:"0"}</td><td class="num"><b>${x.tot}</b></td>`}</tr>`).join("");
+  const s=filas.find(x=>x.f===planSel);
+  $("#planDiaT").textContent=cap(D(planSel).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}));
+  const ausL=AUS.filter(x=>x.fecha===planSel).map(x=>byKey(x.key));
+  $("#planAus").innerHTML=ausL.map(p=>`<li>${esc(p.nombre)} <span class="muted">· ${esc(p.unidad)}</span></li>`).join("")||'<li class="muted">Sin avisos.</li>';
+  $("#planInv").innerHTML=s.inv.map(x=>{const p=byKey(x.key);return`<li>${esc(p.nombre)} <span class="muted">· ${x.cant} almuerzos a su nombre</span></li>`}).join("")||'<li class="muted">Sin invitados.</li>';
+}
+$("#planBody").addEventListener("click",e=>{const tr=e.target.closest("[data-plan]");if(tr){planSel=tr.dataset.plan;renderPlan()}});
+$("#planBody").addEventListener("keydown",e=>{const tr=e.target.closest("[data-plan]");if(tr&&(e.key==="Enter"||e.key===" ")){e.preventDefault();planSel=tr.dataset.plan;renderPlan()}});
+
 /* ---- Configuración: tramos ---- */
 function renderTramos(){
   $("#tramosBody").innerHTML=cfg.tramos.map((t,i)=>`<tr><td><b>Tramo ${t.n}</b></td>
@@ -1203,7 +1238,7 @@ function renderTramos(){
 $("#tramosBody").addEventListener("change",e=>{const i=e.target.dataset.tr;if(i===undefined)return;const v=Number(e.target.value);if(!Number.isFinite(v))return;cfg.tramos[i][e.target.dataset.k]=v;renderTramos()});
 
 /* ---- Configuración ---- */
-const bind=[["#cServicio","servicio"],["#cUbicacion","ubic"],["#cIni","ini"],["#cFin","fin"],["#cLimite","limite",Number],["#cIntentos","intentos",Number],["#cSim","sim"]];
+const bind=[["#cServicio","servicio"],["#cUbicacion","ubic"],["#cIni","ini"],["#cFin","fin"],["#cLimite","limite",Number],["#cMenuDia","menuDia",Number],["#cAviso","avisoDias",Number],["#cSim","sim"]];
 bind.forEach(([s,k,f])=>$(s).addEventListener("input",e=>{cfg[k]=f?f(e.target.value):e.target.value}));
 
 /* ---- Reiniciar maqueta ---- */
@@ -1212,11 +1247,11 @@ function reiniciar(){
   clearTimeout(resetTimer);resetT();previewTicket();
   Object.assign(est,{tipo:"mes",anc:TODAY});Object.assign(det,{desde:TODAY,hasta:TODAY,q:"",estado:""});$("#detQ").value="";anulando=null;
   repMes=today.getMonth()===0?`${YEAR}-01`:`${YEAR}-${pad(today.getMonth())}`;
-  enr={key:null,consent:false,dedos:[null,null]};
-  ["#enrMsg","#manMsg","#nMsg","#masivaMsg"].forEach(x=>{const e=$(x);if(e)e.textContent=""});$("#nMsg").textContent="Al guardar, la persona queda pendiente de enrolamiento de huella y recibe un PIN provisorio para la vía alternativa.";
+  ["#manMsg","#nMsg","#masivaMsg"].forEach(x=>{const e=$(x);if(e)e.textContent=""});$("#nMsg").textContent="Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT.";
   ["#manRut","#habBuscar","#nRut","#nNombre","#nUnidad"].forEach(x=>{const e=$(x);if(e)e.value=""});
   ["#nuevoForm","#masivaForm","#copyBox"].forEach(x=>$(x).hidden=true);$("#tkCopia").checked=false;
   anulandoC=null;$("#ciMsg").textContent="";$("#ciDetalle").value="";$("#ciDesde").value=TODAY;$("#ciHasta").value=TODAY;$("#ciTipo").value="completo";
+  planSel=null;["#miAusMsg","#miInvMsg"].forEach(x=>$(x).textContent="");["#miAusF","#miInvF"].forEach(x=>$(x).value="");
   renderDemo();show(current,false);toast("Maqueta reiniciada con los datos de ejemplo");
 }
 $("#btnReset").onclick=()=>{$("#btnReset").hidden=true;$("#resetConfirm").hidden=false;$("#resetNo").focus()};
