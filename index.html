@@ -281,7 +281,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 <header class="top"><div class="wrap">
   <div class="brand"><h1>Casino Institucional</h1><p>Control de ingreso · Servicio de Bienestar · CONAF</p></div>
   <div class="usr">
-    <div class="probar"><span>Maqueta · probar como</span><div class="chips" id="perfilChips"><button type="button" data-perfil="casino">Jefe Casino</button><button type="button" data-perfil="bienestar">Jefa de Bienestar</button><button type="button" data-perfil="funcionario">Funcionario</button><button type="button" data-perfil="terminal">Terminal casino</button></div></div>
+    <div class="probar"><span>Maqueta · probar como</span><div class="chips" id="perfilChips"><button type="button" data-perfil="terminal">Terminal casino</button><button type="button" data-perfil="funcionario">Funcionario</button><button type="button" data-perfil="casino">Jefe Casino</button><button type="button" data-perfil="bienestar">Jefa de Bienestar</button></div></div>
     <div class="who"><b id="whoName"></b><span id="whoRol"></span></div>
   </div>
 </div></header>
@@ -843,7 +843,7 @@ const PERF={casino:{nombre:"Jefe Casino",views:["estadisticas","detalle","plan",
             bienestar:{nombre:"Jefa de Bienestar",views:["estadisticas","reportes","cierres","alcance"]},
             funcionario:{nombre:"Funcionario",views:["micasino"]},
             terminal:{nombre:"Terminal casino",views:["terminal","ticket"]}};
-let perfil="casino";try{const s=localStorage.getItem("casino.perfil");if(PERF[s])perfil=s}catch(e){}
+let perfil="terminal";try{const s=localStorage.getItem("casino.perfil");if(PERF[s])perfil=s}catch(e){}
 const views=[...document.querySelectorAll("section.view")];
 const tabs=$("#tabs");let current=null;
 function buildTabs(){tabs.innerHTML="";PERF[perfil].views.forEach(id=>{const v=$("#v-"+id);const b=document.createElement("button");b.textContent=v.dataset.label;b.setAttribute("role","tab");b.dataset.id=id;b.onclick=()=>show(id,true);tabs.appendChild(b)})}
