@@ -151,11 +151,13 @@ tr.anulado td:last-child,tr.anulado td:nth-last-child(2){text-decoration:none}
 @media (prefers-reduced-motion:reduce){.ticket.in{animation:none}}
 .ticket .c{text-align:center} .ticket hr{border:0;border-top:1px dashed var(--paper-ink);margin:8px 0;opacity:.6}
 .ticket .big{font-size:16px;font-weight:600}
-.tk-org{font-size:18px;font-weight:600;letter-spacing:.12em}
-.tk-svc{font-size:20px;font-weight:600;letter-spacing:.18em;margin-top:2px}
-.tk-name{font-size:17px;font-weight:600;line-height:1.25;margin:6px 0 4px;text-wrap:balance}
-.tk-hora{font-size:24px;font-weight:600;line-height:1.15;letter-spacing:.04em;margin-top:2px}
-.tk-fecha{font-size:18px;font-weight:600;letter-spacing:.02em;line-height:1.3;white-space:nowrap;margin-top:6px}
+.tk-org{font-size:20px;font-weight:700;letter-spacing:.14em;line-height:1.2}
+.tk-ubic{font-size:12px;line-height:1.35;margin-top:3px;text-wrap:balance}
+.tk-menu{font-size:15px;font-weight:600;margin-top:2px}
+.tk-svc{font-size:19px;font-weight:700;letter-spacing:.14em;margin-top:2px}
+.tk-name{font-size:16px;font-weight:700;line-height:1.3;margin:8px 0 6px;text-wrap:balance}
+.tk-hora{font-size:24px;font-weight:700;line-height:1.15;letter-spacing:.06em}
+.tk-fecha{font-size:16px;font-weight:600;letter-spacing:.02em;line-height:1.3;white-space:nowrap;margin-top:4px}
 .tk-cod{font-size:15px;letter-spacing:.15em}
 .tk-pie{font-size:11.5px;margin-top:2px}
 .tk-copia{font-weight:600}
@@ -462,10 +464,10 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <div style="display:grid;gap:18px;min-width:0">
       <div class="panel"><h3 style="margin-bottom:12px">Contenido, de arriba hacia abajo</h3>
       <ol class="campos">
-        <li><div><b>Encabezado</b><span>Sigla CONAF y lugar del servicio.</span></div></li>
-        <li><div><b>Almuerzos y menú</b><span>Cantidad de almuerzos («1 ALMUERZO», «2 ALMUERZOS» cuando hay invitados) y el menú elegido para el mes, normal o hipocalórico.</span></div></li>
+        <li><div><b>Encabezado</b><span>Sigla CONAF, fecha del día y lugar del servicio. La fecha impide reutilizar un ticket de otro día.</span></div></li>
+        <li><div><b>Almuerzos y menú</b><span>Cantidad de almuerzos («1 ALMUERZO», «2 ALMUERZOS» cuando hay invitados) y, en letra destacada, el menú elegido para el mes, normal o hipocalórico, para que el personal lo sirva sin preguntar.</span></div></li>
         <li><div><b>Nombre completo</b><span>En mayúsculas y letra destacada, para que el personal del casino confirme que quien entrega el ticket es su titular.</span></div></li>
-        <li><div><b>Fecha y hora de emisión</b><span>La fecha, en el mismo tamaño que la sigla CONAF, y bajo ella la hora. Impiden reutilizar un ticket de otro día.</span></div></li>
+        <li><div><b>Hora de emisión</b><span>Al pie del ticket, en el tamaño mayor junto con la cantidad de almuerzos.</span></div></li>
       </ol></div>
       <div class="panel"><h3>Especificaciones de impresión</h3><ul class="tight">
         <li>Papel térmico de 80 mm, ancho de impresión de 72 mm (48 caracteres por línea).</li>
@@ -537,7 +539,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <tr><td>Instalación</td><td>2 UF, pago único; punto de red y enchufe a 1,5 m</td><td>UIA y Depto. de Informática; se requiere el mismo punto de red y enchufe</td></tr>
     <tr><td>Servicios</td><td>Hasta 6 tipos (desayuno, almuerzo, once, cena)</td><td>Solo almuerzo. Escalable a otros servicios en una fase posterior</td></tr>
     <tr><td>Reglas</td><td>Horario, ubicación, turno y límites</td><td>Horario, ubicación y límite diario</td></tr>
-    <tr><td>Ticket</td><td>Nombre, identificador, servicio, hora, fecha, empresa y dirección</td><td>Encabezado, almuerzos y menú, nombre completo en mayúsculas, fecha y hora de emisión</td></tr>
+    <tr><td>Ticket</td><td>Nombre, identificador, servicio, hora, fecha, empresa y dirección</td><td>Encabezado con fecha, almuerzos y menú, nombre completo en mayúsculas y hora de emisión</td></tr>
     <tr><td>Reportes</td><td>Totales, consolidado, detallado y por marca</td><td>Estadísticas diarias, semanales, mensuales y anuales; detalle de ingresos; descuento mensual por trabajador; consumo por unidad y resumen anual</td></tr>
     <tr><td>Integración</td><td>Sincronización con GeoVictoria Asistencia</td><td>Fuera de la fase 1. La nómina se carga desde planilla</td></tr>
   </tbody></table></div>
@@ -854,14 +856,14 @@ function ticketHTML(r,o={}){const p=o.persona||byKey(r.key);const f=D(r.fecha);
   const fecha=cap(f.toLocaleDateString("es-CL",{weekday:"long"}))+" "+String(f.getDate()).padStart(2,"0")+"-"+String(f.getMonth()+1).padStart(2,"0")+"-"+f.getFullYear();
   const F=(k,html)=>o.anot?`<div class="tk-f" data-n="${k}">${html}</div>`:html;
   return `<div class="ticket ${o.cls||""} ${o.anot?"anot":""}">
-   ${F(1,`<div class="c"><div class="tk-org">CONAF</div><div>${esc(cfg.ubic)}</div></div>`)}<hr>
+   ${F(1,`<div class="c"><div class="tk-org">CONAF</div><div class="tk-fecha">${esc(fecha)}</div><div class="tk-ubic">${esc(cfg.ubic)}</div></div>`)}<hr>
    ${o.copia?`<div class="c tk-copia">*** COPIA · reimpresa a las ${o.copiaHora||hhmm(now())} ***</div><hr>`:""}
-   ${F(2,`<div class="c tk-svc">${r.cant||1} ${esc(cfg.servicio.toUpperCase())}${(r.cant||1)>1?"S":""}</div><div class="c">Menú ${esc((r.menu||"Normal").toLowerCase())}</div>`)}
+   ${F(2,`<div class="c tk-svc">${r.cant||1} ${esc(cfg.servicio.toUpperCase())}${(r.cant||1)>1?"S":""}</div><div class="c tk-menu">Menú ${esc((r.menu||"Normal").toLowerCase())}</div>`)}
    ${F(3,`<div class="c tk-name">${esc(p.nombre.toLocaleUpperCase("es-CL"))}</div>`)}
-   ${F(4,`<div class="c tk-fecha">${esc(fecha)}</div><div class="c tk-hora">${r.hora}</div>`)}
+   ${F(4,`<div class="c tk-hora">${r.hora}</div>`)}
   </div>`}
 /* Impresora: muestra siempre la propuesta de ticket con la persona elegida en el simulador */
-const LEY=`<ol class="tk-ley"><li>Encabezado</li><li>Almuerzos y menú</li><li>Nombre completo</li><li>Fecha y hora de emisión</li></ol>`;
+const LEY=`<ol class="tk-ley"><li>Encabezado</li><li>Almuerzos y menú</li><li>Nombre completo</li><li>Hora de emisión</li></ol>`;
 let tkPerson=null,tkHora="12:41",tkCopia=false,tkCant=1,tkMenu="Normal";
 function setLbl(t,estado){const l=$("#printerLbl");l.textContent=t;l.className="small tk-lbl "+(estado||"")}
 function setPrinter(lbl,estado){setLbl(lbl,estado);
