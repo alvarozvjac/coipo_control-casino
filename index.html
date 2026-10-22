@@ -264,6 +264,9 @@ table.msem th.mio{color:var(--accent)}table.msem td.mio{background:var(--accent-
 table.msem.edit textarea{width:100%;min-width:130px;font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;resize:vertical;background:var(--surface);color:var(--ink)}
 table.plan{table-layout:fixed;width:100%}table.plan th{white-space:normal;line-height:1.25;vertical-align:bottom;padding:9px 8px;hyphens:manual}table.plan td{padding:9px 8px;font-variant-numeric:tabular-nums}table.plan td:first-child{white-space:nowrap}
 @media (max-width:640px){table.plan th{font-size:10px;letter-spacing:.02em;padding:7px 4px}table.plan td{font-size:12.5px;padding:7px 4px}table.plan col:first-child{width:22%}}
+.menu-wrap{position:relative}.menu-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:20;min-width:300px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.14);padding:6px;display:grid;gap:2px}
+.menu-pop button{display:grid;gap:2px;text-align:left;font:inherit;background:none;border:0;border-radius:8px;padding:9px 12px;cursor:pointer;color:var(--ink)}.menu-pop button:hover,.menu-pop button:focus-visible{background:var(--accent-soft);outline:none}.menu-pop small{color:var(--muted);font-size:12px}
+@media (max-width:640px){.menu-pop{position:static;min-width:0;width:100%;margin-top:6px}.menu-wrap{width:100%}.menu-wrap #repBtn{width:100%}}
 table.plan .sm{display:none}
 @media (max-width:640px){table.plan .lg{display:none}table.plan .sm{display:inline}table.plan td:first-child{white-space:normal}.plan-ley{display:block!important}}
 table.plan tbody tr{cursor:pointer}table.plan tbody tr:hover td{background:var(--sunken)}table.plan tr.sel td{background:var(--accent-soft)}
@@ -424,19 +427,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <div class="tablebox" style="margin-top:10px"><table><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th>RUT</th><th>Nombre completo</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="repTkBody"></tbody></table></div>
       <p class="small muted" style="margin:6px 0 0" id="repTkNota"></p></details>
   </div>
-  <div class="grid2">
-    <div class="panel" style="display:grid;gap:12px;align-content:start">
-      <div class="row spread"><h3>Consumo por unidad</h3><button class="btn small" id="uniCopiar">Copiar</button></div>
-      <p class="small muted" style="margin:0" id="uniLabel"></p>
-      <div class="tablebox"><table><thead><tr><th>Unidad</th><th class="num">Almuerzos</th><th class="num">Personas</th><th class="num">Monto</th></tr></thead><tbody id="uniBody"></tbody></table></div>
-    </div>
-    <div class="panel" style="display:grid;gap:12px;align-content:start">
-      <div class="row spread"><h3>Resumen anual por mes</h3><button class="btn small" id="anuCopiar">Copiar</button></div>
-      <p class="small muted" style="margin:0" id="anuLabel"></p>
-      <div class="tablebox"><table><thead><tr><th>Mes</th><th class="num">Almuerzos</th><th class="num">Personas</th><th class="num">Monto</th></tr></thead><tbody id="anuBody"></tbody><tfoot id="anuFoot"></tfoot></table></div>
-    </div>
-  </div>
-  <p class="small muted" style="margin:0">En la maqueta, «Emisión reporte mensual» y «Copiar» dejan la tabla en el portapapeles para pegarla en Excel. En el sistema definitivo, cada reporte se descargará como archivo Excel.</p>
+  <p class="small muted" style="margin:0">«Emisión reporte mensual» descarga el reporte elegido como archivo CSV (separador punto y coma), que se abre directamente en Excel.</p>
 </section>
 
 <!-- CONFIGURACION -->
@@ -1182,11 +1173,16 @@ function mesRows(ym){const val=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="V
 function renderRepo(){
   const ym=repMes;const enCurso=ym===TODAY.slice(0,7);
   $("#repMesSel").value=ym;
-  $("#repLead").textContent="Emita el reporte mensual de descuento por planilla y consulte el consumo por unidad y el resumen anual.";
+  $("#repLead").textContent="Revise el descuento por planilla del mes y emita los reportes: descuento mensual, consumo por unidad y resumen anual por mes.";
   const {val,rows}=mesRows(ym);
   const estado=enCurso?`<span class="pill warn">Mes en curso · datos al ${fmtD(TODAY)}</span>`:"";
-  const acc=`<button class="btn primary" id="repCopiar">Emisión reporte mensual</button>`;
-  $("#repEstado").innerHTML=`<div>${estado}</div><div class="row">${acc}</div>`;
+  const acc=`<div class="menu-wrap"><button class="btn primary" id="repBtn" aria-haspopup="menu" aria-expanded="false">Emisión reporte mensual ▾</button>
+    <div class="menu-pop" id="repMenu" role="menu" hidden>
+      <button role="menuitem" data-rep="desc"><b>1. Reporte descuento mensual</b><small>Por trabajador y detalle por ticket · ${esc(cap(MES[+ym.slice(5)-1]))} ${ym.slice(0,4)}</small></button>
+      <button role="menuitem" data-rep="uni"><b>2. Reporte consumo por unidad</b><small>Almuerzos, personas y monto por unidad · ${esc(cap(MES[+ym.slice(5)-1]))} ${ym.slice(0,4)}</small></button>
+      <button role="menuitem" data-rep="anu"><b>3. Reporte anual por mes</b><small>Enero a ${MES[today.getMonth()]} de ${YEAR}</small></button>
+    </div></div>`;
+  $("#repEstado").innerHTML=`<div>${estado}</div><div class="row" style="flex-direction:column;align-items:flex-end;gap:4px">${acc}<span class="small" id="repMsg"></span></div>`;
   const total=rows.reduce((a,x)=>a+x.monto,0);const sinT=rows.filter(x=>!tramoDe(x.p));
   const porT=cfg.tramos.map(t=>{const rr=rows.filter(x=>tramoDe(x.p)===t.n);return`T${t.n}: ${rr.length}`}).join(" · ");
   $("#repStats").innerHTML=[["Almuerzos del mes",sumCant(val).toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Personas habilitadas antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
@@ -1195,25 +1191,31 @@ function renderRepo(){
   const tks=val.slice().sort((a,b)=>a.id<b.id?-1:1);
   $("#repTkSum").textContent=`Detalle por ticket · ${tks.length.toLocaleString("es-CL")} tickets válidos del mes`;
   $("#repTkBody").innerHTML=tks.slice(0,300).map(r=>{const p=byKey(r.key);return`<tr><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.nombre)}</td><td class="num">${cantR(r)}</td><td class="num">${clp(montoR(r))}</td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Sin tickets en el mes.</td></tr>`;
-  $("#repTkNota").textContent=tks.length>300?"Se muestran los primeros 300; «Emisión reporte mensual» incluye todos los tickets.":"«Emisión reporte mensual» incluye este detalle a continuación del resumen por trabajador.";
+  $("#repTkNota").textContent=tks.length>300?"Se muestran los primeros 300; el «Reporte descuento mensual» incluye todos los tickets.":"El «Reporte descuento mensual» incluye este detalle a continuación del resumen por trabajador.";
   $("#repFoot").innerHTML=`<tr><td colspan="5"><b>Total</b></td><td class="num"><b>${sumCant(val).toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(total)}</b></td></tr>`;
-  // por unidad del mes
-  const u=new Map();val.forEach(r=>{const p=byKey(r.key);const o=u.get(p.unidad)||{n:0,s:new Set(),m:0};o.n+=cantR(r);o.m+=montoR(r);o.s.add(p.key);u.set(p.unidad,o)});
-  $("#uniLabel").textContent=cap(MES[+ym.slice(5)-1])+" "+ym.slice(0,4);
-  $("#uniBody").innerHTML=[...u].sort((a,b)=>b[1].n-a[1].n).map(([n,o])=>`<tr><td>${esc(n)}</td><td class="num">${o.n}</td><td class="num">${o.s.size}</td><td class="num">${clp(o.m)}</td></tr>`).join("")||`<tr><td colspan="4" class="muted">Sin consumo.</td></tr>`;
-  // anual
-  $("#anuLabel").textContent=`Año ${YEAR}, enero a ${MES[today.getMonth()]}`;
-  const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=cargos(k+"-01",finMes(k));return{k,m,n:v.reduce((a,c)=>a+c.cant,0),pers:new Set(v.map(c=>c.key)).size,monto:v.reduce((a,c)=>a+c.monto,0)}});
-  $("#anuBody").innerHTML=meses.map(o=>`<tr><td>${cap(MES[o.m])}</td><td class="num">${o.n.toLocaleString("es-CL")}</td><td class="num">${o.pers}</td><td class="num">${clp(o.monto)}</td></tr>`).join("");
-  const tot=meses.reduce((s,o)=>s+o.n,0);
-  $("#anuFoot").innerHTML=`<tr><td><b>Total</b></td><td class="num"><b>${tot.toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(meses.reduce((a,o)=>a+o.monto,0))}</b></td></tr>`;
 }
 $("#repMesSel").addEventListener("change",e=>{repMes=e.target.value;renderRepo()});
-$("#repEstado").addEventListener("click",e=>{const id=e.target.id;
-  if(id==="repCopiar"){const{rows,val}=mesRows(repMes);copiar(["RUT\tNombre completo\tUnidad\tGrado\tTramo\tAlmuerzos\tValor unitario\tMonto a descontar"].concat(rows.map(({p,n,monto,vals})=>[fmtRut(p.key),p.nombre,p.unidad,p.grado??"",tramoDe(p)||"SIN TRAMO",n,vals.length>1?"varios":(monto?vals[0]:""),monto||""].join("\t")),["","DETALLE POR TICKET","ID ticket\tFecha\tHora\tRUT\tNombre completo\tAlmuerzos\tMonto"],val.slice().sort((a,b)=>a.id<b.id?-1:1).map(r=>[r.id,fmtD(r.fecha),r.hora,fmtRut(r.key),byKey(r.key).nombre,cantR(r),montoR(r)].join("\t"))).join("\n"),`Reporte de ${MES[+repMes.slice(5)-1]} emitido: copiado para pegarlo en Excel.`)}
-});
-$("#uniCopiar").onclick=()=>copiar(["Unidad\tAlmuerzos\tPersonas\tMonto"].concat([...$("#uniBody").querySelectorAll("tr")].map(tr=>[...tr.children].map(td=>td.textContent).join("\t"))).join("\n"));
-$("#anuCopiar").onclick=()=>copiar(["Mes\tAlmuerzos\tPersonas\tMonto"].concat([...$("#anuBody").querySelectorAll("tr")].map(tr=>[...tr.children].map(td=>td.textContent).join("\t"))).join("\n"));
+function repMenu(open){const m=$("#repMenu"),b=$("#repBtn");if(!m)return;m.hidden=!open;b.setAttribute("aria-expanded",open);if(open)m.querySelector("button").focus()}
+$("#repEstado").addEventListener("click",e=>{if(e.target.closest("#repBtn")){repMenu($("#repMenu").hidden);return}
+  const it=e.target.closest("[data-rep]");if(!it)return;repMenu(false);const ym=repMes,mes=MES[+ym.slice(5)-1];let filas,nombre;
+  if(it.dataset.rep==="desc"){const{rows,val}=mesRows(ym);
+    filas=[["Reporte descuento mensual",`${cap(mes)} ${ym.slice(0,4)}`],[],["RUT","Nombre completo","Unidad","Grado","Tramo","Almuerzos","Valor unitario","Monto a descontar"]]
+      .concat(rows.map(({p,n,monto,vals})=>[fmtRut(p.key),p.nombre,p.unidad,p.grado??"",tramoDe(p)||"SIN TRAMO",n,vals.length>1?"varios":(monto?vals[0]:""),monto||""]),
+        [["","Total","","","",sumCant(val),"",rows.reduce((a,x)=>a+x.monto,0)],[],["Detalle por ticket"],["ID ticket","Fecha","Hora","RUT","Nombre completo","Almuerzos","Monto"]],
+        val.slice().sort((a,b)=>a.id<b.id?-1:1).map(r=>[r.id,fmtD(r.fecha),r.hora,fmtRut(r.key),byKey(r.key).nombre,cantR(r),montoR(r)]));
+    nombre=`reporte_descuento_${ym}.csv`}
+  else if(it.dataset.rep==="uni"){const val=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido");const u=new Map();
+    val.forEach(r=>{const p=byKey(r.key);const o=u.get(p.unidad)||{n:0,s:new Set(),m:0};o.n+=cantR(r);o.m+=montoR(r);o.s.add(p.key);u.set(p.unidad,o)});
+    const L=[...u].sort((a,b)=>b[1].n-a[1].n);
+    filas=[["Reporte consumo por unidad",`${cap(mes)} ${ym.slice(0,4)}`],[],["Unidad","Almuerzos","Personas","Monto"]].concat(L.map(([n,o])=>[n,o.n,o.s.size,o.m]),[["Total",sumCant(val),new Set(val.map(r=>r.key)).size,sumaM(val)]]);
+    nombre=`reporte_consumo_unidad_${ym}.csv`}
+  else{const M=Array.from({length:today.getMonth()+1},(_,m)=>{const v=R.filter(r=>r.fecha.startsWith(`${YEAR}-${pad(m+1)}`)&&r.estado==="Válido");return[cap(MES[m]),sumCant(v),new Set(v.map(r=>r.key)).size,sumaM(v)]});
+    const va=R.filter(r=>r.fecha.startsWith(String(YEAR))&&r.estado==="Válido");
+    filas=[["Reporte anual por mes",`Año ${YEAR}, enero a ${MES[today.getMonth()]}`],[],["Mes","Almuerzos","Personas","Monto"]].concat(M,[["Total",sumCant(va),new Set(va.map(r=>r.key)).size,sumaM(va)]]);
+    nombre=`reporte_anual_${YEAR}.csv`}
+  descargarCsv(nombre,csvTxt(filas),"#repMsg")});
+$("#repEstado").addEventListener("keydown",e=>{if(e.key==="Escape"){repMenu(false);$("#repBtn")?.focus()}});
+document.addEventListener("click",e=>{if(!e.target.closest(".menu-wrap"))repMenu(false)});
 
 /* ---- Propuesta de ticket ---- */
 function renderTk(){const r={n:6,id:`${YEAR}-004812`,fecha:TODAY,hora:"12:41",key:P[0].key,cant:2,menu:"Normal",origen:"Terminal"};

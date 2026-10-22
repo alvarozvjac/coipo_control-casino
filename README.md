@@ -50,7 +50,10 @@ normal, hipocalórico y vegano, y postre), que reemplaza el envío de la
 minuta por correo electrónico. Los cambios quedan como borrador hasta publicarlos. La maqueta
 usa las minutas reales de las semanas del 5, 13 y 19 de octubre de 2026.
 
-**Reporte mensual:** almuerzos consumidos por trabajador, con el detalle por ticket.
+**Reportes:** la pantalla muestra el descuento por planilla del mes. El botón «Emisión reporte
+mensual» despliega tres reportes que se descargan en CSV para Excel: 1) reporte descuento
+mensual (por trabajador y detalle por ticket), 2) reporte consumo por unidad y 3) reporte
+anual por mes.
 
 **Valor del almuerzo:** se define por tramo según el grado (tramo 1: grados 3 a 11;
 tramo 2: 12 a 14; tramo 3: 15 a 21). Las calidades jurídicas son Dotación, Plazo fijo y Honorarios; solo Dotación tiene grado, y
