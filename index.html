@@ -524,11 +524,12 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <p class="small muted" id="miInvNota" style="margin:0"></p>
     <ul class="avisos" id="miInvList"></ul>
   </div>
-  <div class="grid-mi">
+  <div class="grid2">
     <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Mis asistencias por mes</h3>
       <div class="tablebox"><table><thead><tr><th>Mes</th><th class="num">Días</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="miMeses"></tbody></table></div></div>
-    <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Detalle de este mes</h3>
-      <div class="tablebox"><table><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th class="num">Almuerzos</th><th>Menú</th><th class="num">Monto</th></tr></thead><tbody id="miDet"></tbody></table></div></div>
+    <div class="panel" style="display:grid;gap:12px;align-content:start"><div><h3>Reporte de mis almuerzos</h3><p class="small muted" style="margin:2px 0 0">Descargue el detalle del mes en un archivo CSV que se abre en Excel: ID de ticket, fecha, hora, almuerzos, menú y monto.</p></div>
+      <div class="row" style="align-items:end"><label class="f">Mes<select id="miCsvMes"></select></label><button class="btn primary" type="button" id="miCsv">Descargar CSV</button></div>
+      <span class="small muted" id="miCsvInfo"></span><span class="small" id="miCsvMsg"></span></div>
   </div>
 </section>
 
@@ -541,7 +542,6 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   </div>
   <span id="msMsg" class="small"></span>
   <div class="tablebox"><table class="msem edit"><thead><tr><th>Día</th><th>Entrada</th><th>Plato normal</th><th>Plato hipocalórico</th><th>Plato vegano</th><th>Postre</th></tr></thead><tbody id="msBody"></tbody></table></div>
-  <label class="f">Mensaje para los funcionarios (opcional)<textarea id="msMsgTxt" rows="2" style="font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;resize:vertical"></textarea></label>
   <p class="small muted" style="margin:0">Los cambios quedan como borrador hasta que presione «Publicar». El plato vegano es opcional: solo se completa los días en que se ofrece. En la maqueta, las semanas del 5, 13 y 19 de octubre usan las minutas reales del casino; la del 26 es un borrador de ejemplo.</p>
 </section>
 <section class="view" id="v-plan" data-label="Planificación" hidden>
@@ -766,11 +766,10 @@ const MINUTAS={
  "2026-10-26":[["Lechuga, apio, betarraga, repollo, sopa","Pollo arvejado c/ arroz","Filete de pollo c/ verduras surtidas","","Jalea, fruta natural"],
   ["Lechuga, tomate, sopa, porotos verdes","Charquicán","Merluza al vapor c/ ensalada","","Sémola, fruta natural"],
   ["Lechuga, zanahoria, sopa, pepino","Lentejas c/ longaniza","Ensalada César","Lentejas c/ longaniza vegana",""],null,null]};
-const MSG_MIN="El mejor cocinero es aquel que siempre encuentra una receta para lo que tiene en la nevera.";
 function seedMenuSem(){for(const k in MSEM)delete MSEM[k];
   const pubs={"2026-10-05":["2026-10-05","08:40"],"2026-10-12":["2026-10-13","08:45"],"2026-10-19":["2026-10-19","08:42"]};
   Object.entries(MINUTAS).forEach(([l,rows])=>{const dias=semVacia(l);Object.keys(dias).forEach((f,i)=>{const r=rows[i];if(r)dias[f]={entrada:r[0],normal:r[1],hipo:r[2],vegano:r[3],postre:r[4]}});
-    const msg=pubs[l]?MSG_MIN:"";const pb=pubs[l];
+    const msg="";const pb=pubs[l];
     MSEM[l]={borrador:JSON.parse(JSON.stringify(dias)),msgB:msg,pub:pb?{dias:JSON.parse(JSON.stringify(dias)),msg,fecha:pb[0],hora:pb[1]}:null}})}
 /* Cobro: se descuenta solo lo consumido (tickets válidos). Los avisos de ausencia sirven para planificar raciones. */
 function cargos(a,b,key){return R.filter(r=>r.estado==="Válido"&&r.fecha>=a&&r.fecha<=b&&(!key||r.key===key)).map(r=>({tipo:"Ticket",fecha:r.fecha,hora:r.hora,id:r.id,key:r.key,cant:cantR(r),monto:montoR(r),menu:r.menu}))}
@@ -1272,8 +1271,20 @@ function renderMi(){
   // asistencias
   const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=anio.filter(r=>r.fecha.startsWith(k));return{m,v}}).reverse();
   $("#miMeses").innerHTML=meses.map(({m,v})=>`<tr><td>${cap(MES[m])}</td><td class="num">${new Set(v.map(r=>r.fecha)).size}</td><td class="num">${sumCant(v)}</td><td class="num">${clp(sumaM(v))}</td></tr>`).join("");
-  $("#miDet").innerHTML=mes.slice().sort((a,b)=>a.id<b.id?1:-1).map(r=>`<tr><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="num">${cantR(r)}</td><td>${esc(r.menu||menuDe(p,r.fecha))}</td><td class="num">${clp(montoR(r))}</td></tr>`).join("")||'<tr><td colspan="6" class="muted">Aún no registra almuerzos este mes.</td></tr>';
+  const sel=$("#miCsvMes");const prev=sel.value;sel.innerHTML=Array.from({length:today.getMonth()+1},(_,m)=>`<option value="${YEAR}-${pad(m+1)}">${cap(MES[m])} ${YEAR}</option>`).reverse().join("");sel.value=prev||cm;miCsvInfo();
 }
+function miCsvRows(ym){const p=YO();return R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(ym)).sort((a,b)=>a.id<b.id?-1:1)}
+function miCsvInfo(){const ym=$("#miCsvMes").value;const rr=miCsvRows(ym);$("#miCsvInfo").textContent=rr.length?`${cap(MES[+ym.slice(5)-1])}: ${sumCant(rr)} almuerzo${sumCant(rr)===1?"":"s"} en ${rr.length} ticket${rr.length===1?"":"s"} · ${clp(sumaM(rr))}`:`${cap(MES[+ym.slice(5)-1])}: sin almuerzos registrados.`;$("#miCsv").disabled=!rr.length;$("#miCsvMsg").textContent=""}
+$("#miCsvMes").addEventListener("change",miCsvInfo);
+/* CSV con separador «;» y BOM UTF-8, como lo abre Excel con configuración regional de Chile */
+function csvTxt(rows){return "\uFEFF"+rows.map(r=>r.map(v=>{const t=String(v??"");return /[";\n]/.test(t)?`"${t.replace(/"/g,'""')}"`:t}).join(";")).join("\r\n")}
+async function descargarCsv(nombre,txt,msgSel){const m=$(msgSel);
+  try{const dl=window.claude&&typeof window.claude.use==="function"?await window.claude.use("downloads"):null;
+    if(dl){try{await dl.save({filename:nombre,data:txt});m.innerHTML='<span style="color:var(--ok)">Archivo descargado.</span>'}catch(e){m.innerHTML=e&&e.code==="declined"?'<span class="muted">Descarga cancelada.</span>':'<span style="color:var(--bad)">No fue posible descargar el archivo aquí.</span>'}return}}catch(e){}
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/csv;charset=utf-8"}));a.download=nombre;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);m.innerHTML='<span style="color:var(--ok)">Archivo descargado.</span>'}
+$("#miCsv").addEventListener("click",()=>{const p=YO(),ym=$("#miCsvMes").value;const rr=miCsvRows(ym);if(!rr.length)return;
+  const filas=[["ID ticket","Fecha","Hora","Almuerzos","Menú","Valor unitario","Monto"]].concat(rr.map(r=>[r.id,fmtD(r.fecha),r.hora,cantR(r),r.menu||menuDe(p,r.fecha),montoR(r)/cantR(r),montoR(r)]),[["","","Total",sumCant(rr),"","",sumaM(rr)]]);
+  descargarCsv(`casino_${cleanRut(p.key)}_${ym}.csv`,csvTxt(filas),"#miCsvMsg")});
 $("#miMenu").addEventListener("click",e=>{const b=e.target.closest("[data-menu]");if(!b||b.disabled)return;const[ym,m]=b.dataset.menu.split("|");MENU[YO().key+"|"+ym]=m;renderMi();toast(`Menú ${m.toLowerCase()} registrado para ${MES[+ym.slice(5)-1]}`)});
 function validarDia(f,msgSel){const m=$(msgSel);
   if(!f){m.innerHTML='<span style="color:var(--bad)">Elija una fecha.</span>';return false}
@@ -1306,14 +1317,14 @@ function renderMiSem(p){const l0=lunesDe(TODAY);if(!miSem)miSem=l0;const s=MSEM[
   $("#miSemLead").innerHTML=pub?`Publicado por el Jefe Casino el ${fmtD(pub.fecha)} a las ${pub.hora} · servicio de ${cfg.ini} a ${cfg.fin} horas. Su menú este mes: <b>${esc(mio.toLowerCase())}</b>.`:"El Jefe Casino publica la minuta cada lunes; la de esta semana aún no está publicada.";
   $("#miSemBox").innerHTML=pub?`<table class="msem"><thead><tr><th>Día</th>${MCAMPOS.map(([k,t])=>`<th class="${k===col?"mio":""}">${t}${k===col?" · su menú":""}</th>`).join("")}</tr></thead><tbody>${Object.entries(pub.dias).map(([f,o])=>{const cerr=!habil(D(f))||diaCerrado(f);
     return`<tr class="${f===TODAY?"hoy":""}"><td><b>${cap(D(f).toLocaleDateString("es-CL",{weekday:"long"}))}</b><br><span class="small muted">${fmtD(f)}${f===TODAY?" · hoy":""}</span></td>${cerr?`<td colspan="5"><span class="pill bad">Sin servicio</span></td>`:MCAMPOS.map(([k])=>`<td class="${k===col?"mio":""}">${esc(o[k])||'<span class="muted">—</span>'}</td>`).join("")}</tr>`}).join("")}</tbody></table>`
-    +(pub.msg?`<p class="min-msg">${esc(pub.msg)}</p>`:""):`<p class="muted" style="margin:12px">Minuta no publicada.</p>`}
+    :`<p class="muted" style="margin:12px">Minuta no publicada.</p>`}
 $("#miSemPrev").onclick=()=>{miSem=sumDias(miSem,-7);renderMi()};$("#miSemNext").onclick=()=>{miSem=sumDias(miSem,7);renderMi()};
 
 /* ---- Menú semanal (Jefe Casino publica cada lunes) ---- */
 let msSel=null;
 function renderMenuSem(){const l0=lunesDe(TODAY);if(!msSel)msSel=l0;if(!MSEM[msSel])MSEM[msSel]={borrador:semVacia(msSel),pub:null};const s=MSEM[msSel];
   $("#msLbl").textContent=`Semana del ${fmtD(msSel)} al ${fmtD(sumDias(msSel,4))}`;$("#msPrev").disabled=msSel<=sumDias(l0,-7);$("#msNext").disabled=msSel>=sumDias(l0,14);
-  const cambios=s.pub&&(JSON.stringify(s.pub.dias)!==JSON.stringify(s.borrador)||(s.pub.msg||"")!==(s.msgB||""));$("#msMsgTxt").value=s.msgB||"";
+  const cambios=s.pub&&(JSON.stringify(s.pub.dias)!==JSON.stringify(s.borrador)||(s.pub.msg||"")!==(s.msgB||""));
   $("#msEstado").innerHTML=s.pub?`<span class="pill ok">Publicado el ${fmtD(s.pub.fecha)} a las ${s.pub.hora}</span>${cambios?' <span class="pill warn">Cambios sin publicar</span>':""}`:'<span class="pill warn">Borrador · no publicado</span>';
   $("#msPub").textContent=s.pub?"Publicar cambios":"Publicar menú de la semana";$("#msPub").disabled=!!s.pub&&!cambios;
   $("#msBody").innerHTML=Object.entries(s.borrador).map(([f,o])=>{const cerr=!habil(D(f))||diaCerrado(f);
@@ -1322,7 +1333,6 @@ $("#msBody").addEventListener("input",e=>{const t=e.target.dataset.ms;if(!t)retu
   msEstado()});
 function msEstado(){const s=MSEM[msSel];const cambios=s.pub&&(JSON.stringify(s.pub.dias)!==JSON.stringify(s.borrador)||(s.pub.msg||"")!==(s.msgB||""));$("#msPub").disabled=!!s.pub&&!cambios;
   $("#msEstado").innerHTML=s.pub?`<span class="pill ok">Publicado el ${fmtD(s.pub.fecha)} a las ${s.pub.hora}</span>${cambios?' <span class="pill warn">Cambios sin publicar</span>':""}`:'<span class="pill warn">Borrador · no publicado</span>'}
-$("#msMsgTxt").addEventListener("input",e=>{MSEM[msSel].msgB=e.target.value;msEstado()});
 $("#msPrev").onclick=()=>{msSel=sumDias(msSel,-7);renderMenuSem()};$("#msNext").onclick=()=>{msSel=sumDias(msSel,7);renderMenuSem()};
 $("#msPub").onclick=()=>{const s=MSEM[msSel];const falt=Object.entries(s.borrador).filter(([f,o])=>habil(D(f))&&!diaCerrado(f)&&MCAMPOS.some(([k])=>k!=="vegano"&&!o[k].trim())).length;
   if(falt&&!confirmPub){confirmPub=true;$("#msMsg").innerHTML=`<span style="color:var(--warn)">${falt} día(s) tienen entrada, plato normal, hipocalórico o postre vacíos. Presione de nuevo para publicar igual.</span>`;return}

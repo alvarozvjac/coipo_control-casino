@@ -33,7 +33,8 @@ para una versión futura.
 **Ticket:** sigla CONAF, fecha y lugar; cantidad de almuerzos y menú; nombre completo en mayúsculas, hora e ID único (año y correlativo anual, por ejemplo 2026-004812). El ID se registra en el detalle de ingresos del Jefe Casino, en «Mi casino» del funcionario y en el detalle por ticket del reporte mensual; el detalle de ingresos permite buscar por ID.
 
 **Mi casino (funcionario):** muestra el menú de la semana publicado por el Jefe Casino
-(entrada, plato normal, hipocalórico y vegano, y postre), sus asistencias, y
+(entrada, plato normal, hipocalórico y vegano, y postre), sus asistencias por mes y un
+reporte del mes en CSV para Excel (ID de ticket, fecha, hora, almuerzos, menú y monto), y
 permite elegir el menú de cada mes (normal o hipocalórico, hasta el día 25 del mes anterior),
 avisar los días en que no almorzará (un día o un rango) y registrar almuerzos con invitados.
 El funcionario es responsable de avisar sus ausencias hasta las 23:59 del día anterior, para
@@ -45,7 +46,7 @@ avisadas, menú normal, menú hipocalórico, almuerzos de invitados, raciones pl
 consumo habitual como referencia.
 
 **Menú semanal (Jefe Casino):** cada lunes publica la minuta de la semana (entrada, plato
-normal, hipocalórico y vegano, postre y un mensaje opcional), que reemplaza el envío de la
+normal, hipocalórico y vegano, y postre), que reemplaza el envío de la
 minuta por correo electrónico. Los cambios quedan como borrador hasta publicarlos. La maqueta
 usa las minutas reales de las semanas del 5, 13 y 19 de octubre de 2026.
 
