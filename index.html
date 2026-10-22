@@ -152,13 +152,15 @@ tr.anulado td:last-child,tr.anulado td:nth-last-child(2){text-decoration:none}
 .ticket .c{text-align:center} .ticket hr{border:0;border-top:1px dashed var(--paper-ink);margin:8px 0;opacity:.6}
 .ticket .big{font-size:16px;font-weight:600}
 .tk-org{font-size:20px;font-weight:700;letter-spacing:.14em;line-height:1.2}
-.tk-ubic{font-size:12px;line-height:1.35;margin-top:3px;text-wrap:balance}
+.tk-ubic{font-size:12px;line-height:1.35;margin-top:3px}
 .tk-menu{font-size:15px;font-weight:600;margin-top:2px}
 .tk-svc{font-size:19px;font-weight:700;letter-spacing:.14em;margin-top:2px}
 .tk-name{font-size:16px;font-weight:700;line-height:1.3;margin:8px 0 6px;text-wrap:balance}
 .tk-hora{font-size:24px;font-weight:700;line-height:1.15;letter-spacing:.06em}
 .tk-fecha{font-size:16px;font-weight:600;letter-spacing:.02em;line-height:1.3;white-space:nowrap;margin-top:4px}
 .tk-cod{font-size:15px;letter-spacing:.15em}
+details.rep-tk summary{cursor:pointer;font-weight:600;color:var(--accent);padding:4px 0}
+.tk-id{font-size:13px;font-weight:600;letter-spacing:.06em;margin-top:6px;padding-top:6px;border-top:1px dashed currentColor}
 .tk-pie{font-size:11.5px;margin-top:2px}
 .tk-copia{font-weight:600}
 .ticket.anot{-webkit-mask:none;mask:none;margin-left:40px;border-bottom:2px dashed var(--line)}
@@ -341,12 +343,12 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   <div class="panel row" style="align-items:end">
     <label class="f">Desde<input type="date" id="detDesde"></label>
     <label class="f">Hasta<input type="date" id="detHasta"></label>
-    <label class="f" style="flex:1;min-width:200px">Buscar<input id="detQ" placeholder="Nombre, RUT o unidad" autocomplete="off"></label>
+    <label class="f" style="flex:1;min-width:200px">Buscar<input id="detQ" placeholder="Nombre, RUT, unidad o ID de ticket" autocomplete="off"></label>
     <label class="f">Estado<select id="detEstado"><option value="">Todos</option><option>Válido</option><option>Anulado</option></select></label>
     <div class="row" style="gap:6px"><button class="btn small" data-rango="hoy">Hoy</button><button class="btn small" data-rango="semana">Esta semana</button><button class="btn small" data-rango="mes">Este mes</button></div>
   </div>
   <div class="row spread"><span id="detCount" class="small muted"></span><button class="btn" id="detCopiar">Copiar detalle</button></div>
-  <div class="tablebox"><table><thead><tr><th>Fecha</th><th>Hora</th><th>N° ticket</th><th class="num">Almuerzos</th><th>Nombre completo</th><th>RUT</th><th>Unidad</th><th>Validación</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="detBody"></tbody></table></div>
+  <div class="tablebox"><table><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th class="num">Almuerzos</th><th>Nombre completo</th><th>RUT</th><th>Unidad</th><th>Validación</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="detBody"></tbody></table></div>
 </section>
 
 <!-- CIERRES -->
@@ -410,6 +412,9 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <div class="row spread" id="repEstado"></div>
     <div class="stats" id="repStats"></div>
     <div class="tablebox"><table><thead><tr><th>RUT</th><th>Nombre completo</th><th>Unidad</th><th class="num">Grado</th><th>Tramo</th><th class="num">Almuerzos</th><th class="num">Valor unitario</th><th class="num">Monto a descontar</th></tr></thead><tbody id="repBody"></tbody><tfoot id="repFoot"></tfoot></table></div>
+    <details class="rep-tk"><summary id="repTkSum">Detalle por ticket</summary>
+      <div class="tablebox" style="margin-top:10px"><table><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th>RUT</th><th>Nombre completo</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="repTkBody"></tbody></table></div>
+      <p class="small muted" style="margin:6px 0 0" id="repTkNota"></p></details>
   </div>
   <div class="grid2">
     <div class="panel" style="display:grid;gap:12px;align-content:start">
@@ -467,7 +472,8 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
         <li><div><b>Encabezado</b><span>Sigla CONAF, fecha del día y lugar del servicio. La fecha impide reutilizar un ticket de otro día.</span></div></li>
         <li><div><b>Almuerzos y menú</b><span>Cantidad de almuerzos («1 ALMUERZO», «2 ALMUERZOS» cuando hay invitados) y, en letra destacada, el menú elegido para el mes, normal o hipocalórico, para que el personal lo sirva sin preguntar.</span></div></li>
         <li><div><b>Nombre completo</b><span>En mayúsculas y letra destacada, para que el personal del casino confirme que quien entrega el ticket es su titular.</span></div></li>
-        <li><div><b>Hora de emisión</b><span>Al pie del ticket, en el tamaño mayor junto con la cantidad de almuerzos.</span></div></li>
+        <li><div><b>Hora de emisión</b><span>En el tamaño mayor junto con la cantidad de almuerzos.</span></div></li>
+        <li><div><b>ID único</b><span>Año y correlativo anual (por ejemplo, 2026-004812). Queda registrado en el detalle de ingresos del Jefe Casino, en «Mi casino» del funcionario y en el reporte mensual, para resolver reclamos. Una copia reimpresa conserva el mismo ID.</span></div></li>
       </ol></div>
       <div class="panel"><h3>Especificaciones de impresión</h3><ul class="tight">
         <li>Papel térmico de 80 mm, ancho de impresión de 72 mm (48 caracteres por línea).</li>
@@ -513,7 +519,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Mis asistencias por mes</h3>
       <div class="tablebox"><table><thead><tr><th>Mes</th><th class="num">Días</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="miMeses"></tbody></table></div></div>
     <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Detalle de este mes</h3>
-      <div class="tablebox"><table><thead><tr><th>Fecha</th><th>Hora</th><th class="num">Almuerzos</th><th>Menú</th><th class="num">Monto</th></tr></thead><tbody id="miDet"></tbody></table></div></div>
+      <div class="tablebox"><table><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th class="num">Almuerzos</th><th>Menú</th><th class="num">Monto</th></tr></thead><tbody id="miDet"></tbody></table></div></div>
   </div>
 </section>
 
@@ -539,7 +545,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <tr><td>Instalación</td><td>2 UF, pago único; punto de red y enchufe a 1,5 m</td><td>UIA y Depto. de Informática; se requiere el mismo punto de red y enchufe</td></tr>
     <tr><td>Servicios</td><td>Hasta 6 tipos (desayuno, almuerzo, once, cena)</td><td>Solo almuerzo. Escalable a otros servicios en una fase posterior</td></tr>
     <tr><td>Reglas</td><td>Horario, ubicación, turno y límites</td><td>Horario, ubicación y límite diario</td></tr>
-    <tr><td>Ticket</td><td>Nombre, identificador, servicio, hora, fecha, empresa y dirección</td><td>Encabezado con fecha, almuerzos y menú, nombre completo en mayúsculas y hora de emisión</td></tr>
+    <tr><td>Ticket</td><td>Nombre, identificador, servicio, hora, fecha, empresa y dirección</td><td>Encabezado con fecha, almuerzos y menú, nombre completo en mayúsculas y hora de emisión, e ID único (año y correlativo)</td></tr>
     <tr><td>Reportes</td><td>Totales, consolidado, detallado y por marca</td><td>Estadísticas diarias, semanales, mensuales y anuales; detalle de ingresos; descuento mensual por trabajador; consumo por unidad y resumen anual</td></tr>
     <tr><td>Integración</td><td>Sincronización con GeoVictoria Asistencia</td><td>Fuera de la fase 1. La nómina se carga desde planilla</td></tr>
   </tbody></table></div>
@@ -590,6 +596,10 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 
 <script>
 (()=>{
+/* ID único del ticket: año + correlativo anual de 6 dígitos (incluye tickets anulados, que no se reutilizan) */
+const SEQ={};const idFmt=(y,n)=>`${y}-${String(n).padStart(6,"0")}`;
+function nextId(f){const y=f.slice(0,4);SEQ[y]=(SEQ[y]||0)+1;return idFmt(y,SEQ[y])}
+function asignarIds(){for(const k in SEQ)delete SEQ[k];R.slice().sort((a,b)=>a.fecha===b.fecha?(a.hora<b.hora?-1:a.hora>b.hora?1:0):(a.fecha<b.fecha?-1:1)).forEach(r=>r.id=nextId(r.fecha))}
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const clp=n=>"$"+Math.round(n).toLocaleString("es-CL");
@@ -740,6 +750,7 @@ function seedYear(){
   P.forEach(p=>{if(!demo.has(p.key)&&!hoy.some(x=>x.p===p)&&p.hab&&rnd()<0.72+p.af){const mm=clampMin(p.pref+gauss()*13);if(mm<785)hoy.push({p,h:hm(mm)})}});
   hoy.sort((a,b)=>a.h<b.h?-1:1).forEach((x,i)=>R.push({n:i+1,fecha:TODAY,hora:x.h,key:x.p.key,valor:valorDe(x.p),cant:1,menu:menuDe(x.p,TODAY),origen:"Terminal",estado:"Válido"}));
   R.push({n:R.filter(r=>r.fecha===TODAY).length+1,fecha:TODAY,hora:"13:01",key:P[7].key,origen:"Terminal",estado:"Anulado",motivo:"Ticket emitido por error, persona no almorzó"});
+  asignarIds();
 }
 /* Misma semilla: cada reinicio entrega exactamente los mismos datos de ejemplo */
 function seedAll(){seed=7;seedPersonas();seedCierres();seedSolicitudes();seedYear()}
@@ -851,28 +862,29 @@ function checkRut(){
   result("ok",r.cant>1?`${r.cant} almuerzos registrados`:"Almuerzo registrado",`${r.cant>1?`Retire su ticket por ${r.cant} almuerzos (usted y sus invitados)`:"Retire su ticket"}. Menú ${r.menu.toLowerCase()}. ¡Buen provecho!`,p.nombre);
 }
 function emit(p,origen,motivo){const iv=invDe(p,TODAY);const a=ausDe(p,TODAY);if(a)AUS.splice(AUS.indexOf(a),1);
-  const r={n:nextN(),fecha:TODAY,hora:hhmm(now()),key:p.key,valor:valorDe(p),cant:iv?iv.cant:1,menu:menuDe(p,TODAY),origen,estado:"Válido",motivo};R.push(r);printTicket(r);return r}
+  const r={n:nextN(),id:nextId(TODAY),fecha:TODAY,hora:hhmm(now()),key:p.key,valor:valorDe(p),cant:iv?iv.cant:1,menu:menuDe(p,TODAY),origen,estado:"Válido",motivo};R.push(r);printTicket(r);return r}
 function ticketHTML(r,o={}){const p=o.persona||byKey(r.key);const f=D(r.fecha);
   const fecha=cap(f.toLocaleDateString("es-CL",{weekday:"long"}))+" "+String(f.getDate()).padStart(2,"0")+"-"+String(f.getMonth()+1).padStart(2,"0")+"-"+f.getFullYear();
   const F=(k,html)=>o.anot?`<div class="tk-f" data-n="${k}">${html}</div>`:html;
   return `<div class="ticket ${o.cls||""} ${o.anot?"anot":""}">
-   ${F(1,`<div class="c"><div class="tk-org">CONAF</div><div class="tk-fecha">${esc(fecha)}</div><div class="tk-ubic">${esc(cfg.ubic)}</div></div>`)}<hr>
+   ${F(1,`<div class="c"><div class="tk-org">CONAF</div><div class="tk-fecha">${esc(fecha)}</div><div class="tk-ubic">${cfg.ubic.split(/\s*·\s*/).map(esc).join("<br>")}</div></div>`)}<hr>
    ${o.copia?`<div class="c tk-copia">*** COPIA · reimpresa a las ${o.copiaHora||hhmm(now())} ***</div><hr>`:""}
    ${F(2,`<div class="c tk-svc">${r.cant||1} ${esc(cfg.servicio.toUpperCase())}${(r.cant||1)>1?"S":""}</div><div class="c tk-menu">Menú ${esc((r.menu||"Normal").toLowerCase())}</div>`)}
    ${F(3,`<div class="c tk-name">${esc(p.nombre.toLocaleUpperCase("es-CL"))}</div>`)}
    ${F(4,`<div class="c tk-hora">${r.hora}</div>`)}
+   ${F(5,`<div class="c tk-id">Ticket N° ${esc(r.id||"————-——————")}</div>`)}
   </div>`}
 /* Impresora: muestra siempre la propuesta de ticket con la persona elegida en el simulador */
-const LEY=`<ol class="tk-ley"><li>Encabezado</li><li>Almuerzos y menú</li><li>Nombre completo</li><li>Hora de emisión</li></ol>`;
-let tkPerson=null,tkHora="12:41",tkCopia=false,tkCant=1,tkMenu="Normal";
+const LEY=`<ol class="tk-ley"><li>Encabezado</li><li>Almuerzos y menú</li><li>Nombre completo</li><li>Hora de emisión</li><li>ID único</li></ol>`;
+let tkPerson=null,tkHora="12:41",tkCopia=false,tkCant=1,tkMenu="Normal",tkId="";
 function setLbl(t,estado){const l=$("#printerLbl");l.textContent=t;l.className="small tk-lbl "+(estado||"")}
 function setPrinter(lbl,estado){setLbl(lbl,estado);
-  const r={n:0,fecha:TODAY,hora:tkPerson?tkHora:"--:--",key:tkPerson?tkPerson.key:"",cant:tkCant,menu:tkMenu,origen:"Terminal"};
+  const r={n:0,id:tkId,fecha:TODAY,hora:tkPerson?tkHora:"--:--",key:tkPerson?tkPerson.key:"",cant:tkCant,menu:tkMenu,origen:"Terminal"};
   $("#ticketOut").innerHTML=ticketHTML(r,{persona:tkPerson||{nombre:"Persona no identificada"},anot:true,copia:tkCopia,copiaHora:hhmm(now()),cls:estado==="ok"?"in":estado==="no"?"tk-no":""})+LEY}
-function previewPersona(p,lbl){tkPerson=p;tkHora=hhmm(now());tkCopia=false;const iv=invDe(p,TODAY);tkCant=iv?iv.cant:1;tkMenu=menuDe(p,TODAY);setPrinter(lbl,"pend")}
-function noEmite(motivo,sinPersona){if(sinPersona){tkPerson=null;tkCopia=false}setPrinter("No se emite ticket · "+motivo,"no")}
-function printTicket(r,copia){tkPerson=byKey(r.key);tkHora=r.hora;tkCopia=!!copia;tkCant=r.cant||1;tkMenu=r.menu||"Normal";setPrinter(copia?"Copia reimpresa":"Ticket emitido","ok")}
-function previewTicket(){tkPerson=P[0];tkHora="12:41";tkCopia=false;tkCant=1;tkMenu="Normal";setPrinter("Vista previa · propuesta de ticket","")}
+function previewPersona(p,lbl){tkPerson=p;tkId="";tkHora=hhmm(now());tkCopia=false;const iv=invDe(p,TODAY);tkCant=iv?iv.cant:1;tkMenu=menuDe(p,TODAY);setPrinter(lbl,"pend")}
+function noEmite(motivo,sinPersona){tkId="";if(sinPersona){tkPerson=null;tkCopia=false}setPrinter("No se emite ticket · "+motivo,"no")}
+function printTicket(r,copia){tkPerson=byKey(r.key);tkId=r.id||"";tkHora=r.hora;tkCopia=!!copia;tkCant=r.cant||1;tkMenu=r.menu||"Normal";setPrinter(copia?"Copia reimpresa":"Ticket emitido","ok")}
+function previewTicket(){tkPerson=P[0];tkId="";tkHora="12:41";tkCopia=false;tkCant=1;tkMenu="Normal";setPrinter("Vista previa · propuesta de ticket","")}
 setInterval(()=>{const c=$("#clk");if(c)c.textContent=hhmm(now())},15000);
 
 /* Panel de simulación: digita el RUT de una persona de prueba en el teclado */
@@ -1055,7 +1067,7 @@ $("#estFecha").addEventListener("change",e=>{if(e.target.value){est.anc=e.target
 /* ---- Detalle de ingresos (solo Jefe Casino) ---- */
 let anulando=null;const det={desde:TODAY,hasta:TODAY,q:"",estado:""};
 function detRows(){const q=det.q.trim().toLowerCase(),qr=cleanRut(q);
-  return R.filter(r=>r.fecha>=det.desde&&r.fecha<=det.hasta&&(!det.estado||r.estado===det.estado)&&(!q||(p=>p.nombre.toLowerCase().includes(q)||p.unidad.toLowerCase().includes(q)||(qr.length>2&&p.key.includes(qr)))(byKey(r.key))))
+  return R.filter(r=>r.fecha>=det.desde&&r.fecha<=det.hasta&&(!det.estado||r.estado===det.estado)&&(!q||(r.id||"").includes(q)||(p=>p.nombre.toLowerCase().includes(q)||p.unidad.toLowerCase().includes(q)||(qr.length>2&&p.key.includes(qr)))(byKey(r.key))))
    .sort((a,b)=>a.fecha===b.fecha?(a.hora<b.hora?1:-1):(a.fecha<b.fecha?1:-1))}
 function renderDet(){
   $("#detDesde").value=det.desde;$("#detHasta").value=det.hasta;$("#detEstado").value=det.estado;
@@ -1065,7 +1077,7 @@ function renderDet(){
     const acc=r.estado!=="Válido"?`<span class="small muted">${esc(r.motivo||"")}</span>`:!hoy?'<span class="small muted">—</span>':anulando===i?
       `<form class="inline-confirm" data-i="${i}"><input id="anMot${i}" placeholder="Motivo de anulación" required><button class="btn small danger">Confirmar</button><button type="button" class="btn small" data-cancel>Cancelar</button></form>`:
       `<div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn small" data-copia="${i}">Reimprimir</button><button class="btn small danger" data-anular="${i}">Anular</button></div>`;
-    return `<tr class="${r.estado==="Anulado"?"anulado":""}"><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="mono">${String(r.n).padStart(4,"0")}</td><td class="num">${cantR(r)}</td><td>${esc(p.nombre)}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.unidad)}</td>
+    return `<tr class="${r.estado==="Anulado"?"anulado":""}"><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="num">${cantR(r)}</td><td>${esc(p.nombre)}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.unidad)}</td>
     <td>${r.origen==="Manual"?`<span class="pill warn" title="${esc(r.motivo||"")}">Manual</span>`:`<span class="pill neu">${esc(r.origen)}</span>`}</td>
     <td>${r.estado==="Válido"?'<span class="pill ok">Válido</span>':'<span class="pill bad">Anulado</span>'}</td><td>${acc}</td></tr>`}).join("")||`<tr><td colspan="10" class="muted">Sin registros para los filtros elegidos.</td></tr>`;
 }
@@ -1073,7 +1085,7 @@ function renderDet(){
 $("#detQ").addEventListener("input",e=>{det.q=e.target.value;renderDet()});
 $("#detEstado").addEventListener("change",e=>{det.estado=e.target.value;renderDet()});
 document.querySelectorAll("[data-rango]").forEach(b=>b.onclick=()=>{const r=b.dataset.rango;det.hasta=TODAY;det.desde=r==="hoy"?TODAY:periodo(r,TODAY).a;renderDet()});
-$("#detCopiar").onclick=()=>{const rows=detRows();copiar(["Fecha\tHora\tN° ticket\tAlmuerzos\tNombre completo\tRUT\tUnidad\tValidación\tEstado\tMotivo"].concat(rows.map(r=>{const p=byKey(r.key);return[fmtD(r.fecha),r.hora,r.n,cantR(r),p.nombre,fmtRut(r.key),p.unidad,r.origen,r.estado,r.motivo||""].join("\t")})).join("\n"),`${rows.length.toLocaleString("es-CL")} registros copiados. Péguelos en Excel.`)};
+$("#detCopiar").onclick=()=>{const rows=detRows();copiar(["ID ticket\tFecha\tHora\tAlmuerzos\tNombre completo\tRUT\tUnidad\tValidación\tEstado\tMotivo"].concat(rows.map(r=>{const p=byKey(r.key);return[r.id,fmtD(r.fecha),r.hora,cantR(r),p.nombre,fmtRut(r.key),p.unidad,r.origen,r.estado,r.motivo||""].join("\t")})).join("\n"),`${rows.length.toLocaleString("es-CL")} registros copiados. Péguelos en Excel.`)};
 $("#detBody").addEventListener("click",e=>{const b=e.target;
   if(b.dataset.copia){printTicket(R[+b.dataset.copia],true);toast("Copia enviada a la impresora del casino")}
   else if(b.dataset.anular){anulando=+b.dataset.anular;renderDet();$("#anMot"+anulando)?.focus()}
@@ -1084,8 +1096,8 @@ $("#manualForm").addEventListener("submit",e=>{e.preventDefault();const msg=$("#
   const p=byKey(cleanRut(v));if(!p){msg.innerHTML='<span style="color:var(--bad)">No está en la nómina de habilitados.</span>';return}
   if(!p.hab){msg.innerHTML='<span style="color:var(--bad)">Habilitación suspendida.</span>';return}
   if(cierreEn(TODAY,hhmm(now()))){msg.innerHTML='<span style="color:var(--warn)">El casino está cerrado en este horario; no se registran almuerzos.</span>';return}
-  const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");if(ya.length>=cfg.limite){msg.innerHTML=`<span style="color:var(--warn)">Ya tiene ticket N° ${ya[0].n} hoy.</span>`;return}
-  const r=emit(p,"Manual",$("#manMotivo").value);$("#manRut").value="";msg.innerHTML=`<span style="color:var(--ok)">Ticket N° ${r.n} emitido para ${esc(p.nombre)}.</span>`;det.desde=det.hasta=TODAY;renderDet()});
+  const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");if(ya.length>=cfg.limite){msg.innerHTML=`<span style="color:var(--warn)">Ya tiene el ticket N° ${ya[0].id} hoy.</span>`;return}
+  const r=emit(p,"Manual",$("#manMotivo").value);$("#manRut").value="";msg.innerHTML=`<span style="color:var(--ok)">Ticket N° ${r.id} emitido para ${esc(p.nombre)}.</span>`;det.desde=det.hasta=TODAY;renderDet()});
 $("#manRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)});
 
 /* ---- Reportes (Jefe Casino emite y envía; Jefa de Bienestar consulta y copia) ---- */
@@ -1106,6 +1118,10 @@ function renderRepo(){
   $("#repStats").innerHTML=[["Almuerzos del mes",sumCant(val).toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Personas habilitadas antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
     .map(([a,b,c],i)=>`<div class="stat ${i===2&&sinT.length?"stat-warn":""}"><span>${a}</span><b>${b}</b>${c?`<small>${c}</small>`:""}</div>`).join("");
   $("#repBody").innerHTML=rows.map(({p,n,monto,vals})=>{const t=tramoDe(p);return`<tr class="${t?"":"row-warn"}"><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.nombre)}</td><td>${esc(p.unidad)}</td><td class="num">${p.grado??"—"}</td><td>${t?`Tramo ${t}`:'<span class="pill warn">Sin tramo</span>'}</td><td class="num">${n}</td><td class="num">${!monto?"—":vals.length>1?"varios":clp(vals[0])}</td><td class="num"><b>${monto?clp(monto):"—"}</b></td></tr>`}).join("")||`<tr><td colspan="8" class="muted">Sin consumo en el mes.</td></tr>`;
+  const tks=val.slice().sort((a,b)=>a.id<b.id?-1:1);
+  $("#repTkSum").textContent=`Detalle por ticket · ${tks.length.toLocaleString("es-CL")} tickets válidos del mes`;
+  $("#repTkBody").innerHTML=tks.slice(0,300).map(r=>{const p=byKey(r.key);return`<tr><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.nombre)}</td><td class="num">${cantR(r)}</td><td class="num">${clp(montoR(r))}</td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Sin tickets en el mes.</td></tr>`;
+  $("#repTkNota").textContent=tks.length>300?"Se muestran los primeros 300; «Emisión reporte mensual» incluye todos los tickets.":"«Emisión reporte mensual» incluye este detalle a continuación del resumen por trabajador.";
   $("#repFoot").innerHTML=`<tr><td colspan="5"><b>Total</b></td><td class="num"><b>${sumCant(val).toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(total)}</b></td></tr>`;
   // por unidad del mes
   const u=new Map();val.forEach(r=>{const p=byKey(r.key);const o=u.get(p.unidad)||{n:0,s:new Set(),m:0};o.n+=cantR(r);o.m+=montoR(r);o.s.add(p.key);u.set(p.unidad,o)});
@@ -1120,13 +1136,13 @@ function renderRepo(){
 }
 $("#repMesSel").addEventListener("change",e=>{repMes=e.target.value;renderRepo()});
 $("#repEstado").addEventListener("click",e=>{const id=e.target.id;
-  if(id==="repCopiar"){const{rows}=mesRows(repMes);copiar(["RUT\tNombre completo\tUnidad\tGrado\tTramo\tAlmuerzos\tValor unitario\tMonto a descontar"].concat(rows.map(({p,n,monto,vals})=>[fmtRut(p.key),p.nombre,p.unidad,p.grado??"",tramoDe(p)||"SIN TRAMO",n,vals.length>1?"varios":(monto?vals[0]:""),monto||""].join("\t"))).join("\n"),`Reporte de ${MES[+repMes.slice(5)-1]} emitido: copiado para pegarlo en Excel.`)}
+  if(id==="repCopiar"){const{rows,val}=mesRows(repMes);copiar(["RUT\tNombre completo\tUnidad\tGrado\tTramo\tAlmuerzos\tValor unitario\tMonto a descontar"].concat(rows.map(({p,n,monto,vals})=>[fmtRut(p.key),p.nombre,p.unidad,p.grado??"",tramoDe(p)||"SIN TRAMO",n,vals.length>1?"varios":(monto?vals[0]:""),monto||""].join("\t")),["","DETALLE POR TICKET","ID ticket\tFecha\tHora\tRUT\tNombre completo\tAlmuerzos\tMonto"],val.slice().sort((a,b)=>a.id<b.id?-1:1).map(r=>[r.id,fmtD(r.fecha),r.hora,fmtRut(r.key),byKey(r.key).nombre,cantR(r),montoR(r)].join("\t"))).join("\n"),`Reporte de ${MES[+repMes.slice(5)-1]} emitido: copiado para pegarlo en Excel.`)}
 });
 $("#uniCopiar").onclick=()=>copiar(["Unidad\tAlmuerzos\tPersonas\tMonto"].concat([...$("#uniBody").querySelectorAll("tr")].map(tr=>[...tr.children].map(td=>td.textContent).join("\t"))).join("\n"));
 $("#anuCopiar").onclick=()=>copiar(["Mes\tAlmuerzos\tPersonas\tMonto"].concat([...$("#anuBody").querySelectorAll("tr")].map(tr=>[...tr.children].map(td=>td.textContent).join("\t"))).join("\n"));
 
 /* ---- Propuesta de ticket ---- */
-function renderTk(){const r={n:6,fecha:TODAY,hora:"12:41",key:P[0].key,cant:2,menu:"Normal",origen:"Terminal"};
+function renderTk(){const r={n:6,id:`${YEAR}-004812`,fecha:TODAY,hora:"12:41",key:P[0].key,cant:2,menu:"Normal",origen:"Terminal"};
   $("#tkMuestra").innerHTML=ticketHTML(r,{anot:true,copia:$("#tkCopia").checked,copiaHora:"13:20"})}
 $("#tkCopia").addEventListener("change",renderTk);
 
@@ -1187,7 +1203,7 @@ function renderMi(){
   // asistencias
   const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=anio.filter(r=>r.fecha.startsWith(k));return{m,v}}).reverse();
   $("#miMeses").innerHTML=meses.map(({m,v})=>`<tr><td>${cap(MES[m])}</td><td class="num">${new Set(v.map(r=>r.fecha)).size}</td><td class="num">${sumCant(v)}</td><td class="num">${clp(sumaM(v))}</td></tr>`).join("");
-  $("#miDet").innerHTML=mes.slice().reverse().map(r=>`<tr><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="num">${cantR(r)}</td><td>${esc(r.menu||menuDe(p,r.fecha))}</td><td class="num">${clp(montoR(r))}</td></tr>`).join("")||'<tr><td colspan="5" class="muted">Aún no registra almuerzos este mes.</td></tr>';
+  $("#miDet").innerHTML=mes.slice().sort((a,b)=>a.id<b.id?1:-1).map(r=>`<tr><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="num">${cantR(r)}</td><td>${esc(r.menu||menuDe(p,r.fecha))}</td><td class="num">${clp(montoR(r))}</td></tr>`).join("")||'<tr><td colspan="6" class="muted">Aún no registra almuerzos este mes.</td></tr>';
 }
 $("#miMenu").addEventListener("click",e=>{const b=e.target.closest("[data-menu]");if(!b||b.disabled)return;const[ym,m]=b.dataset.menu.split("|");MENU[YO().key+"|"+ym]=m;renderMi();toast(`Menú ${m.toLowerCase()} registrado para ${MES[+ym.slice(5)-1]}`)});
 function validarDia(f,msgSel){const m=$(msgSel);

@@ -29,7 +29,7 @@ ya registrado, habilitación suspendida, RUT que no está en la nómina y RUT ma
 hora está fijada en 13:05 y se cambia en Configuración. La validación con RUT y PIN queda
 para una versión futura.
 
-**Ticket:** sigla CONAF, fecha y lugar; cantidad de almuerzos y menú; nombre completo en mayúsculas y hora.
+**Ticket:** sigla CONAF, fecha y lugar; cantidad de almuerzos y menú; nombre completo en mayúsculas, hora e ID único (año y correlativo anual, por ejemplo 2026-004812). El ID se registra en el detalle de ingresos del Jefe Casino, en «Mi casino» del funcionario y en el detalle por ticket del reporte mensual; el detalle de ingresos permite buscar por ID.
 
 **Mi casino (funcionario):** el menú de cada mes se elige hasta el día 25 del mes anterior;
 los avisos de ausencia y los almuerzos con invitados (2 a 5 almuerzos a su nombre) se
