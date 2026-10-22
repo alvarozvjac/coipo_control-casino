@@ -45,6 +45,10 @@ invitados se descuentan al funcionario según su tramo.
 avisadas, menú normal, hipocalórico y vegano, almuerzos de invitados, raciones planificadas y
 consumo habitual como referencia.
 
+**Avisos de ausencia de hoy (Jefe Casino, en Detalle de ingresos):** si una persona avisó por
+error que no almorzaría, el Jefe Casino anula su aviso y la terminal vuelve a aceptar su RUT.
+La anulación queda registrada con la hora y quién la hizo.
+
 **Menú semanal (Jefe Casino):** cada lunes publica la minuta de la semana (entrada, plato
 normal, hipocalórico y vegano, y postre), que reemplaza el envío de la
 minuta por correo electrónico. Los cambios quedan como borrador hasta publicarlos. La maqueta

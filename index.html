@@ -350,6 +350,11 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <span id="manMsg" class="small"></span>
     </form>
   </div>
+  <div class="panel" style="display:grid;gap:10px">
+    <div class="row spread"><h3>Avisos de ausencia de hoy</h3><span class="muted small">Si una persona avisó por error que no almorzaría, anule su aviso para que pueda registrar su RUT en la terminal.</span></div>
+    <ul class="avisos" id="ausHoy"></ul>
+    <span id="ausHoyMsg" class="small"></span>
+  </div>
   <div class="panel row" style="align-items:end">
     <label class="f">Desde<input type="date" id="detDesde"></label>
     <label class="f">Hasta<input type="date" id="detHasta"></label>
@@ -571,6 +576,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <tr><td>Descuento por planilla</td><td>Emite el reporte mensual</td><td>Emite el reporte mensual</td></tr>
     <tr><td>Consumo por unidad y resumen anual</td><td>Sí</td><td>Sí</td></tr>
     <tr><td>Terminal, reimpresión, anulación y registro manual</td><td>Sí</td><td>No</td></tr>
+    <tr><td>Anulación el mismo día de un aviso de ausencia hecho por error</td><td>Sí</td><td>No</td></tr>
     <tr><td>Registro y anulación de cierres del casino</td><td>Sí, con alerta a la Jefa de Bienestar</td><td>Sí, con alerta al Jefe Casino</td></tr>
     <tr><td>Nómina de habilitados y configuración</td><td>Sí</td><td>No</td></tr>
     <tr><td>Planificación de raciones (menús, ausencias e invitados)</td><td>Sí</td><td>No</td></tr>
@@ -717,7 +723,7 @@ const descC=c=>`${fechasC(c)}, ${horarioC(c)} · ${c.motivo}${c.detalle?` (${c.d
 /* registros: {n, fecha, hora, key, origen, estado, motivo} — año en curso hasta hoy */
 /* ---- Solicitudes del funcionario: menú del mes, ausencias e invitados ---- */
 const MENUS=["Normal","Hipocalórico","Vegano"];
-const MENU={},AUS=[],INV=[];
+const MENU={},AUS=[],INV=[],AUS_ANUL=[];
 const hkey=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
 const ymOf=f=>f.slice(0,7);
 const ymNext=ym=>{const[y,m]=ym.split("-").map(Number);return m===12?`${y+1}-01`:`${y}-${pad(m+1)}`};
@@ -811,7 +817,7 @@ function seedYear(){
   asignarIds();
 }
 /* Misma semilla: cada reinicio entrega exactamente los mismos datos de ejemplo */
-function seedAll(){seed=7;seedPersonas();seedCierres();seedSolicitudes();seedYear();seedMenuSem()}
+function seedAll(){seed=7;AUS_ANUL.length=0;seedPersonas();seedCierres();seedSolicitudes();seedYear();seedMenuSem()}
 seedAll();
 const todays=()=>R.filter(r=>r.fecha===TODAY);
 const nextN=()=>todays().length+1;
@@ -1126,7 +1132,15 @@ let anulando=null;const det={desde:TODAY,hasta:TODAY,q:"",estado:""};
 function detRows(){const q=det.q.trim().toLowerCase(),qr=cleanRut(q);
   return R.filter(r=>r.fecha>=det.desde&&r.fecha<=det.hasta&&(!det.estado||r.estado===det.estado)&&(!q||(r.id||"").includes(q)||(p=>p.nombre.toLowerCase().includes(q)||p.unidad.toLowerCase().includes(q)||(qr.length>2&&p.key.includes(qr)))(byKey(r.key))))
    .sort((a,b)=>a.fecha===b.fecha?(a.hora<b.hora?1:-1):(a.fecha<b.fecha?1:-1))}
-function renderDet(){
+let anulAus=null;
+function renderAusHoy(){const L=AUS.filter(x=>x.fecha===TODAY).map(x=>({x,p:byKey(x.key)})).sort((a,b)=>a.p.nombre.localeCompare(b.p.nombre,"es"));
+  $("#ausHoy").innerHTML=L.map(({x,p})=>`<li><span><b>${esc(p.nombre)}</b> <span class="muted">· ${fmtRut(p.key)} · ${esc(p.unidad)} · avisado el ${esc(x.creado)}</span></span>${anulAus===p.key?
+    `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn small danger" data-aus-ok="${p.key}">Confirmar anulación</button><button class="btn small" data-aus-cancel>Cancelar</button></span>`:
+    `<button class="btn small" data-aus-anular="${p.key}">Anular aviso</button>`}</li>`).join("")+
+    AUS_ANUL.filter(a=>a.fecha===TODAY).map(a=>{const p=byKey(a.key);return`<li class="muted"><span>${esc(p.nombre)} · aviso anulado a las ${a.hora} por ${esc(a.por)}</span></li>`}).join("")
+    ||'<li class="muted">Nadie avisó que no almorzará hoy.</li>'}
+function anularAus(key){const i=AUS.findIndex(x=>x.key===key&&x.fecha===TODAY);if(i<0)return false;AUS.splice(i,1);AUS_ANUL.push({key,fecha:TODAY,hora:hhmm(now()),por:USR.casino.n});return true}
+function renderDet(){renderAusHoy();
   $("#detDesde").value=det.desde;$("#detHasta").value=det.hasta;$("#detEstado").value=det.estado;
   const rows=detRows();const shown=rows.slice(0,300);const val=rows.filter(r=>r.estado==="Válido").length;
   $("#detCount").textContent=`${rows.length.toLocaleString("es-CL")} registro${rows.length===1?"":"s"} · ${val.toLocaleString("es-CL")} válido${val===1?"":"s"}${rows.length>300?" · se muestran los 300 más recientes; «Copiar detalle» incluye todos":""}`;
@@ -1152,11 +1166,17 @@ $("#manualForm").addEventListener("submit",e=>{e.preventDefault();const msg=$("#
   if(!rutOk(v)){msg.innerHTML='<span style="color:var(--bad)">RUT no válido.</span>';return}
   const p=byKey(cleanRut(v));if(!p){msg.innerHTML='<span style="color:var(--bad)">No está en la nómina de habilitados.</span>';return}
   if(!p.hab){msg.innerHTML='<span style="color:var(--bad)">Habilitación suspendida.</span>';return}
-  if(ausDe(p,TODAY)){msg.innerHTML='<span style="color:var(--bad)">No disponible hoy: informó en «Mi casino» que no almorzará.</span>';return}
+  if(ausDe(p,TODAY)){msg.innerHTML=`<span style="color:var(--bad)">No disponible hoy: informó en «Mi casino» que no almorzará.</span> <button type="button" class="btn small" data-man-anular="${p.key}">Anular aviso</button>`;return}
   if(cierreEn(TODAY,hhmm(now()))){msg.innerHTML='<span style="color:var(--warn)">El casino está cerrado en este horario; no se registran almuerzos.</span>';return}
   const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");if(ya.length>=cfg.limite){msg.innerHTML=`<span style="color:var(--warn)">Ya tiene el ticket N° ${ya[0].id} hoy.</span>`;return}
   const r=emit(p,"Manual",$("#manMotivo").value);$("#manRut").value="";msg.innerHTML=`<span style="color:var(--ok)">Ticket N° ${r.id} emitido para ${esc(p.nombre)}.</span>`;det.desde=det.hasta=TODAY;renderDet()});
 $("#manRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)});
+$("#ausHoy").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.ausAnular){anulAus=b.dataset.ausAnular;renderAusHoy()}
+  else if(b.hasAttribute("data-aus-cancel")){anulAus=null;renderAusHoy()}
+  else if(b.dataset.ausOk){const p=byKey(b.dataset.ausOk);anulAus=null;if(anularAus(p.key)){$("#ausHoyMsg").innerHTML=`<span style="color:var(--ok)">Aviso de ${esc(p.nombre)} anulado. Ya puede registrar su RUT en la terminal.</span>`;$("#manMsg").textContent="";renderAusHoy();renderDemo()}}});
+$("#manMsg").addEventListener("click",e=>{const b=e.target.closest("[data-man-anular]");if(!b)return;const p=byKey(b.dataset.manAnular);
+  if(anularAus(p.key)){$("#manMsg").innerHTML=`<span style="color:var(--ok)">Aviso anulado. Presione «Registrar y emitir ticket» para emitirlo.</span>`;renderAusHoy();renderDemo()}});
 
 /* ---- Reportes (Jefe Casino emite y envía; Jefa de Bienestar consulta y copia) ---- */
 let repMes=`${YEAR}-${pad(today.getMonth())}`;if(today.getMonth()===0)repMes=`${YEAR}-01`;
