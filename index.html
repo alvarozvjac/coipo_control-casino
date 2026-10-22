@@ -258,6 +258,10 @@ select.sel-warn{border-color:var(--warn);color:var(--warn);font-weight:700}
 .menu-mes{display:grid;gap:6px}.menu-mes .seg button:disabled{cursor:not-allowed;opacity:.6}
 ul.avisos{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 ul.avisos li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;flex-wrap:wrap}
+.grid-mi{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+table.msem td:first-child{white-space:nowrap}table.msem{min-width:860px}table.msem td,table.msem th{vertical-align:top}table.msem td{font-size:13.5px;line-height:1.4}
+table.msem th.mio{color:var(--accent)}table.msem td.mio{background:var(--accent-soft);font-weight:600}table.msem tr.hoy td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+table.msem.edit textarea{width:100%;min-width:130px;font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;resize:vertical;background:var(--surface);color:var(--ink)}
 table.plan tbody tr{cursor:pointer}table.plan tbody tr:hover td{background:var(--sunken)}table.plan tr.sel td{background:var(--accent-soft)}
 dl.cfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:0}
 .cmp td:first-child{font-weight:700;white-space:nowrap}
@@ -406,12 +410,12 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   <div><h2>Reportes</h2><p class="lead" id="repLead"></p></div>
   <div class="panel" style="display:grid;gap:14px">
     <div class="row spread" style="align-items:end">
-      <div><h3>Descuento por planilla</h3><p class="small muted" style="margin:2px 0 0">Almuerzos válidos del mes por trabajador, para Remuneraciones.</p></div>
+      <div><h3>Descuento por planilla</h3><p class="small muted" style="margin:2px 0 0">Por trabajador, para Remuneraciones: almuerzos consumidos y días sin aviso ni asistencia, que también se descuentan.</p></div>
       <label class="f">Mes<select id="repMesSel"></select></label>
     </div>
     <div class="row spread" id="repEstado"></div>
     <div class="stats" id="repStats"></div>
-    <div class="tablebox"><table><thead><tr><th>RUT</th><th>Nombre completo</th><th>Unidad</th><th class="num">Grado</th><th>Tramo</th><th class="num">Almuerzos</th><th class="num">Valor unitario</th><th class="num">Monto a descontar</th></tr></thead><tbody id="repBody"></tbody><tfoot id="repFoot"></tfoot></table></div>
+    <div class="tablebox"><table><thead><tr><th>RUT</th><th>Nombre completo</th><th>Unidad</th><th class="num">Grado</th><th>Tramo</th><th class="num">Consumidos</th><th class="num">Sin aviso</th><th class="num">Valor unitario</th><th class="num">Monto a descontar</th></tr></thead><tbody id="repBody"></tbody><tfoot id="repFoot"></tfoot></table></div>
     <details class="rep-tk"><summary id="repTkSum">Detalle por ticket</summary>
       <div class="tablebox" style="margin-top:10px"><table><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th>RUT</th><th>Nombre completo</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="repTkBody"></tbody></table></div>
       <p class="small muted" style="margin:6px 0 0" id="repTkNota"></p></details>
@@ -442,10 +446,10 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <label class="f">Hora de término<input id="cFin" type="time" value="15:00"></label>
       <label class="f">Límite por persona y día<input id="cLimite" type="number" min="1" max="3" value="1"></label>
       <label class="f">Plazo del menú: día del mes anterior<input id="cMenuDia" type="number" min="1" max="31" value="25"></label>
-      <label class="f">Avisos con días hábiles de anticipación<input id="cAviso" type="number" min="0" max="10" value="1"></label>
+      <label class="f">Plazo de avisos e invitaciones<input value="Hasta las 23:59 del día anterior" disabled></label>
       <label class="f">Hora simulada (solo maqueta)<input id="cSim" type="time" value="13:05"></label>
     </dl>
-    <p class="small muted" style="margin:14px 0 0">Los cambios se aplican de inmediato en la terminal. Los plazos del menú y de los avisos son valores de ejemplo: los define Bienestar. La hora simulada permite probar la regla de horario sin esperar al mediodía.</p>
+    <p class="small muted" style="margin:14px 0 0">Los cambios se aplican de inmediato en la terminal. El plazo del menú mensual es un valor de ejemplo que define Bienestar; los avisos de ausencia e invitaciones se aceptan hasta las 23:59 del día anterior. La hora simulada permite probar la regla de horario sin esperar al mediodía.</p>
   </div>
   <div class="panel" style="display:grid;gap:12px">
     <div><h3>Valor del almuerzo por tramo</h3><p class="small muted" style="margin:2px 0 0">El tramo se define por el grado del funcionario. Quienes no tienen grado (honorarios, Código del Trabajo) reciben el tramo que asigna el Jefe Casino en «Personas habilitadas».</p></div>
@@ -492,21 +496,26 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 <section class="view" id="v-micasino" data-label="Mi casino" hidden>
   <div><h2>Mi casino</h2><p class="lead" id="miLead"></p></div>
   <div class="stats" id="miKpi"></div>
+  <div class="panel" style="display:grid;gap:12px">
+    <div class="row spread" style="align-items:end"><div><h3>Menú de la semana</h3><p class="small muted" style="margin:2px 0 0" id="miSemLead"></p></div>
+      <div class="row" style="gap:6px"><button class="btn small" id="miSemPrev" aria-label="Semana anterior">‹</button><span class="small" id="miSemLbl"></span><button class="btn small" id="miSemNext" aria-label="Semana siguiente">›</button></div></div>
+    <div class="tablebox" id="miSemBox"></div>
+  </div>
   <div class="grid2">
     <div class="panel" style="display:grid;gap:12px;align-content:start">
       <div><h3>Menú del mes</h3><p class="small muted" style="margin:2px 0 0">Elija el menú que solicitará durante cada mes.</p></div>
       <div id="miMenu" style="display:grid;gap:12px"></div>
     </div>
     <div class="panel" style="display:grid;gap:12px;align-content:start">
-      <div><h3>Días en que no almorzaré</h3><p class="small muted" style="margin:2px 0 0">Avisar ayuda al casino a preparar las raciones justas.</p></div>
-      <form id="miAusForm" class="row" style="align-items:end"><label class="f">Día<input type="date" id="miAusF"></label><button class="btn primary" type="submit">Registrar aviso</button></form>
+      <div><h3>Días en que no almorzaré</h3><p class="small muted" style="margin:2px 0 0">Usted es responsable de avisar los días en que no usará el casino, hasta las 23:59 del día anterior. <b>Si no avisa y no asiste, el almuerzo se descuenta igual.</b></p></div>
+      <form id="miAusForm" novalidate class="row" style="align-items:end"><label class="f">Desde<input type="date" id="miAusF"></label><label class="f">Hasta (opcional)<input type="date" id="miAusH"></label><button class="btn primary" type="submit">Registrar aviso</button></form>
       <span id="miAusMsg" class="small"></span>
       <ul class="avisos" id="miAusList"></ul>
     </div>
   </div>
   <div class="panel" style="display:grid;gap:12px">
     <div><h3>Almuerzo con invitados</h3><p class="small muted" style="margin:2px 0 0">Indique el día y cuántos almuerzos necesitará a su nombre, incluido el suyo.</p></div>
-    <form id="miInvForm" class="row" style="align-items:end">
+    <form id="miInvForm" novalidate class="row" style="align-items:end">
       <label class="f">Día<input type="date" id="miInvF"></label>
       <label class="f">Almuerzos a mi nombre<select id="miInvC"><option value="2">2 almuerzos</option><option value="3">3 almuerzos</option><option value="4">4 almuerzos</option><option value="5">5 almuerzos</option></select></label>
       <button class="btn primary" type="submit">Registrar invitación</button>
@@ -515,23 +524,33 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <p class="small muted" id="miInvNota" style="margin:0"></p>
     <ul class="avisos" id="miInvList"></ul>
   </div>
-  <div class="grid2">
-    <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Mis asistencias por mes</h3>
-      <div class="tablebox"><table><thead><tr><th>Mes</th><th class="num">Días</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="miMeses"></tbody></table></div></div>
-    <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Detalle de este mes</h3>
+  <div class="grid-mi">
+    <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Mis asistencias y descuentos por mes</h3>
+      <div class="tablebox"><table><thead><tr><th>Mes</th><th class="num">Días</th><th class="num">Almuerzos</th><th class="num">Sin aviso</th><th class="num">Monto</th></tr></thead><tbody id="miMeses"></tbody></table></div></div>
+    <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Detalle de este mes</h3><p class="small muted" style="margin:-4px 0 0">Incluye los días sin aviso ni asistencia, que se descuentan igual.</p>
       <div class="tablebox"><table><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th class="num">Almuerzos</th><th>Menú</th><th class="num">Monto</th></tr></thead><tbody id="miDet"></tbody></table></div></div>
   </div>
 </section>
 
 <!-- PLANIFICACION (Jefe Casino) -->
+<section class="view" id="v-menusem" data-label="Menú semanal" hidden>
+  <div><h2>Menú semanal</h2><p class="lead">Cada lunes, publique el menú de la semana: entrada, plato normal, hipocalórico y vegano, y postre. Los funcionarios lo ven en «Mi casino».</p></div>
+  <div class="panel row spread" style="align-items:center">
+    <div class="row" style="gap:6px;align-items:center"><button class="btn small" id="msPrev" aria-label="Semana anterior">‹</button><b id="msLbl"></b><button class="btn small" id="msNext" aria-label="Semana siguiente">›</button></div>
+    <div class="row" style="gap:8px;align-items:center"><span id="msEstado"></span><button class="btn primary" id="msPub">Publicar menú de la semana</button></div>
+  </div>
+  <span id="msMsg" class="small"></span>
+  <div class="tablebox"><table class="msem edit"><thead><tr><th>Día</th><th>Entrada</th><th>Plato normal</th><th>Plato hipocalórico</th><th>Plato vegano</th><th>Postre</th></tr></thead><tbody id="msBody"></tbody></table></div>
+  <p class="small muted" style="margin:0">Los cambios quedan como borrador hasta que presione «Publicar». En la maqueta, la semana actual ya está publicada y la próxima está a medio preparar.</p>
+</section>
 <section class="view" id="v-plan" data-label="Planificación" hidden>
-  <div><h2>Planificación de raciones</h2><p class="lead">Próximos 10 días hábiles, según el consumo habitual de cada día de la semana, el menú elegido por los funcionarios, los avisos de ausencia y los invitados. Elija un día para ver el detalle.</p></div>
-  <div class="tablebox"><table class="plan"><thead><tr><th>Día</th><th class="num">Menú normal</th><th class="num">Menú hipocalórico</th><th class="num">Ausencias avisadas</th><th class="num">Almuerzos de invitados</th><th class="num">Raciones estimadas</th></tr></thead><tbody id="planBody"></tbody></table></div>
+  <div><h2>Planificación de raciones</h2><p class="lead">Próximos 10 días hábiles. Como cada funcionario debe avisar cuando no almorzará, las raciones planificadas son las personas habilitadas sin aviso de ausencia, según su menú, más los almuerzos de invitados. Elija un día para ver el detalle.</p></div>
+  <div class="tablebox"><table class="plan"><thead><tr><th>Día</th><th class="num">Habilitados</th><th class="num">Ausencias avisadas</th><th class="num">Menú normal</th><th class="num">Menú hipocalórico</th><th class="num">Almuerzos de invitados</th><th class="num">Raciones planificadas</th><th class="num">Consumo habitual</th></tr></thead><tbody id="planBody"></tbody></table></div>
   <div class="grid2">
     <div class="panel"><h3>No almorzarán · <span id="planDiaT"></span></h3><ul class="tight" id="planAus"></ul></div>
     <div class="panel"><h3>Almuerzos con invitados</h3><ul class="tight" id="planInv"></ul></div>
   </div>
-  <p class="small muted" style="margin:0">La estimación parte del promedio de los últimos 8 días iguales de la semana, descuenta las ausencias avisadas y suma los almuerzos adicionales de invitados (que se cuentan como menú normal). Es una referencia, no una reserva.</p>
+  <p class="small muted" style="margin:0">Los almuerzos adicionales de invitados se cuentan como menú normal. «Consumo habitual» es el promedio de los últimos 8 días iguales de la semana, solo como referencia. Los avisos se cierran a las 23:59 del día anterior, por lo que la cifra del día siguiente queda firme a medianoche.</p>
 </section>
 
 <!-- ALCANCE -->
@@ -553,12 +572,13 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   <div class="tablebox"><table class="cmp"><thead><tr><th>Función</th><th>Jefe Casino</th><th>Jefa de Bienestar</th></tr></thead><tbody>
     <tr><td>Estadísticas diaria, semanal, mensual y anual</td><td>Sí</td><td>Sí, cifras agregadas</td></tr>
     <tr><td>Detalle de ingresos (nombre, RUT, hora)</td><td>Sí</td><td>No</td></tr>
-    <tr><td>Descuento por planilla</td><td>Emite el reporte mensual</td><td>Emite el reporte mensual</td></tr>
+    <tr><td>Descuento por planilla (consumidos y días sin aviso)</td><td>Emite el reporte mensual</td><td>Emite el reporte mensual</td></tr>
     <tr><td>Consumo por unidad y resumen anual</td><td>Sí</td><td>Sí</td></tr>
     <tr><td>Terminal, reimpresión, anulación y registro manual</td><td>Sí</td><td>No</td></tr>
     <tr><td>Registro y anulación de cierres del casino</td><td>Sí, con alerta a la Jefa de Bienestar</td><td>Sí, con alerta al Jefe Casino</td></tr>
     <tr><td>Nómina de habilitados y configuración</td><td>Sí</td><td>No</td></tr>
     <tr><td>Planificación de raciones (menús, ausencias e invitados)</td><td>Sí</td><td>No</td></tr>
+    <tr><td>Publicación del menú semanal (cada lunes)</td><td>Sí</td><td>No</td></tr>
   </tbody></table></div></div>
   <div class="grid2">
     <div class="panel"><h3>Puntos por validar con Bienestar</h3><ul class="tight">
@@ -569,7 +589,9 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <li>Qué tecla del teclado numérico representa la K del RUT (la maqueta usa *).</li>
       <li>Cómo verificará el personal del casino que el nombre del ticket corresponde a quien lo entrega.</li>
       <li>Formato que requiere Remuneraciones para el descuento.</li>
-      <li>Plazos para elegir el menú del mes y para avisar ausencias e invitados (la maqueta usa el día 25 y 1 día hábil).</li>
+      <li>Plazo para elegir el menú del mes (la maqueta usa el día 25 del mes anterior). Los avisos de ausencia e invitaciones se aceptan hasta las 23:59 del día anterior.</li>
+      <li>Regla de cobro: se descuenta el almuerzo de quien no avisó su ausencia y no asistió. Confirmar con Bienestar y Fiscalía cómo se comunica a los funcionarios y si se admiten justificaciones (licencia médica, comisión de servicio).</li>
+      <li>Si el plato vegano será también una opción de menú mensual para elegir, además de normal e hipocalórico.</li>
       <li>Cómo ingresará el funcionario a «Mi casino» (por ejemplo, RUT y código al correo, como en el sistema de reservas).</li>
       <li>Deber de reserva del Jefe Casino sobre los datos de los comensales y registro de quién consulta el detalle.</li>
     </ul></div>
@@ -714,7 +736,38 @@ const sumCant=rows=>rows.reduce((a,r)=>a+cantR(r),0);
 /* Plazos (valores de ejemplo; los define Bienestar) */
 const menuLimite=ym=>{const pv=ymPrev(ym);const last=new Date(+pv.slice(0,4),+pv.slice(5),0).getDate();return `${pv}-${pad(Math.min(cfg.menuDia,last))}`};
 const menuEditable=ym=>TODAY<=menuLimite(ym);
-const avisoMin=()=>cfg.avisoDias>0?habilesDesde(TODAY,cfg.avisoDias):TODAY;
+/* Avisos e invitaciones: hasta las 23:59 del día anterior (el primer día posible es mañana) */
+const sumDias=(f,n)=>{const d=D(f);d.setDate(d.getDate()+n);return ymd(d)};
+const avisoMin=()=>sumDias(TODAY,1);
+const AYER=()=>sumDias(TODAY,-1);
+/* Menú semanal que publica el Jefe Casino cada lunes: entrada, plato normal, hipocalórico y vegano, y postre */
+const MCAMPOS=[["entrada","Entrada"],["normal","Plato normal"],["hipo","Plato hipocalórico"],["vegano","Plato vegano"],["postre","Postre"]];
+const MSEM={};
+const lunesDe=f=>{const d=D(f);d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d)};
+const diasSem=l=>[0,1,2,3,4].map(i=>sumDias(l,i));
+function semVacia(l){const o={};diasSem(l).forEach(f=>o[f]={entrada:"",normal:"",hipo:"",vegano:"",postre:""});return o}
+function seedMenuSem(){for(const k in MSEM)delete MSEM[k];
+  const E=["Ensalada chilena","Crema de zapallo","Ensalada de repollo y zanahoria","Consomé de ave","Ensalada de betarraga","Crema de espárragos","Ensalada de lechuga y tomate","Sopa de verduras"];
+  const N=["Pastel de choclo","Cazuela de vacuno","Pollo arvejado con arroz","Charquicán con huevo frito","Carbonada","Tallarines con salsa boloñesa","Pescado frito con puré","Porotos granados","Pollo asado con papas doradas","Lomo saltado"];
+  const H=["Pechuga de pollo a la plancha con verduras salteadas","Merluza al vapor con ensalada mixta","Pavo al jugo con quinoa","Reineta a la plancha con arroz integral","Ensalada de atún con garbanzos","Pollo al horno con zapallo italiano"];
+  const V=["Lentejas con arroz","Guiso de garbanzos con verduras","Hamburguesa de porotos con ensalada","Charquicán de verduras","Tallarines con salsa de tomate y albahaca","Quinoa salteada con verduras"];
+  const Po=["Fruta de la estación","Jalea de frambuesa","Ensalada de frutas","Mote con huesillo","Sémola con salsa de frambuesa","Manzana asada"];
+  const l0=lunesDe(TODAY);
+  [-7,0,7].forEach((off,w)=>{const l=sumDias(l0,off);const dias=semVacia(l);const ks=Object.keys(dias);
+    ks.forEach((f,i)=>{if(off===7&&i>2)return;const j=w*5+i;dias[f]={entrada:E[j%E.length],normal:N[j%N.length],hipo:H[j%H.length],vegano:V[j%V.length],postre:Po[j%Po.length]}});
+    MSEM[l]={borrador:JSON.parse(JSON.stringify(dias)),pub:off<=0?{dias:JSON.parse(JSON.stringify(dias)),fecha:l,hora:off===0?"08:42":"08:35"}:null}})}
+/* Cobro: se descuenta cada almuerzo consumido (ticket válido) y, en los días hábiles ya transcurridos con casino abierto,
+   el almuerzo de cada persona habilitada que no avisó su ausencia ni registró ingreso («sin aviso»). */
+function cargos(a,b,key){const out=[];const tk=new Set();
+  R.forEach(r=>{if(r.estado!=="Válido")return;tk.add(r.key+"|"+r.fecha);
+    if(r.fecha>=a&&r.fecha<=b&&(!key||r.key===key))out.push({tipo:"Ticket",fecha:r.fecha,hora:r.hora,id:r.id,key:r.key,cant:cantR(r),monto:montoR(r),menu:r.menu})});
+  const fin=b<AYER()?b:AYER();
+  if(a<=fin){const aus=new Set(AUS.map(x=>x.key+"|"+x.fecha));const ps=P.filter(p=>p.hab&&(!key||p.key===key));
+    for(const d=D(a);ymd(d)<=fin;d.setDate(d.getDate()+1)){if(!habil(d))continue;const f=ymd(d);if(diaCerrado(f))continue;
+      ps.forEach(p=>{const k=p.key+"|"+f;if(tk.has(k)||aus.has(k))return;const iv=invDe(p,f);const c=iv?iv.cant:1;
+        out.push({tipo:"Sin aviso",fecha:f,hora:"—",id:"",key:p.key,cant:c,monto:(valorDe(p)||0)*c,menu:menuDe(p,f)})})}}
+  return out}
+const finMes=ym=>{const[y,m]=ym.split("-").map(Number);return `${ym}-${pad(new Date(y,m,0).getDate())}`};
 function proxHabilesAntes(f){const d=D(f);do{d.setDate(d.getDate()-1)}while(!habil(d));return ymd(d)}
 function proxHabiles(n){const out=[];const d=D(TODAY);while(out.length<n){d.setDate(d.getDate()+1);if(habil(d))out.push(ymd(d))}return out}
 function seedSolicitudes(){
@@ -726,6 +779,8 @@ function seedSolicitudes(){
   const dias=proxHabiles(10);const cre=`${fmtD(TODAY)} 09:12`;
   P.forEach((p,i)=>{if(i<12&&i!==4)return;dias.forEach(f=>{const h=hkey(p.key+f);
     if(h%23===0)AUS.push({key:p.key,fecha:f,creado:cre});else if(h%61===0)INV.push({key:p.key,fecha:f,cant:2+h%2,creado:cre})})});
+  P.forEach((p,i)=>{if(i<12||!p.hab)return;dias.forEach((f,j)=>{if(AUS.some(x=>x.key===p.key&&x.fecha===f)||INV.some(x=>x.key===p.key&&x.fecha===f))return;
+    if(hkey(p.key+f+"f")%100<(j<2?24:j<5?16:9))AUS.push({key:p.key,fecha:f,creado:cre})})});
   AUS.push({key:P[4].key,fecha:dias[3],creado:cre});INV.push({key:P[4].key,fecha:dias[6],cant:2,creado:cre});
   INV.push({key:P[1].key,fecha:dias[0],cant:3,creado:cre});
   INV.push({key:P[2].key,fecha:TODAY,cant:2,creado:`${fmtD(proxHabilesAntes(TODAY))} 16:40`});
@@ -744,23 +799,27 @@ function seedYear(){
     const cerradoDia=!!diaCerrado(f);
     day.sort((a,b)=>a.min-b.min).filter(x=>!cerradoDia&&!cierreEn(f,hm(x.min))).forEach((x,i)=>{const o=rnd();const an=rnd()<0.006;
       R.push({n:i+1,fecha:f,hora:hm(x.min),key:x.p.key,valor:valorDe(x.p),cant:hkey(x.p.key+f)%97===0?2:1,menu:menuDe(x.p,f),origen:o<0.03?"Manual":"Terminal",estado:an?"Anulado":"Válido",motivo:an?"Ticket emitido por error":(o<0.03?"Falla de terminal":undefined)})});
+    if(!cerradoDia){const fue=new Set(day.map(x=>x.p.key));const cre=`${fmtD(sumDias(f,-1))} 18:00`;
+      P.forEach(p=>{if(p.hab&&!fue.has(p.key)&&hkey(p.key+f+"a")%100<92)AUS.push({key:p.key,fecha:f,creado:cre})})}
   }
   const demo=new Set([0,1,2,4,6,7,8,9,10,11].map(i=>P[i].key));
   const hoy=[[3,"12:44"],[5,"12:52"]].map(([i,h])=>({p:P[i],h}));
   P.forEach(p=>{if(!demo.has(p.key)&&!hoy.some(x=>x.p===p)&&p.hab&&rnd()<0.72+p.af){const mm=clampMin(p.pref+gauss()*13);if(mm<785)hoy.push({p,h:hm(mm)})}});
   hoy.sort((a,b)=>a.h<b.h?-1:1).forEach((x,i)=>R.push({n:i+1,fecha:TODAY,hora:x.h,key:x.p.key,valor:valorDe(x.p),cant:1,menu:menuDe(x.p,TODAY),origen:"Terminal",estado:"Válido"}));
   R.push({n:R.filter(r=>r.fecha===TODAY).length+1,fecha:TODAY,hora:"13:01",key:P[7].key,origen:"Terminal",estado:"Anulado",motivo:"Ticket emitido por error, persona no almorzó"});
+  /* Ejemplo para el perfil Funcionario: un día del mes en que Valentina no avisó ni asistió (se descuenta igual) */
+  const yo=P[4].key,cm=TODAY.slice(0,7);const ia=AUS.findIndex(x=>x.key===yo&&x.fecha.startsWith(cm)&&x.fecha<TODAY);if(ia>=0)AUS.splice(ia,1);
   asignarIds();
 }
 /* Misma semilla: cada reinicio entrega exactamente los mismos datos de ejemplo */
-function seedAll(){seed=7;seedPersonas();seedCierres();seedSolicitudes();seedYear()}
+function seedAll(){seed=7;seedPersonas();seedCierres();seedSolicitudes();seedYear();seedMenuSem()}
 seedAll();
 const todays=()=>R.filter(r=>r.fecha===TODAY);
 const nextN=()=>todays().length+1;
 const valid=(a,b)=>R.filter(r=>r.estado==="Válido"&&r.fecha>=a&&r.fecha<=b);
 
 /* ---- Perfiles y pestañas ---- */
-const PERF={casino:{nombre:"Jefe Casino",views:["terminal","ticket","estadisticas","detalle","plan","reportes","cierres","habilitados","configuracion","alcance"]},
+const PERF={casino:{nombre:"Jefe Casino",views:["terminal","ticket","estadisticas","detalle","plan","menusem","reportes","cierres","habilitados","configuracion","alcance"]},
             bienestar:{nombre:"Jefa de Bienestar",views:["estadisticas","reportes","cierres","ticket","alcance"]},
             funcionario:{nombre:"Funcionario",views:["micasino"]}};
 let perfil="casino";try{const s=localStorage.getItem("casino.perfil");if(PERF[s])perfil=s}catch(e){}
@@ -770,7 +829,7 @@ function buildTabs(){tabs.innerHTML="";PERF[perfil].views.forEach(id=>{const v=$
 function show(id,push){if(!PERF[perfil].views.includes(id))id=PERF[perfil].views[0];current=id;
   views.forEach(v=>v.hidden=v.id!=="v-"+id);tabs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.id===id));
   if(push)try{history.replaceState(null,"","#"+id)}catch(e){}
-  ({estadisticas:renderEst,detalle:renderDet,reportes:renderRepo,habilitados:renderHab,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan})[id]?.();renderAlertas()}
+  ({estadisticas:renderEst,detalle:renderDet,reportes:renderRepo,habilitados:renderHab,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan,menusem:renderMenuSem})[id]?.();renderAlertas()}
 const USR={casino:{n:"Rodrigo Salinas Vera",r:"Jefe Casino"},bienestar:{n:"María Fernanda Ortiz Lagos",r:"Jefa de Bienestar"},get funcionario(){return{n:P[4].nombre,r:"Funcionario/a"}}};
 function pintarPerfil(){$("#perfilChips").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.perfil===perfil));$("#whoName").textContent=USR[perfil].n;$("#whoRol").textContent=USR[perfil].r}
 pintarPerfil();
@@ -1046,7 +1105,7 @@ function renderEst(){
     ["Almuerzos",k.n.toLocaleString("es-CL"),delta===null?"sin datos del período anterior":`${delta>=0?"+":"−"}${Math.abs(delta)}% vs. ${enCurso?"mismo tramo del período anterior":"período anterior"}`],
     ["Uso del beneficio",`${habN?Math.round(k.pers/habN*100):0}%`,est.tipo==="dia"?`${k.pers} de ${habN} habilitados almorzaron ${enCurso?"hasta ahora":"ese día"}`:`${k.pers} de ${habN} habilitados almorzaron al menos una vez · ${k.pers?(k.n/k.pers).toLocaleString("es-CL",{maximumFractionDigits:1}):0} almuerzos por persona`],
     racionesCard(rows,enCurso),
-    ["Monto a descontar",clp(k.monto),cfg.tramos.map(t=>`T${t.n}: ${rows.filter(r=>tramoDe(byKey(r.key))===t.n).length.toLocaleString("es-CL")}`).join(" · ")+" almuerzos"],
+    (()=>{const cg=cargos(p.a,p.b>TODAY?TODAY:p.b);const sa=cg.filter(c=>c.tipo==="Sin aviso");return["Monto a descontar",clp(cg.reduce((a,c)=>a+c.monto,0)),sa.length?`incluye ${sa.length.toLocaleString("es-CL")} almuerzo${sa.length===1?"":"s"} sin aviso (${clp(sa.reduce((a,c)=>a+c.monto,0))})`:"sin días sin aviso en el período"]})(),
     ["Registrados en la terminal",Math.round(k.hue*100)+"%","el resto, registro manual del Jefe Casino"]
   ].map(([a,b,c])=>`<div class="stat"><span>${a}</span><b>${b}</b><small>${c}</small></div>`).join("");
   $("#estChartT").textContent={dia:"Ingresos cada 15 minutos",semana:"Almuerzos por día",mes:"Almuerzos por día hábil",anio:"Almuerzos por mes"}[est.tipo];
@@ -1103,40 +1162,41 @@ $("#manRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)}
 /* ---- Reportes (Jefe Casino emite y envía; Jefa de Bienestar consulta y copia) ---- */
 let repMes=`${YEAR}-${pad(today.getMonth())}`;if(today.getMonth()===0)repMes=`${YEAR}-01`;
 $("#repMesSel").innerHTML=Array.from({length:today.getMonth()+1},(_,m)=>`<option value="${YEAR}-${pad(m+1)}">${cap(MES[m])} ${YEAR}</option>`).reverse().join("");
-function mesRows(ym){const val=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido");const m=new Map();val.forEach(r=>{const o=m.get(r.key)||{n:0,monto:0,vals:new Set()};o.n+=cantR(r);o.monto+=montoR(r);o.vals.add(montoR(r)/cantR(r));m.set(r.key,o)});
-  return{val,rows:[...m].map(([k,o])=>({p:byKey(k),n:o.n,monto:o.monto,vals:[...o.vals]})).sort((a,b)=>a.p.nombre.localeCompare(b.p.nombre,"es"))}}
+function mesRows(ym){const val=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido");const cg=cargos(ym+"-01",finMes(ym));const m=new Map();
+  cg.forEach(c=>{const o=m.get(c.key)||{n:0,s:0,monto:0,vals:new Set()};if(c.tipo==="Ticket")o.n+=c.cant;else o.s+=c.cant;o.monto+=c.monto;o.vals.add(c.monto/c.cant);m.set(c.key,o)});
+  return{val,cg,rows:[...m].map(([k,o])=>({p:byKey(k),n:o.n,s:o.s,monto:o.monto,vals:[...o.vals]})).sort((a,b)=>a.p.nombre.localeCompare(b.p.nombre,"es"))}}
 function renderRepo(){
   const ym=repMes;const enCurso=ym===TODAY.slice(0,7);
   $("#repMesSel").value=ym;
   $("#repLead").textContent="Emita el reporte mensual de descuento por planilla y consulte el consumo por unidad y el resumen anual.";
-  const {val,rows}=mesRows(ym);
+  const {val,cg,rows}=mesRows(ym);const sumN=rows.reduce((a,x)=>a+x.n,0),sumS=rows.reduce((a,x)=>a+x.s,0);
   const estado=enCurso?`<span class="pill warn">Mes en curso · datos al ${fmtD(TODAY)}</span>`:"";
   const acc=`<button class="btn primary" id="repCopiar">Emisión reporte mensual</button>`;
   $("#repEstado").innerHTML=`<div>${estado}</div><div class="row">${acc}</div>`;
   const total=rows.reduce((a,x)=>a+x.monto,0);const sinT=rows.filter(x=>!tramoDe(x.p));
   const porT=cfg.tramos.map(t=>{const rr=rows.filter(x=>tramoDe(x.p)===t.n);return`T${t.n}: ${rr.length}`}).join(" · ");
-  $("#repStats").innerHTML=[["Almuerzos del mes",sumCant(val).toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Personas habilitadas antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
+  $("#repStats").innerHTML=[["Almuerzos a descontar",(sumN+sumS).toLocaleString("es-CL"),`${sumN.toLocaleString("es-CL")} consumidos · ${sumS.toLocaleString("es-CL")} sin aviso`],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Personas habilitadas antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
     .map(([a,b,c],i)=>`<div class="stat ${i===2&&sinT.length?"stat-warn":""}"><span>${a}</span><b>${b}</b>${c?`<small>${c}</small>`:""}</div>`).join("");
-  $("#repBody").innerHTML=rows.map(({p,n,monto,vals})=>{const t=tramoDe(p);return`<tr class="${t?"":"row-warn"}"><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.nombre)}</td><td>${esc(p.unidad)}</td><td class="num">${p.grado??"—"}</td><td>${t?`Tramo ${t}`:'<span class="pill warn">Sin tramo</span>'}</td><td class="num">${n}</td><td class="num">${!monto?"—":vals.length>1?"varios":clp(vals[0])}</td><td class="num"><b>${monto?clp(monto):"—"}</b></td></tr>`}).join("")||`<tr><td colspan="8" class="muted">Sin consumo en el mes.</td></tr>`;
-  const tks=val.slice().sort((a,b)=>a.id<b.id?-1:1);
-  $("#repTkSum").textContent=`Detalle por ticket · ${tks.length.toLocaleString("es-CL")} tickets válidos del mes`;
-  $("#repTkBody").innerHTML=tks.slice(0,300).map(r=>{const p=byKey(r.key);return`<tr><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.nombre)}</td><td class="num">${cantR(r)}</td><td class="num">${clp(montoR(r))}</td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Sin tickets en el mes.</td></tr>`;
-  $("#repTkNota").textContent=tks.length>300?"Se muestran los primeros 300; «Emisión reporte mensual» incluye todos los tickets.":"«Emisión reporte mensual» incluye este detalle a continuación del resumen por trabajador.";
-  $("#repFoot").innerHTML=`<tr><td colspan="5"><b>Total</b></td><td class="num"><b>${sumCant(val).toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(total)}</b></td></tr>`;
+  $("#repBody").innerHTML=rows.map(({p,n,s,monto,vals})=>{const t=tramoDe(p);return`<tr class="${t?"":"row-warn"}"><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.nombre)}</td><td>${esc(p.unidad)}</td><td class="num">${p.grado??"—"}</td><td>${t?`Tramo ${t}`:'<span class="pill warn">Sin tramo</span>'}</td><td class="num">${n}</td><td class="num">${s||"—"}</td><td class="num">${!monto?"—":vals.length>1?"varios":clp(vals[0])}</td><td class="num"><b>${monto?clp(monto):"—"}</b></td></tr>`}).join("")||`<tr><td colspan="9" class="muted">Sin consumo en el mes.</td></tr>`;
+  const tks=cg.slice().sort((a,b)=>a.fecha===b.fecha?(a.tipo===b.tipo?(a.id<b.id?-1:1):(a.tipo==="Ticket"?-1:1)):(a.fecha<b.fecha?-1:1));const nT=tks.filter(c=>c.tipo==="Ticket").length;
+  $("#repTkSum").textContent=`Detalle por ticket · ${nT.toLocaleString("es-CL")} tickets válidos y ${(tks.length-nT).toLocaleString("es-CL")} días sin aviso`;
+  $("#repTkBody").innerHTML=tks.slice(0,300).map(c=>{const p=byKey(c.key);return`<tr class="${c.tipo==="Ticket"?"":"row-warn"}"><td class="mono">${c.tipo==="Ticket"?c.id:'<span class="pill warn">Sin aviso</span>'}</td><td class="mono">${fmtD(c.fecha)}</td><td class="mono">${c.hora}</td><td class="mono">${fmtRut(c.key)}</td><td>${esc(p.nombre)}</td><td class="num">${c.cant}</td><td class="num">${clp(c.monto)}</td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Sin tickets en el mes.</td></tr>`;
+  $("#repTkNota").textContent=tks.length>300?"Se muestran los primeros 300; «Emisión reporte mensual» incluye todo el detalle.":"«Emisión reporte mensual» incluye este detalle a continuación del resumen por trabajador.";
+  $("#repFoot").innerHTML=`<tr><td colspan="5"><b>Total</b></td><td class="num"><b>${sumN.toLocaleString("es-CL")}</b></td><td class="num"><b>${sumS.toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(total)}</b></td></tr>`;
   // por unidad del mes
-  const u=new Map();val.forEach(r=>{const p=byKey(r.key);const o=u.get(p.unidad)||{n:0,s:new Set(),m:0};o.n+=cantR(r);o.m+=montoR(r);o.s.add(p.key);u.set(p.unidad,o)});
+  const u=new Map();cg.forEach(c=>{const p=byKey(c.key);const o=u.get(p.unidad)||{n:0,s:new Set(),m:0};o.n+=c.cant;o.m+=c.monto;o.s.add(p.key);u.set(p.unidad,o)});
   $("#uniLabel").textContent=cap(MES[+ym.slice(5)-1])+" "+ym.slice(0,4);
   $("#uniBody").innerHTML=[...u].sort((a,b)=>b[1].n-a[1].n).map(([n,o])=>`<tr><td>${esc(n)}</td><td class="num">${o.n}</td><td class="num">${o.s.size}</td><td class="num">${clp(o.m)}</td></tr>`).join("")||`<tr><td colspan="4" class="muted">Sin consumo.</td></tr>`;
   // anual
   $("#anuLabel").textContent=`Año ${YEAR}, enero a ${MES[today.getMonth()]}`;
-  const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=R.filter(r=>r.fecha.startsWith(k)&&r.estado==="Válido");return{k,m,n:sumCant(v),pers:new Set(v.map(r=>r.key)).size,monto:sumaM(v)}});
+  const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=cargos(k+"-01",finMes(k));return{k,m,n:v.reduce((a,c)=>a+c.cant,0),pers:new Set(v.map(c=>c.key)).size,monto:v.reduce((a,c)=>a+c.monto,0)}});
   $("#anuBody").innerHTML=meses.map(o=>`<tr><td>${cap(MES[o.m])}</td><td class="num">${o.n.toLocaleString("es-CL")}</td><td class="num">${o.pers}</td><td class="num">${clp(o.monto)}</td></tr>`).join("");
   const tot=meses.reduce((s,o)=>s+o.n,0);
   $("#anuFoot").innerHTML=`<tr><td><b>Total</b></td><td class="num"><b>${tot.toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(meses.reduce((a,o)=>a+o.monto,0))}</b></td></tr>`;
 }
 $("#repMesSel").addEventListener("change",e=>{repMes=e.target.value;renderRepo()});
 $("#repEstado").addEventListener("click",e=>{const id=e.target.id;
-  if(id==="repCopiar"){const{rows,val}=mesRows(repMes);copiar(["RUT\tNombre completo\tUnidad\tGrado\tTramo\tAlmuerzos\tValor unitario\tMonto a descontar"].concat(rows.map(({p,n,monto,vals})=>[fmtRut(p.key),p.nombre,p.unidad,p.grado??"",tramoDe(p)||"SIN TRAMO",n,vals.length>1?"varios":(monto?vals[0]:""),monto||""].join("\t")),["","DETALLE POR TICKET","ID ticket\tFecha\tHora\tRUT\tNombre completo\tAlmuerzos\tMonto"],val.slice().sort((a,b)=>a.id<b.id?-1:1).map(r=>[r.id,fmtD(r.fecha),r.hora,fmtRut(r.key),byKey(r.key).nombre,cantR(r),montoR(r)].join("\t"))).join("\n"),`Reporte de ${MES[+repMes.slice(5)-1]} emitido: copiado para pegarlo en Excel.`)}
+  if(id==="repCopiar"){const{rows,cg}=mesRows(repMes);copiar(["RUT\tNombre completo\tUnidad\tGrado\tTramo\tConsumidos\tSin aviso\tValor unitario\tMonto a descontar"].concat(rows.map(({p,n,s,monto,vals})=>[fmtRut(p.key),p.nombre,p.unidad,p.grado??"",tramoDe(p)||"SIN TRAMO",n,s,vals.length>1?"varios":(monto?vals[0]:""),monto||""].join("\t")),["","DETALLE POR TICKET Y DÍAS SIN AVISO","ID ticket\tFecha\tHora\tRUT\tNombre completo\tAlmuerzos\tMonto"],cg.slice().sort((a,b)=>a.fecha===b.fecha?(a.id<b.id?-1:1):(a.fecha<b.fecha?-1:1)).map(c=>[c.tipo==="Ticket"?c.id:"SIN AVISO",fmtD(c.fecha),c.hora,fmtRut(c.key),byKey(c.key).nombre,c.cant,c.monto].join("\t"))).join("\n"),`Reporte de ${MES[+repMes.slice(5)-1]} emitido: copiado para pegarlo en Excel.`)}
 });
 $("#uniCopiar").onclick=()=>copiar(["Unidad\tAlmuerzos\tPersonas\tMonto"].concat([...$("#uniBody").querySelectorAll("tr")].map(tr=>[...tr.children].map(td=>td.textContent).join("\t"))).join("\n"));
 $("#anuCopiar").onclick=()=>copiar(["Mes\tAlmuerzos\tPersonas\tMonto"].concat([...$("#anuBody").querySelectorAll("tr")].map(tr=>[...tr.children].map(td=>td.textContent).join("\t"))).join("\n"));
@@ -1185,8 +1245,9 @@ function renderMi(){
   const p=YO();const cm=ymOf(TODAY),nm=ymNext(cm);const t=tramoDe(p);
   $("#miLead").textContent=`${p.nombre} · ${p.unidad} · ${t?`tramo ${t}, ${clp(valorDe(p))} por almuerzo`:"sin tramo asignado"}`;
   const mes=R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(cm));
+  const cgMes=cargos(cm+"-01",finMes(cm),p.key);const sinMes=cgMes.filter(c=>c.tipo==="Sin aviso");
   const anio=R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(String(YEAR)));
-  $("#miKpi").innerHTML=[["Almuerzos este mes",sumCant(mes),`${new Set(mes.map(r=>r.fecha)).size} días con asistencia`],["A descontar este mes",clp(sumaM(mes)),"por planilla, al cierre del mes"],["Almuerzos en el año",sumCant(anio),`desde enero de ${YEAR}`],["Menú de este mes",menuDe(p,TODAY),`${cap(MES[+cm.slice(5)-1])} ${cm.slice(0,4)}`]]
+  $("#miKpi").innerHTML=[["Almuerzos este mes",sumCant(mes),`${new Set(mes.map(r=>r.fecha)).size} días con asistencia`],["Sin aviso este mes",sinMes.length,sinMes.length?"días que no avisó ni asistió; se descuentan":"avisó todos los días que no asistió"],["A descontar este mes",clp(cgMes.reduce((a,c)=>a+c.monto,0)),"por planilla, al cierre del mes"],["Menú de este mes",menuDe(p,TODAY),`${cap(MES[+cm.slice(5)-1])} ${cm.slice(0,4)}`]]
     .map(([a,b,c])=>`<div class="stat"><span>${a}</span><b>${b}</b><small>${c}</small></div>`).join("");
   // menú
   const opt=ym=>{const ed=menuEditable(ym);const v=MENU[p.key+"|"+ym]||"Normal";
@@ -1194,7 +1255,8 @@ function renderMi(){
     <small class="muted">${ed?`Puede cambiarlo hasta el ${fmtD(menuLimite(ym))}.`:`Plazo cerrado el ${fmtD(menuLimite(ym))}.`}</small></div>`};
   $("#miMenu").innerHTML=opt(cm)+opt(nm);
   // avisos
-  const min=avisoMin();["#miAusF","#miInvF"].forEach(s=>{$(s).min=min;if(!$(s).value||$(s).value<min)$(s).value=min});
+  const min=avisoMin();["#miAusF","#miInvF"].forEach(s=>{$(s).min=min;if(!$(s).value||$(s).value<min)$(s).value=min});$("#miAusH").min=min;if($("#miAusH").value&&$("#miAusH").value<min)$("#miAusH").value="";
+  renderMiSem(p);
   const fut=x=>x.key===p.key&&x.fecha>=TODAY;
   const quitar=(tipo,x)=>x.fecha>=min?`<button class="btn small" data-quitar="${tipo}|${x.fecha}">Quitar</button>`:'<span class="small muted">fuera de plazo</span>';
   $("#miAusList").innerHTML=AUS.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))}</span>${quitar("aus",x)}</li>`).join("")||'<li class="muted">No hay avisos registrados.</li>';
@@ -1202,20 +1264,28 @@ function renderMi(){
   $("#miInvNota").textContent=`Se descuentan de su planilla todos los almuerzos de ese día, a ${clp(valorDe(p))} cada uno. El ticket indicará la cantidad de almuerzos.`;
   // asistencias
   const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=anio.filter(r=>r.fecha.startsWith(k));return{m,v}}).reverse();
-  $("#miMeses").innerHTML=meses.map(({m,v})=>`<tr><td>${cap(MES[m])}</td><td class="num">${new Set(v.map(r=>r.fecha)).size}</td><td class="num">${sumCant(v)}</td><td class="num">${clp(sumaM(v))}</td></tr>`).join("");
-  $("#miDet").innerHTML=mes.slice().sort((a,b)=>a.id<b.id?1:-1).map(r=>`<tr><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="num">${cantR(r)}</td><td>${esc(r.menu||menuDe(p,r.fecha))}</td><td class="num">${clp(montoR(r))}</td></tr>`).join("")||'<tr><td colspan="6" class="muted">Aún no registra almuerzos este mes.</td></tr>';
+  $("#miMeses").innerHTML=meses.map(({m,v})=>{const k=`${YEAR}-${pad(m+1)}`;const cg=cargos(k+"-01",finMes(k),p.key);const sa=cg.filter(c=>c.tipo==="Sin aviso").length;
+    return`<tr><td>${cap(MES[m])}</td><td class="num">${new Set(v.map(r=>r.fecha)).size}</td><td class="num">${sumCant(v)}</td><td class="num">${sa||"—"}</td><td class="num">${clp(cg.reduce((a,c)=>a+c.monto,0))}</td></tr>`}).join("");
+  $("#miDet").innerHTML=cgMes.slice().sort((a,b)=>a.fecha===b.fecha?(a.hora<b.hora?1:-1):(a.fecha<b.fecha?1:-1)).map(c=>`<tr class="${c.tipo==="Sin aviso"?"row-warn":""}"><td class="mono">${c.tipo==="Ticket"?c.id:'<span class="pill warn">Sin aviso</span>'}</td><td class="mono">${fmtD(c.fecha)}</td><td class="mono">${c.hora}</td><td class="num">${c.cant}</td><td>${c.tipo==="Ticket"?esc(c.menu||menuDe(p,c.fecha)):'<span class="muted">No asistió</span>'}</td><td class="num">${clp(c.monto)}</td></tr>`).join("")||'<tr><td colspan="6" class="muted">Aún no registra almuerzos este mes.</td></tr>';
 }
 $("#miMenu").addEventListener("click",e=>{const b=e.target.closest("[data-menu]");if(!b||b.disabled)return;const[ym,m]=b.dataset.menu.split("|");MENU[YO().key+"|"+ym]=m;renderMi();toast(`Menú ${m.toLowerCase()} registrado para ${MES[+ym.slice(5)-1]}`)});
 function validarDia(f,msgSel){const m=$(msgSel);
   if(!f){m.innerHTML='<span style="color:var(--bad)">Elija una fecha.</span>';return false}
-  if(f<avisoMin()){m.innerHTML=`<span style="color:var(--bad)">El aviso debe hacerse con al menos ${cfg.avisoDias} día${cfg.avisoDias===1?"":"s"} hábil${cfg.avisoDias===1?"":"es"} de anticipación (desde el ${fmtD(avisoMin())}).</span>`;return false}
+  if(f<avisoMin()){m.innerHTML=`<span style="color:var(--bad)">Se puede avisar hasta las 23:59 del día anterior: el primer día disponible es el ${fmtD(avisoMin())}.</span>`;return false}
   if(!habil(D(f))){m.innerHTML='<span style="color:var(--bad)">Ese día no hay servicio de casino (fin de semana o feriado).</span>';return false}
   if(diaCerrado(f)){m.innerHTML='<span style="color:var(--warn)">El casino estará cerrado ese día.</span>';return false}
   return true}
-$("#miAusForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#miAusF").value,p=YO(),m=$("#miAusMsg");if(!validarDia(f,"#miAusMsg"))return;
-  if(ausDe(p,f)){m.innerHTML='<span style="color:var(--warn)">Ya avisó ese día.</span>';return}
-  if(invDe(p,f)){m.innerHTML='<span style="color:var(--bad)">Ese día tiene invitados registrados; quite la invitación primero.</span>';return}
-  AUS.push({key:p.key,fecha:f,creado:`${new Date().toLocaleDateString("es-CL")} ${hhmm(new Date())}`});m.innerHTML=`<span style="color:var(--ok)">Aviso registrado para el ${fmtD(f)}.</span>`;renderMi()});
+$("#miAusForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#miAusF").value,h=$("#miAusH").value||f,p=YO(),m=$("#miAusMsg");
+  if(!f){m.innerHTML='<span style="color:var(--bad)">Elija una fecha.</span>';return}
+  if(f<avisoMin()){validarDia(f,"#miAusMsg");return}
+  if(h<f){m.innerHTML='<span style="color:var(--bad)">La fecha «Hasta» es anterior a «Desde».</span>';return}
+  if(h===f){if(!validarDia(f,"#miAusMsg"))return}
+  const cre=`${new Date().toLocaleDateString("es-CL")} ${hhmm(new Date())}`;const ok=[],omit=[];
+  for(const d=D(f);ymd(d)<=h;d.setDate(d.getDate()+1)){const x=ymd(d);if(!habil(d)||diaCerrado(x)||ausDe(p,x))continue;if(invDe(p,x)){omit.push(x);continue}AUS.push({key:p.key,fecha:x,creado:cre});ok.push(x)}
+  if(h===f&&!ok.length&&!omit.length){m.innerHTML='<span style="color:var(--warn)">Ya avisó ese día.</span>';return}
+  if(h===f&&omit.length){m.innerHTML='<span style="color:var(--bad)">Ese día tiene invitados registrados; quite la invitación primero.</span>';return}
+  m.innerHTML=`<span style="color:var(--ok)">${ok.length?(ok.length===1?`Aviso registrado para el ${fmtD(ok[0])}.`:`${ok.length} días hábiles avisados, del ${fmtD(ok[0])} al ${fmtD(ok[ok.length-1])}.`):"No había días hábiles nuevos que avisar en ese rango."}</span>${omit.length?` <span style="color:var(--warn)">Se omitieron ${omit.length} día(s) con invitados registrados.</span>`:""}`;
+  $("#miAusH").value="";renderMi()});
 $("#miInvForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#miInvF").value,c=+$("#miInvC").value,p=YO(),m=$("#miInvMsg");if(!validarDia(f,"#miInvMsg"))return;
   if(ausDe(p,f)){m.innerHTML='<span style="color:var(--bad)">Avisó que no almorzará ese día; quite el aviso primero.</span>';return}
   const ex=invDe(p,f);if(ex)ex.cant=c;else INV.push({key:p.key,fecha:f,cant:c,creado:`${new Date().toLocaleDateString("es-CL")} ${hhmm(new Date())}`});
@@ -1223,15 +1293,43 @@ $("#miInvForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#miI
 $("#v-micasino").addEventListener("click",e=>{const b=e.target.closest("[data-quitar]");if(!b)return;const[t,f]=b.dataset.quitar.split("|");const L=t==="aus"?AUS:INV;
   const i=L.findIndex(x=>x.key===YO().key&&x.fecha===f);if(i>=0)L.splice(i,1);renderMi();toast(t==="aus"?"Aviso quitado":"Invitación quitada")});
 
+let miSem=null;
+function renderMiSem(p){const l0=lunesDe(TODAY);if(!miSem)miSem=l0;const s=MSEM[miSem];const pub=s&&s.pub;
+  $("#miSemLbl").textContent=`Semana del ${fmtD(miSem)}`;$("#miSemPrev").disabled=miSem<=sumDias(l0,-7);$("#miSemNext").disabled=miSem>=sumDias(l0,7);
+  const mio=menuDe(p,miSem>TODAY?miSem:TODAY);const col={Normal:"normal",Hipocalórico:"hipo"}[mio];
+  $("#miSemLead").innerHTML=pub?`Publicado por el Jefe Casino el ${fmtD(pub.fecha)} a las ${pub.hora}. Su menú este mes: <b>${esc(mio.toLowerCase())}</b>.`:"El Jefe Casino publica el menú cada lunes; el de esta semana aún no está publicado.";
+  $("#miSemBox").innerHTML=pub?`<table class="msem"><thead><tr><th>Día</th>${MCAMPOS.map(([k,t])=>`<th class="${k===col?"mio":""}">${t}${k===col?" · su menú":""}</th>`).join("")}</tr></thead><tbody>${Object.entries(pub.dias).map(([f,o])=>{const cerr=!habil(D(f))||diaCerrado(f);
+    return`<tr class="${f===TODAY?"hoy":""}"><td><b>${cap(D(f).toLocaleDateString("es-CL",{weekday:"long"}))}</b><br><span class="small muted">${fmtD(f)}${f===TODAY?" · hoy":""}</span></td>${cerr?`<td colspan="5"><span class="pill bad">Sin servicio</span></td>`:MCAMPOS.map(([k])=>`<td class="${k===col?"mio":""}">${esc(o[k])||'<span class="muted">—</span>'}</td>`).join("")}</tr>`}).join("")}</tbody></table>`
+    :`<p class="muted" style="margin:12px">Menú no publicado.</p>`}
+$("#miSemPrev").onclick=()=>{miSem=sumDias(miSem,-7);renderMi()};$("#miSemNext").onclick=()=>{miSem=sumDias(miSem,7);renderMi()};
+
+/* ---- Menú semanal (Jefe Casino publica cada lunes) ---- */
+let msSel=null;
+function renderMenuSem(){const l0=lunesDe(TODAY);if(!msSel)msSel=l0;if(!MSEM[msSel])MSEM[msSel]={borrador:semVacia(msSel),pub:null};const s=MSEM[msSel];
+  $("#msLbl").textContent=`Semana del ${fmtD(msSel)} al ${fmtD(sumDias(msSel,4))}`;$("#msPrev").disabled=msSel<=sumDias(l0,-7);$("#msNext").disabled=msSel>=sumDias(l0,14);
+  const cambios=s.pub&&JSON.stringify(s.pub.dias)!==JSON.stringify(s.borrador);
+  $("#msEstado").innerHTML=s.pub?`<span class="pill ok">Publicado el ${fmtD(s.pub.fecha)} a las ${s.pub.hora}</span>${cambios?' <span class="pill warn">Cambios sin publicar</span>':""}`:'<span class="pill warn">Borrador · no publicado</span>';
+  $("#msPub").textContent=s.pub?"Publicar cambios":"Publicar menú de la semana";$("#msPub").disabled=!!s.pub&&!cambios;
+  $("#msBody").innerHTML=Object.entries(s.borrador).map(([f,o])=>{const cerr=!habil(D(f))||diaCerrado(f);
+    return`<tr><td><b>${cap(D(f).toLocaleDateString("es-CL",{weekday:"long"}))}</b><br><span class="small muted">${fmtD(f)}</span></td>${cerr?`<td colspan="5"><span class="pill bad">${diaCerrado(f)?"Casino cerrado":"Feriado"}</span></td>`:MCAMPOS.map(([k,t])=>`<td><textarea rows="2" data-ms="${f}|${k}" aria-label="${t} del ${fmtD(f)}">${esc(o[k])}</textarea></td>`).join("")}</tr>`}).join("")}
+$("#msBody").addEventListener("input",e=>{const t=e.target.dataset.ms;if(!t)return;const[f,k]=t.split("|");MSEM[msSel].borrador[f][k]=e.target.value;
+  const s=MSEM[msSel];const cambios=s.pub&&JSON.stringify(s.pub.dias)!==JSON.stringify(s.borrador);$("#msPub").disabled=!!s.pub&&!cambios;
+  $("#msEstado").innerHTML=s.pub?`<span class="pill ok">Publicado el ${fmtD(s.pub.fecha)} a las ${s.pub.hora}</span>${cambios?' <span class="pill warn">Cambios sin publicar</span>':""}`:'<span class="pill warn">Borrador · no publicado</span>'});
+$("#msPrev").onclick=()=>{msSel=sumDias(msSel,-7);renderMenuSem()};$("#msNext").onclick=()=>{msSel=sumDias(msSel,7);renderMenuSem()};
+$("#msPub").onclick=()=>{const s=MSEM[msSel];const falt=Object.entries(s.borrador).filter(([f,o])=>habil(D(f))&&!diaCerrado(f)&&MCAMPOS.some(([k])=>!o[k].trim())).length;
+  if(falt&&!confirmPub){confirmPub=true;$("#msMsg").innerHTML=`<span style="color:var(--warn)">${falt} día(s) tienen campos vacíos. Presione de nuevo para publicar igual.</span>`;return}
+  confirmPub=false;s.pub={dias:JSON.parse(JSON.stringify(s.borrador)),fecha:TODAY,hora:hhmm(now())};$("#msMsg").innerHTML=`<span style="color:var(--ok)">Menú publicado. Los funcionarios lo ven en «Mi casino».</span>`;renderMenuSem()};
+let confirmPub=false;
+
 /* ---- Planificación (Jefe Casino) ---- */
 let planSel=null;
 function renderPlan(){
   const dias=proxHabiles(10);if(!planSel||!dias.includes(planSel))planSel=dias[0];
   const hab=P.filter(p=>p.hab);
-  const filas=dias.map(f=>{const cerr=diaCerrado(f);const base=avgDia(f);const aus=AUS.filter(x=>x.fecha===f).length;const inv=INV.filter(x=>x.fecha===f);const extra=inv.reduce((a,x)=>a+x.cant-1,0);
-    const share=hab.filter(p=>menuDe(p,f)==="Hipocalórico").length/Math.max(1,hab.length);const pres=Math.max(0,base-aus);
-    const hipo=Math.round(pres*share),norm=Math.round(pres)-hipo+extra;return{f,cerr,aus,extra,hipo,norm,tot:hipo+norm,inv}});
-  $("#planBody").innerHTML=filas.map(x=>`<tr class="${x.f===planSel?"sel":""}" data-plan="${x.f}" tabindex="0"><td>${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short",day:"numeric",month:"short"}))}</td>${x.cerr?'<td colspan="5"><span class="pill bad">Casino cerrado</span></td>':`<td class="num">${x.norm}</td><td class="num">${x.hipo}</td><td class="num">${x.aus}</td><td class="num">${x.extra?"+"+x.extra:"0"}</td><td class="num"><b>${x.tot}</b></td>`}</tr>`).join("");
+  const filas=dias.map(f=>{const cerr=diaCerrado(f);const base=Math.round(avgDia(f));const ausK=new Set(AUS.filter(x=>x.fecha===f).map(x=>x.key));const inv=INV.filter(x=>x.fecha===f);const extra=inv.reduce((a,x)=>a+x.cant-1,0);
+    const pres=hab.filter(p=>!ausK.has(p.key));const hipo=pres.filter(p=>menuDe(p,f)==="Hipocalórico").length;const norm=pres.length-hipo+extra;
+    return{f,cerr,hab:hab.length,aus:hab.filter(p=>ausK.has(p.key)).length,extra,hipo,norm,tot:hipo+norm,inv,base}});
+  $("#planBody").innerHTML=filas.map(x=>`<tr class="${x.f===planSel?"sel":""}" data-plan="${x.f}" tabindex="0"><td>${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short",day:"numeric",month:"short"}))}</td>${x.cerr?'<td colspan="7"><span class="pill bad">Casino cerrado</span></td>':`<td class="num">${x.hab}</td><td class="num">−${x.aus}</td><td class="num">${x.norm}</td><td class="num">${x.hipo}</td><td class="num">${x.extra?"+"+x.extra:"0"}</td><td class="num"><b>${x.tot}</b></td><td class="num muted">${x.base}</td>`}</tr>`).join("");
   const s=filas.find(x=>x.f===planSel);
   $("#planDiaT").textContent=cap(D(planSel).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}));
   const ausL=AUS.filter(x=>x.fecha===planSel).map(x=>byKey(x.key));
@@ -1257,12 +1355,12 @@ function renderTramos(){
 $("#tramosBody").addEventListener("change",e=>{const i=e.target.dataset.tr;if(i===undefined)return;const v=Number(e.target.value);if(!Number.isFinite(v))return;cfg.tramos[i][e.target.dataset.k]=v;renderTramos()});
 
 /* ---- Configuración ---- */
-const bind=[["#cServicio","servicio"],["#cUbicacion","ubic"],["#cIni","ini"],["#cFin","fin"],["#cLimite","limite",Number],["#cMenuDia","menuDia",Number],["#cAviso","avisoDias",Number],["#cSim","sim"]];
+const bind=[["#cServicio","servicio"],["#cUbicacion","ubic"],["#cIni","ini"],["#cFin","fin"],["#cLimite","limite",Number],["#cMenuDia","menuDia",Number],["#cSim","sim"]];
 bind.forEach(([s,k,f])=>$(s).addEventListener("input",e=>{cfg[k]=f?f(e.target.value):e.target.value}));
 
 /* ---- Reiniciar maqueta ---- */
 function reiniciar(){
-  seedAll();Object.assign(cfg,copiaCfg());bind.forEach(([sel,k])=>$(sel).value=cfg[k]);
+  seedAll();miSem=null;msSel=null;confirmPub=false;Object.assign(cfg,copiaCfg());bind.forEach(([sel,k])=>$(sel).value=cfg[k]);
   clearTimeout(resetTimer);resetT();previewTicket();
   Object.assign(est,{tipo:"mes",anc:TODAY});Object.assign(det,{desde:TODAY,hasta:TODAY,q:"",estado:""});$("#detQ").value="";anulando=null;
   repMes=today.getMonth()===0?`${YEAR}-01`:`${YEAR}-${pad(today.getMonth())}`;
