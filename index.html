@@ -281,7 +281,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 <header class="top"><div class="wrap">
   <div class="brand"><h1>Casino Institucional</h1><p>Control de ingreso · Servicio de Bienestar · CONAF</p></div>
   <div class="usr">
-    <div class="probar"><span>Maqueta · probar como</span><div class="chips" id="perfilChips"><button type="button" data-perfil="casino">Jefe Casino</button><button type="button" data-perfil="bienestar">Jefa de Bienestar</button><button type="button" data-perfil="funcionario">Funcionario</button></div></div>
+    <div class="probar"><span>Maqueta · probar como</span><div class="chips" id="perfilChips"><button type="button" data-perfil="casino">Jefe Casino</button><button type="button" data-perfil="bienestar">Jefa de Bienestar</button><button type="button" data-perfil="funcionario">Funcionario</button><button type="button" data-perfil="terminal">Terminal casino</button></div></div>
     <div class="who"><b id="whoName"></b><span id="whoRol"></span></div>
   </div>
 </div></header>
@@ -587,14 +587,15 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <tr><td>Detalle de ingresos (nombre, RUT, hora)</td><td>Sí</td><td>No</td></tr>
     <tr><td>Descuento por planilla</td><td>Emite el reporte mensual</td><td>Emite el reporte mensual</td></tr>
     <tr><td>Consumo por unidad y resumen anual</td><td>Sí</td><td>Sí</td></tr>
-    <tr><td>Terminal, reimpresión, anulación y registro manual</td><td>Sí</td><td>No</td></tr>
+    <tr><td>Reimpresión, anulación y registro manual de contingencia</td><td>Sí</td><td>No</td></tr>
     <tr><td>Anulación el mismo día de un aviso de ausencia hecho por error</td><td>Sí</td><td>No</td></tr>
     <tr><td>Cambio de menú por excepción (ingreso nuevo, indicación médica)</td><td>Sí</td><td>No</td></tr>
     <tr><td>Registro y anulación de cierres del casino</td><td>Sí, con alerta a la Jefa de Bienestar</td><td>Sí, con alerta al Jefe Casino</td></tr>
     <tr><td>Nómina de habilitados y configuración</td><td>Sí</td><td>No</td></tr>
     <tr><td>Planificación de raciones (menús, ausencias e invitados)</td><td>Sí</td><td>No</td></tr>
     <tr><td>Publicación de la minuta semanal (cada lunes, reemplaza el correo)</td><td>Sí</td><td>No</td></tr>
-  </tbody></table></div></div>
+  </tbody></table></div>
+  <p class="small muted" style="margin:0">La <b>Terminal del casino</b> y la <b>Propuesta de ticket</b> quedan en un perfil aparte, «Terminal casino», que corresponde al equipo instalado en el casino: solo recibe el RUT y emite el ticket, sin acceso a estadísticas, reportes ni datos de otras personas.</p></div>
   <div class="grid2">
     <div class="panel"><h3>Puntos por validar con Bienestar</h3><ul class="tight">
       <li>Universo de usuarios: el correo indica 200 personas y la cotización, 100.</li>
@@ -838,9 +839,10 @@ const nextN=()=>todays().length+1;
 const valid=(a,b)=>R.filter(r=>r.estado==="Válido"&&r.fecha>=a&&r.fecha<=b);
 
 /* ---- Perfiles y pestañas ---- */
-const PERF={casino:{nombre:"Jefe Casino",views:["terminal","ticket","estadisticas","detalle","plan","menusem","reportes","cierres","habilitados","configuracion","alcance"]},
-            bienestar:{nombre:"Jefa de Bienestar",views:["estadisticas","reportes","cierres","ticket","alcance"]},
-            funcionario:{nombre:"Funcionario",views:["micasino"]}};
+const PERF={casino:{nombre:"Jefe Casino",views:["estadisticas","detalle","plan","menusem","reportes","cierres","habilitados","configuracion","alcance"]},
+            bienestar:{nombre:"Jefa de Bienestar",views:["estadisticas","reportes","cierres","alcance"]},
+            funcionario:{nombre:"Funcionario",views:["micasino"]},
+            terminal:{nombre:"Terminal casino",views:["terminal","ticket"]}};
 let perfil="casino";try{const s=localStorage.getItem("casino.perfil");if(PERF[s])perfil=s}catch(e){}
 const views=[...document.querySelectorAll("section.view")];
 const tabs=$("#tabs");let current=null;
@@ -849,7 +851,7 @@ function show(id,push){if(!PERF[perfil].views.includes(id))id=PERF[perfil].views
   views.forEach(v=>v.hidden=v.id!=="v-"+id);tabs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.id===id));
   if(push)try{history.replaceState(null,"","#"+id)}catch(e){}
   ({estadisticas:renderEst,detalle:renderDet,reportes:renderRepo,habilitados:renderHab,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan,menusem:renderMenuSem})[id]?.();renderAlertas()}
-const USR={casino:{n:"Rodrigo Salinas Vera",r:"Jefe Casino"},bienestar:{n:"María Fernanda Ortiz Lagos",r:"Jefa de Bienestar"},get funcionario(){return{n:P[4].nombre,r:"Funcionario/a"}}};
+const USR={casino:{n:"Rodrigo Salinas Vera",r:"Jefe Casino"},bienestar:{n:"María Fernanda Ortiz Lagos",r:"Jefa de Bienestar"},get funcionario(){return{n:P[4].nombre,r:"Funcionario/a"}},terminal:{n:"Terminal del casino",r:"Equipo del casino · Oficina Central"}};
 function pintarPerfil(){$("#perfilChips").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.perfil===perfil));$("#whoName").textContent=USR[perfil].n;$("#whoRol").textContent=USR[perfil].r}
 pintarPerfil();
 $("#perfilChips").addEventListener("click",e=>{const b=e.target.closest("[data-perfil]");if(!b||b.dataset.perfil===perfil)return;perfil=b.dataset.perfil;pintarPerfil();try{localStorage.setItem("casino.perfil",perfil)}catch(_){}
