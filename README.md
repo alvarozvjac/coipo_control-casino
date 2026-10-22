@@ -29,7 +29,7 @@ ya registrado, habilitación suspendida, RUT que no está en la nómina y RUT ma
 hora está fijada en 13:05 y se cambia en Configuración. La validación con RUT y PIN queda
 para una versión futura.
 
-**Ticket:** encabezado, cantidad de almuerzos y menú, nombre completo, hora y fecha.
+**Ticket:** sigla CONAF y lugar, cantidad de almuerzos y menú, nombre completo en mayúsculas, fecha y hora.
 
 **Mi casino (funcionario):** el menú de cada mes se elige hasta el día 25 del mes anterior;
 los avisos de ausencia y los almuerzos con invitados (2 a 5 almuerzos a su nombre) se
