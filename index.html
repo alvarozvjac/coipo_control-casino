@@ -388,7 +388,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <label class="f">RUT<input id="nRut" placeholder="12.345.678-5" style="width:160px" autocomplete="off"></label>
       <label class="f" style="flex:1;min-width:200px">Nombre completo<input id="nNombre" autocomplete="off"></label>
       <label class="f">Unidad<input id="nUnidad" style="width:200px" autocomplete="off"></label>
-      <label class="f">Calidad jurídica<select id="nTipo"><option>Planta</option><option>Contrata</option><option>Código del Trabajo</option><option>Honorarios</option></select></label>
+      <label class="f">Calidad jurídica<select id="nTipo"><option>Dotación</option><option>Plazo fijo</option><option>Honorarios</option></select></label>
       <label class="f">Grado<input id="nGrado" type="number" min="1" max="30" style="width:90px"></label>
       <label class="f" id="nTramoL" hidden>Tramo<select id="nTramo"><option value="">Asignar después</option><option value="1">Tramo 1</option><option value="2">Tramo 2</option><option value="3">Tramo 3</option></select></label>
       <button class="btn primary" type="submit">Guardar</button>
@@ -397,9 +397,9 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   </form>
   <form class="panel" id="masivaForm" hidden>
     <h3>Carga masiva</h3>
-    <p class="small muted" style="margin:4px 0 8px">Pegue filas copiadas desde Excel: RUT, nombre, unidad, calidad jurídica y grado (separadas por tabulación o punto y coma). Sin grado, el tramo se asigna después en la tabla.</p>
-    <textarea id="masivaTxt" rows="4">16.459.212-K;Ejemplo Persona Uno;Gerencia de Finanzas;Contrata;13
-9.877.512-9;Ejemplo Persona Dos;Fiscalía;Planta;8</textarea>
+    <p class="small muted" style="margin:4px 0 8px">Pegue filas copiadas desde Excel: RUT, nombre, unidad, calidad jurídica (Dotación, Plazo fijo u Honorarios) y grado (separadas por tabulación o punto y coma). Solo Dotación tiene grado; para Plazo fijo y Honorarios el tramo se asigna después en la tabla.</p>
+    <textarea id="masivaTxt" rows="4">16.459.212-K;Ejemplo Persona Uno;Gerencia de Finanzas;Dotación;13
+9.877.512-9;Ejemplo Persona Dos;Fiscalía;PLAZO FIJO;</textarea>
     <div class="row" style="margin-top:8px"><button class="btn primary" type="submit">Validar e importar</button><span id="masivaMsg" class="small"></span></div>
   </form>
   <div class="tablebox"><table><thead><tr><th>Nombre</th><th>RUT</th><th>Unidad</th><th>Calidad</th><th>Grado</th><th>Tramo</th><th>Habilitado</th></tr></thead><tbody id="habBody"></tbody></table></div>
@@ -452,7 +452,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <p class="small muted" style="margin:14px 0 0">Los cambios se aplican de inmediato en la terminal. El plazo del menú mensual es un valor de ejemplo que define Bienestar; los avisos de ausencia e invitaciones se aceptan hasta las 23:59 del día anterior. La hora simulada permite probar la regla de horario sin esperar al mediodía.</p>
   </div>
   <div class="panel" style="display:grid;gap:12px">
-    <div><h3>Valor del almuerzo por tramo</h3><p class="small muted" style="margin:2px 0 0">El tramo se define por el grado del funcionario. Quienes no tienen grado (honorarios, Código del Trabajo) reciben el tramo que asigna el Jefe Casino en «Personas habilitadas».</p></div>
+    <div><h3>Valor del almuerzo por tramo</h3><p class="small muted" style="margin:2px 0 0">El tramo se define por el grado del funcionario. Quienes no tienen grado (plazo fijo y honorarios) reciben el tramo que asigna el Jefe Casino en «Personas habilitadas».</p></div>
     <div class="tablebox"><table><thead><tr><th>Tramo</th><th>Desde grado</th><th>Hasta grado</th><th>Valor del almuerzo (CLP, ejemplo)</th><th class="num">Personas</th></tr></thead><tbody id="tramosBody"></tbody></table></div>
     <p class="small" id="tramosMsg" style="margin:0"></p>
     <p class="small muted" style="margin:0">Un cambio de valor aplica a los almuerzos que se registren desde ese momento. Los ya registrados conservan el valor con que se emitieron.</p>
@@ -638,23 +638,23 @@ function maskRut(key){const b=key.slice(0,-1);return fmtBody(b).replace(/\d{3}$/
 /* ---- Datos de ejemplo ---- */
 let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
 const BASE12=[
- [15234871,"Carolina Muñoz Rojas","Gerencia de Personas","Contrata","4821"],
- [12876430,"Jorge Fuentes Lagos","Gerencia de Finanzas","Planta","7310"],
- [17654092,"Daniela Soto Herrera","Fiscalía","Contrata","1957"],
- [10987654,"Héctor Pizarro Vidal","Gerencia de Protección contra Incendios","Planta","6602"],
- [18345210,"Valentina Araya Cortés","Unidad de Información y Análisis","Contrata","3148"],
- [13456789,"Marcela Riquelme Paz","Servicio de Bienestar","Planta","2290"],
- [16789123,"Felipe Contreras Ibáñez","Departamento de Informática","Código del Trabajo","8475"],
- [14567321,"Paula Navarro Fuentealba","Gerencia de Desarrollo y Fomento Forestal","Contrata","5031"],
+ [15234871,"Carolina Muñoz Rojas","Gerencia de Personas","Dotación","4821"],
+ [12876430,"Jorge Fuentes Lagos","Gerencia de Finanzas","Dotación","7310"],
+ [17654092,"Daniela Soto Herrera","Fiscalía","Plazo fijo","1957"],
+ [10987654,"Héctor Pizarro Vidal","Gerencia de Protección contra Incendios","Dotación","6602"],
+ [18345210,"Valentina Araya Cortés","Unidad de Información y Análisis","Dotación","3148"],
+ [13456789,"Marcela Riquelme Paz","Servicio de Bienestar","Dotación","2290"],
+ [16789123,"Felipe Contreras Ibáñez","Departamento de Informática","Plazo fijo","8475"],
+ [14567321,"Paula Navarro Fuentealba","Gerencia de Desarrollo y Fomento Forestal","Dotación","5031"],
  [19234567,"Ignacio Reyes Tapia","Gerencia de Áreas Silvestres Protegidas","Honorarios","9164"],
- [11223344,"Rosa Espinoza Guzmán","Secretaría Ejecutiva","Planta","4407"],
- [17001234,"Tomás Bravo Olivares","Gerencia de Personas","Contrata","1286"],
- [15998877,"Camila Vergara Salinas","Gerencia de Finanzas","Contrata","6739"]
+ [11223344,"Rosa Espinoza Guzmán","Secretaría Ejecutiva","Dotación","4407"],
+ [17001234,"Tomás Bravo Olivares","Gerencia de Personas","Plazo fijo","1286"],
+ [15998877,"Camila Vergara Salinas","Gerencia de Finanzas","Dotación","6739"]
 ];
 const NOM=["Andrea","Rodrigo","Claudia","Patricio","Verónica","Cristián","Lorena","Mauricio","Francisca","Gonzalo","Carla","Sebastián","Pamela","Eduardo","Javiera","Luis","Natalia","Ricardo","Soledad","Matías","Gabriela","Víctor","Constanza","Pablo","Macarena","Hernán"];
 const APE=["González","Muñoz","Rojas","Díaz","Pérez","Soto","Contreras","Silva","Martínez","Sepúlveda","Morales","Rodríguez","López","Fuentes","Hernández","Torres","Araya","Flores","Espinoza","Valenzuela","Castillo","Tapia","Reyes","Gutiérrez","Castro","Pizarro","Álvarez","Vásquez","Sánchez","Fernández"];
 const UNI=["Gerencia de Personas","Gerencia de Finanzas","Fiscalía","Gerencia de Protección contra Incendios","Unidad de Información y Análisis","Servicio de Bienestar","Departamento de Informática","Gerencia de Desarrollo y Fomento Forestal","Gerencia de Áreas Silvestres Protegidas","Secretaría Ejecutiva","Gerencia de Fiscalización y Evaluación Ambiental","Auditoría Interna"];
-const TIP=["Planta","Contrata","Contrata","Contrata","Código del Trabajo","Honorarios"];
+const TIP=["Dotación","Dotación","Dotación","Dotación","Plazo fijo","Plazo fijo","Honorarios"];
 const pick=a=>a[Math.floor(rnd()*a.length)];
 const gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
 const clampMin=m=>Math.max(750,Math.min(899,Math.round(m)));
@@ -671,7 +671,7 @@ function seedPersonas(){
   P[6].bloq=true;P[6].fallos=3;
   const GR=[3,5,6,7,8,9,10,10,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,20,21];
   P.forEach((p,i)=>{const h=parseInt(p.key.slice(0,-1),10);
-    if(p.tipo==="Planta"||p.tipo==="Contrata"){p.grado=GR[h%GR.length];p.tramoManual=null}
+    if(p.tipo==="Dotación"){p.grado=GR[h%GR.length];p.tramoManual=null}
     else{p.grado=null;p.tramoManual=i===8?null:[1,2,3][h%3]}});
 }
 const byKey=k=>P.find(p=>p.key===k);
@@ -680,7 +680,7 @@ const CFG0={servicio:"Almuerzo",ubic:"Casino Institucional · Oficina Central",i
   tramos:[{n:1,desde:3,hasta:11,valor:3000},{n:2,desde:12,hasta:14,valor:2500},{n:3,desde:15,hasta:21,valor:2000}]};
 const copiaCfg=()=>({...CFG0,tramos:CFG0.tramos.map(t=>({...t}))});
 const cfg=copiaCfg();
-/* Tramo: por grado si la persona tiene grado; si no (honorarios, Código del Trabajo), el que asignó el Jefe Casino */
+/* Tramo: por grado si la persona tiene grado; si no (plazo fijo, honorarios), el que asignó el Jefe Casino */
 const tramoDe=p=>{if(!p)return null;if(p.grado!=null){const t=cfg.tramos.find(t=>p.grado>=t.desde&&p.grado<=t.hasta);return t?t.n:null}return p.tramoManual||null};
 const valorDe=p=>{const t=tramoDe(p);return t?cfg.tramos[t-1].valor:0};
 /* Cada almuerzo guarda el valor vigente al emitirse; si la persona no tenía tramo, se calcula con el actual */
@@ -976,11 +976,14 @@ $("#habBuscar").addEventListener("input",renderHab);
 $("#habBody").addEventListener("change",e=>{if(e.target.dataset.trm!==undefined){const p=P[e.target.dataset.trm];p.tramoManual=Number(e.target.value)||null;renderHab();toast(p.tramoManual?`${p.nombre}: tramo ${p.tramoManual} asignado`:"Tramo quitado");return}const i=e.target.dataset.hab;if(i!==undefined){P[i].hab=e.target.checked;renderHab();renderDemo();toast(P[i].hab?"Persona habilitada":"Habilitación suspendida")}});
 $("#btnNuevo").onclick=()=>{$("#nuevoForm").hidden=!$("#nuevoForm").hidden;$("#masivaForm").hidden=true};
 $("#btnMasiva").onclick=()=>{$("#masivaForm").hidden=!$("#masivaForm").hidden;$("#nuevoForm").hidden=true};
-$("#nTipo").addEventListener("change",e=>{const sinG=["Honorarios","Código del Trabajo"].includes(e.target.value);$("#nGrado").closest("label").hidden=sinG;$("#nTramoL").hidden=!sinG});
+$("#nTipo").addEventListener("change",e=>{const sinG=["Honorarios","Plazo fijo"].includes(e.target.value);$("#nGrado").closest("label").hidden=sinG;$("#nTramoL").hidden=!sinG});
 $("#nRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)});
+const CALIDADES=["Dotación","Plazo fijo","Honorarios"];
+const normTipo=t=>{const k=String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();return k?CALIDADES.find(c=>c.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()===k)||"":"Dotación"};
 function addPerson(rut,nombre,unidad,tipo,grado,tramo){const key=cleanRut(rut);if(!rutOk(rut))return"RUT no válido";if(byKey(key))return"ya existe";if(!nombre)return"falta nombre";
-  P.push({key,nombre,unidad:unidad||"Sin unidad",tipo:tipo||"Contrata",pin:String(1000+Math.floor(Math.random()*9000)),hab:true,fallos:0,bloq:false,prov:true,bio:"pendiente",enrFecha:null,grado:grado?Number(grado):null,tramoManual:grado?null:(Number(tramo)||null)});return null}
-$("#nuevoForm").addEventListener("submit",e=>{e.preventDefault();const sinG=["Honorarios","Código del Trabajo"].includes($("#nTipo").value);if(!sinG&&!$("#nGrado").value){$("#nMsg").innerHTML='<span style="color:var(--bad)">Indique el grado: define el tramo del almuerzo.</span>';return}
+  tipo=normTipo(tipo);if(!tipo)return"calidad jurídica no válida (Dotación, Plazo fijo u Honorarios)";if(tipo!=="Dotación")grado=null;
+  P.push({key,nombre,unidad:unidad||"Sin unidad",tipo:tipo||"Dotación",pin:String(1000+Math.floor(Math.random()*9000)),hab:true,fallos:0,bloq:false,prov:true,bio:"pendiente",enrFecha:null,grado:grado?Number(grado):null,tramoManual:grado?null:(Number(tramo)||null)});return null}
+$("#nuevoForm").addEventListener("submit",e=>{e.preventDefault();const sinG=["Honorarios","Plazo fijo"].includes($("#nTipo").value);if(!sinG&&!$("#nGrado").value){$("#nMsg").innerHTML='<span style="color:var(--bad)">Indique el grado: define el tramo del almuerzo.</span>';return}
   const err=addPerson($("#nRut").value,$("#nNombre").value.trim(),$("#nUnidad").value.trim(),$("#nTipo").value,sinG?null:$("#nGrado").value,$("#nTramo").value);
   const m=$("#nMsg");if(err){m.innerHTML=`<span style="color:var(--bad)">No se pudo guardar: ${err}.</span>`;return}
   m.innerHTML=`<span style="color:var(--ok)">Persona agregada y habilitada.</span>`;["#nRut","#nNombre","#nUnidad"].forEach(s=>$(s).value="");renderHab();renderDemo()});

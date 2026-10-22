@@ -53,8 +53,8 @@ usa las minutas reales de las semanas del 5, 13 y 19 de octubre de 2026.
 **Reporte mensual:** almuerzos consumidos por trabajador, con el detalle por ticket.
 
 **Valor del almuerzo:** se define por tramo según el grado (tramo 1: grados 3 a 11;
-tramo 2: 12 a 14; tramo 3: 15 a 21). Quienes no tienen grado (honorarios, Código del
-Trabajo) reciben el tramo que asigna el Jefe Casino. Los valores son de ejemplo.
+tramo 2: 12 a 14; tramo 3: 15 a 21). Las calidades jurídicas son Dotación, Plazo fijo y Honorarios; solo Dotación tiene grado, y
+quienes no lo tienen (plazo fijo y honorarios) reciben el tramo que asigna el Jefe Casino. Los valores son de ejemplo.
 
 **Cierres del casino:** al registrar o anular un cierre (clima, mantención, catástrofe,
 corte de suministro u otro), el otro perfil recibe una alerta. Durante un cierre vigente
