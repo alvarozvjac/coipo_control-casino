@@ -959,7 +959,7 @@ let tkPerson=null,tkHora="12:41",tkCopia=false,tkCant=1,tkMenu="Normal",tkId="";
 function setLbl(t,estado){const l=$("#printerLbl");l.textContent=t;l.className="small tk-lbl "+(estado||"")}
 function setPrinter(lbl,estado){setLbl(lbl,estado);
   const r={n:0,id:tkId,fecha:TODAY,hora:tkPerson?tkHora:"--:--",key:tkPerson?tkPerson.key:"",cant:tkCant,menu:tkMenu,origen:"Terminal"};
-  $("#ticketOut").innerHTML=ticketHTML(r,{persona:tkPerson||{nombre:"Persona no identificada"},anot:true,copia:tkCopia,copiaHora:hhmm(now()),cls:estado==="ok"?"in":estado==="no"?"tk-no":""})+LEY}
+  $("#ticketOut").innerHTML=ticketHTML(r,{persona:tkPerson||{nombre:"Persona no identificada"},anot:false,copia:tkCopia,copiaHora:hhmm(now()),cls:estado==="ok"?"in":estado==="no"?"tk-no":""})}
 function previewPersona(p,lbl){tkPerson=p;tkId="";tkHora=hhmm(now());tkCopia=false;const iv=invDe(p,TODAY);tkCant=iv?iv.cant:1;tkMenu=menuDe(p,TODAY);setPrinter(lbl,"pend")}
 function noEmite(motivo,sinPersona){tkId="";if(sinPersona){tkPerson=null;tkCopia=false}setPrinter("No se emite ticket · "+motivo,"no")}
 function printTicket(r,copia){tkPerson=byKey(r.key);tkId=r.id||"";tkHora=r.hora;tkCopia=!!copia;tkCant=r.cant||1;tkMenu=r.menu||"Normal";setPrinter(copia?"Copia reimpresa":"Ticket emitido","ok")}
