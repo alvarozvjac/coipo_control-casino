@@ -32,12 +32,12 @@ para una versión futura.
 **Ticket:** sigla CONAF, fecha y lugar; cantidad de almuerzos y menú; nombre completo en mayúsculas, hora e ID único (año y correlativo anual, por ejemplo 2026-004812). El ID se registra en el detalle de ingresos del Jefe Casino, en «Mi casino» del funcionario y en el detalle por ticket del reporte mensual; el detalle de ingresos permite buscar por ID.
 
 **Mi casino (funcionario):** muestra el menú de la semana publicado por el Jefe Casino
-(entrada, plato normal, hipocalórico y vegano, y postre), sus asistencias y descuentos, y
+(entrada, plato normal, hipocalórico y vegano, y postre), sus asistencias, y
 permite elegir el menú de cada mes (normal o hipocalórico, hasta el día 25 del mes anterior),
 avisar los días en que no almorzará (un día o un rango) y registrar almuerzos con invitados.
-El funcionario es responsable de avisar sus ausencias hasta las 23:59 del día anterior: **si
-no avisa y no asiste, el almuerzo se descuenta igual** y aparece como «Sin aviso». Los
-almuerzos con invitados se descuentan al funcionario según su tramo.
+El funcionario es responsable de avisar sus ausencias hasta las 23:59 del día anterior, para
+planificar las raciones; solo se descuentan los almuerzos consumidos. Los almuerzos con
+invitados se descuentan al funcionario según su tramo.
 
 **Planificación (Jefe Casino):** próximos 10 días hábiles con habilitados, ausencias
 avisadas, menú normal, menú hipocalórico, almuerzos de invitados, raciones planificadas y
@@ -46,8 +46,7 @@ consumo habitual como referencia.
 **Menú semanal (Jefe Casino):** cada lunes publica el menú de la semana; los cambios quedan
 como borrador hasta publicarlos.
 
-**Reporte mensual:** por trabajador, almuerzos consumidos y días sin aviso, con el detalle
-por ticket y por día sin aviso.
+**Reporte mensual:** almuerzos consumidos por trabajador, con el detalle por ticket.
 
 **Valor del almuerzo:** se define por tramo según el grado (tramo 1: grados 3 a 11;
 tramo 2: 12 a 14; tramo 3: 15 a 21). Quienes no tienen grado (honorarios, Código del
