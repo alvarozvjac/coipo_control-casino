@@ -17,7 +17,7 @@ En el encabezado, el recuadro **«Maqueta · probar como»** cambia entre los tr
 |---|---|
 | Jefe Casino | Terminal del casino (RUT digitado, emisión del ticket), propuesta de ticket, estadísticas, detalle de ingresos, planificación de raciones, emisión del reporte mensual de descuento, cierres del casino, personas habilitadas (grado y tramo) y configuración |
 | Jefa de Bienestar | Estadísticas agregadas, emisión de reportes, cierres del casino y propuesta de ticket |
-| Funcionario | «Mi casino»: asistencias por mes, menú del mes (normal o hipocalórico), días en que no almorzará y almuerzos con invitados |
+| Funcionario | «Mi casino»: asistencias por mes, menú del mes (normal, hipocalórico o vegano), reporte CSV, días en que no almorzará y almuerzos con invitados |
 
 **Terminal del casino:** la persona digita su RUT en un teclado numérico USB y presiona
 Enter; la tecla `*` equivale a la K. La pantalla y el ticket muestran su nombre completo,
