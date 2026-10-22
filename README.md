@@ -43,8 +43,10 @@ invitados se descuentan al funcionario según su tramo.
 avisadas, menú normal, menú hipocalórico, almuerzos de invitados, raciones planificadas y
 consumo habitual como referencia.
 
-**Menú semanal (Jefe Casino):** cada lunes publica el menú de la semana; los cambios quedan
-como borrador hasta publicarlos.
+**Menú semanal (Jefe Casino):** cada lunes publica la minuta de la semana (entrada, plato
+normal, hipocalórico y vegano, postre y un mensaje opcional), que reemplaza el envío de la
+minuta por correo electrónico. Los cambios quedan como borrador hasta publicarlos. La maqueta
+usa las minutas reales de las semanas del 5, 13 y 19 de octubre de 2026.
 
 **Reporte mensual:** almuerzos consumidos por trabajador, con el detalle por ticket.
 
