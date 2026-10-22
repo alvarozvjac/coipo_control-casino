@@ -507,7 +507,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <div id="miMenu" style="display:grid;gap:12px"></div>
     </div>
     <div class="panel" style="display:grid;gap:12px;align-content:start">
-      <div><h3>Días en que no almorzaré</h3><p class="small muted" style="margin:2px 0 0">Usted es responsable de avisar los días en que no usará el casino, hasta las 23:59 del día anterior, para que se preparen las raciones justas.</p></div>
+      <div><h3>Días en que no almorzaré</h3><p class="small muted" style="margin:2px 0 0">Usted es responsable de avisar los días en que no usará el casino, hasta las 23:59 del día anterior, para que se preparen las raciones justas. Ese día, la terminal no aceptará su RUT.</p></div>
       <form id="miAusForm" novalidate class="row" style="align-items:end"><label class="f">Desde<input type="date" id="miAusF"></label><label class="f">Hasta (opcional)<input type="date" id="miAusH"></label><button class="btn primary" type="submit">Registrar aviso</button></form>
       <span id="miAusMsg" class="small"></span>
       <ul class="avisos" id="miAusList"></ul>
@@ -790,6 +790,7 @@ function seedSolicitudes(){
     if(hkey(p.key+f+"f")%100<(j<2?24:j<5?16:9))AUS.push({key:p.key,fecha:f,creado:cre})})});
   AUS.push({key:P[4].key,fecha:dias[3],creado:cre});INV.push({key:P[4].key,fecha:dias[6],cant:2,creado:cre});
   INV.push({key:P[1].key,fecha:dias[0],cant:3,creado:cre});
+  AUS.push({key:P[8].key,fecha:TODAY,creado:`${fmtD(proxHabilesAntes(TODAY))} 19:20`});
   INV.push({key:P[2].key,fecha:TODAY,cant:2,creado:`${fmtD(proxHabilesAntes(TODAY))} 16:40`});
 }
 function avgDia(f){const w=D(f).getDay();const cnt=new Map();
@@ -912,6 +913,7 @@ function resetT(){clearTimeout(resetTimer);Object.assign(T,{step:"rut",rut:"",re
 function reglas(p){
   const ci=cierreEn(TODAY,hhmm(now()));if(ci){result("warn","Casino cerrado",`${esc(horarioC(ci)==="día completo"?"Cerrado todo el día":"Cerrado "+horarioC(ci))} por ${esc(ci.motivo.toLowerCase())}. No se registran almuerzos mientras dure el cierre.`);return false}
   if(!p.hab){result("bad","Habilitación suspendida","Su habilitación para el casino está suspendida. Consulte con el Jefe Casino.",p.nombre);return false}
+  if(ausDe(p,TODAY)){result("bad","No disponible hoy","Usted informó en «Mi casino» que hoy no almorzará.",p.nombre);return false}
   if(!inHours()){result("warn","Fuera del horario del servicio",`El ${esc(cfg.servicio.toLowerCase())} se registra entre ${cfg.ini} y ${cfg.fin} horas.`);return false}
   const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");
   if(ya.length>=cfg.limite){result("warn","Ya registró su almuerzo hoy",`Su ticket se emitió a las ${ya[0].hora}.`,p.nombre);return false}
@@ -925,7 +927,7 @@ function checkRut(){
   const r=emit(p,"Terminal");
   result("ok",r.cant>1?`${r.cant} almuerzos registrados`:"Almuerzo registrado",`${r.cant>1?`Retire su ticket por ${r.cant} almuerzos (usted y sus invitados)`:"Retire su ticket"}. Menú ${r.menu.toLowerCase()}. ¡Buen provecho!`,p.nombre);
 }
-function emit(p,origen,motivo){const iv=invDe(p,TODAY);const a=ausDe(p,TODAY);if(a)AUS.splice(AUS.indexOf(a),1);
+function emit(p,origen,motivo){const iv=invDe(p,TODAY);
   const r={n:nextN(),id:nextId(TODAY),fecha:TODAY,hora:hhmm(now()),key:p.key,valor:valorDe(p),cant:iv?iv.cant:1,menu:menuDe(p,TODAY),origen,estado:"Válido",motivo};R.push(r);printTicket(r);return r}
 function ticketHTML(r,o={}){const p=o.persona||byKey(r.key);const f=D(r.fecha);
   const fecha=cap(f.toLocaleDateString("es-CL",{weekday:"long"}))+" "+String(f.getDate()).padStart(2,"0")+"-"+String(f.getMonth()+1).padStart(2,"0")+"-"+f.getFullYear();
@@ -954,7 +956,7 @@ setInterval(()=>{const c=$("#clk");if(c)c.textContent=hhmm(now())},15000);
 /* Panel de simulación: digita el RUT de una persona de prueba en el teclado */
 function renderDemo(){
   $("#demoList").innerHTML=P.slice(0,12).map(p=>{
-    const est=!p.hab?' <span class="pill neu">suspendida</span>':todays().some(r=>r.key===p.key&&r.estado==="Válido")?' <span class="pill warn">ya almorzó</span>':invDe(p,TODAY)?` <span class="pill ok">${invDe(p,TODAY).cant} almuerzos hoy</span>`:"";
+    const est=!p.hab?' <span class="pill neu">suspendida</span>':todays().some(r=>r.key===p.key&&r.estado==="Válido")?' <span class="pill warn">ya almorzó</span>':ausDe(p,TODAY)?' <span class="pill bad">avisó que no almuerza hoy</span>':invDe(p,TODAY)?` <span class="pill ok">${invDe(p,TODAY).cant} almuerzos hoy</span>`:"";
     return `<tr><td>${esc(p.nombre)}${est}</td><td class="mono">${fmtRut(p.key)}</td><td><button class="btn small primary" data-rut="${p.key}">Digitar RUT</button></td></tr>`}).join("")+
    `<tr><td>RUT que no está en la nómina</td><td class="mono">${fmtRut("21654321"+dv(21654321))}</td><td><button class="btn small" data-rut="${"21654321"+dv(21654321)}">Digitar RUT</button></td></tr>
     <tr><td>RUT mal digitado</td><td class="mono">${fmtRut("152348712")}</td><td><button class="btn small" data-rut="152348712">Digitar RUT</button></td></tr>`}
@@ -1159,6 +1161,7 @@ $("#manualForm").addEventListener("submit",e=>{e.preventDefault();const msg=$("#
   if(!rutOk(v)){msg.innerHTML='<span style="color:var(--bad)">RUT no válido.</span>';return}
   const p=byKey(cleanRut(v));if(!p){msg.innerHTML='<span style="color:var(--bad)">No está en la nómina de habilitados.</span>';return}
   if(!p.hab){msg.innerHTML='<span style="color:var(--bad)">Habilitación suspendida.</span>';return}
+  if(ausDe(p,TODAY)){msg.innerHTML='<span style="color:var(--bad)">No disponible hoy: informó en «Mi casino» que no almorzará.</span>';return}
   if(cierreEn(TODAY,hhmm(now()))){msg.innerHTML='<span style="color:var(--warn)">El casino está cerrado en este horario; no se registran almuerzos.</span>';return}
   const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");if(ya.length>=cfg.limite){msg.innerHTML=`<span style="color:var(--warn)">Ya tiene el ticket N° ${ya[0].id} hoy.</span>`;return}
   const r=emit(p,"Manual",$("#manMotivo").value);$("#manRut").value="";msg.innerHTML=`<span style="color:var(--ok)">Ticket N° ${r.id} emitido para ${esc(p.nombre)}.</span>`;det.desde=det.hasta=TODAY;renderDet()});

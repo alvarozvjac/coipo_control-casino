@@ -25,7 +25,8 @@ para que el personal del casino verifique la identidad. El **simulador del tecla
 numérico**, al costado, digita el RUT de cada persona de prueba; también se puede usar el
 teclado del computador. Las tres primeras personas (Carolina, Jorge y Daniela) muestran la
 emisión completa del ticket; Daniela tiene hoy 2 almuerzos a su nombre. Otros casos: almuerzo
-ya registrado, habilitación suspendida, RUT que no está en la nómina y RUT mal digitado. La
+ya registrado, aviso de ausencia para hoy (Ignacio: la terminal muestra «No disponible hoy» y no
+emite ticket), habilitación suspendida, RUT que no está en la nómina y RUT mal digitado. La
 hora está fijada en 13:05 y se cambia en Configuración. La validación con RUT y PIN queda
 para una versión futura.
 
