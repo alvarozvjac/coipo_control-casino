@@ -468,7 +468,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <div class="panel"><h3 style="margin-bottom:12px">Contenido, de arriba hacia abajo</h3>
       <ol class="campos">
         <li><div><b>Encabezado</b><span>Sigla CONAF, fecha del día y lugar del servicio. La fecha impide reutilizar un ticket de otro día.</span></div></li>
-        <li><div><b>Almuerzos y menú</b><span>Cantidad de almuerzos («1 ALMUERZO», «2 ALMUERZOS» cuando hay invitados) y, en letra grande, el menú elegido para el mes, normal o hipocalórico, para que el personal lo sirva sin preguntar.</span></div></li>
+        <li><div><b>Almuerzos y menú</b><span>Cantidad de almuerzos («1 ALMUERZO», «2 ALMUERZOS» cuando hay invitados) y, en letra grande, el menú elegido para el mes: normal, hipocalórico o vegano, para que el personal lo sirva sin preguntar.</span></div></li>
         <li><div><b>Nombre completo</b><span>En mayúsculas y letra normal (sin negrita), para que el personal del casino confirme que quien entrega el ticket es su titular.</span></div></li>
         <li><div><b>Hora de emisión</b><span>Bajo el nombre, en letra mediana sin negrita.</span></div></li>
         <li><div><b>ID único</b><span>Año y correlativo anual (por ejemplo, 2026-004812). Queda registrado en el detalle de ingresos del Jefe Casino, en «Mi casino» del funcionario y en el reporte mensual, para resolver reclamos. Una copia reimpresa conserva el mismo ID.</span></div></li>
@@ -497,7 +497,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   </div>
   <div class="grid2">
     <div class="panel" style="display:grid;gap:12px;align-content:start">
-      <div><h3>Menú del mes</h3><p class="small muted" style="margin:2px 0 0">Elija el menú que solicitará durante cada mes.</p></div>
+      <div><h3>Menú del mes</h3><p class="small muted" style="margin:2px 0 0">Elija el menú que solicitará durante cada mes: normal, hipocalórico o vegano.</p></div>
       <div id="miMenu" style="display:grid;gap:12px"></div>
     </div>
     <div class="panel" style="display:grid;gap:12px;align-content:start">
@@ -536,12 +536,12 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   </div>
   <span id="msMsg" class="small"></span>
   <div class="tablebox"><table class="msem edit"><thead><tr><th>Día</th><th>Entrada</th><th>Plato normal</th><th>Plato hipocalórico</th><th>Plato vegano</th><th>Postre</th></tr></thead><tbody id="msBody"></tbody></table></div>
-  <p class="small muted" style="margin:0">Los cambios quedan como borrador hasta que presione «Publicar». El plato vegano es opcional: solo se completa los días en que se ofrece. En la maqueta, las semanas del 5, 13 y 19 de octubre usan las minutas reales del casino; la del 26 es un borrador de ejemplo.</p>
+  <p class="small muted" style="margin:0">Los cambios quedan como borrador hasta que presione «Publicar». El plato vegano debe completarse todos los días en que haya funcionarios con menú vegano. En la maqueta, las semanas del 5, 13 y 19 de octubre usan las minutas reales del casino; la del 26 es un borrador de ejemplo.</p>
 </section>
 <section class="view" id="v-plan" data-label="Planificación" hidden>
-  <div><h2>Planificación de raciones</h2><p class="lead">Próximos 10 días hábiles. Como cada funcionario debe avisar cuando no almorzará, las raciones planificadas son las personas habilitadas sin aviso de ausencia, según su menú, más los almuerzos de invitados. Elija un día para ver el detalle.</p></div>
-  <div class="tablebox"><table class="plan"><colgroup><col style="width:15%"><col span="7"></colgroup><thead><tr><th>Día</th><th class="num"><span class="lg">Habili&shy;tados</span><span class="sm">Hab.</span></th><th class="num"><span class="lg">Ausencias avisadas</span><span class="sm">Aus.</span></th><th class="num"><span class="lg">Menú normal</span><span class="sm">Norm.</span></th><th class="num"><span class="lg">Menú hipo&shy;calórico</span><span class="sm">Hipo.</span></th><th class="num"><span class="lg">Invitados</span><span class="sm">Inv.</span></th><th class="num"><span class="lg">Raciones planificadas</span><span class="sm">Rac.</span></th><th class="num"><span class="lg">Consumo habitual</span><span class="sm">Hab. día</span></th></tr></thead><tbody id="planBody"></tbody></table></div>
-  <p class="small muted plan-ley" style="display:none;margin:0">Hab.: habilitados · Aus.: ausencias avisadas · Norm. e Hipo.: menú normal e hipocalórico · Inv.: almuerzos de invitados · Rac.: raciones planificadas · Hab. día: consumo habitual.</p>
+  <div><h2>Planificación de raciones</h2><p class="lead">Próximos 10 días hábiles. Como cada funcionario debe avisar cuando no almorzará, las raciones planificadas son las personas habilitadas sin aviso de ausencia, según su menú (normal, hipocalórico o vegano), más los almuerzos de invitados. Elija un día para ver el detalle.</p></div>
+  <div class="tablebox"><table class="plan"><colgroup><col style="width:14%"><col span="8"></colgroup><thead><tr><th>Día</th><th class="num"><span class="lg">Habili&shy;tados</span><span class="sm">Hab.</span></th><th class="num"><span class="lg">Ausencias avisadas</span><span class="sm">Aus.</span></th><th class="num"><span class="lg">Menú normal</span><span class="sm">Norm.</span></th><th class="num"><span class="lg">Menú hipo&shy;calórico</span><span class="sm">Hipo.</span></th><th class="num"><span class="lg">Menú vegano</span><span class="sm">Veg.</span></th><th class="num"><span class="lg">Invitados</span><span class="sm">Inv.</span></th><th class="num"><span class="lg">Raciones planificadas</span><span class="sm">Rac.</span></th><th class="num"><span class="lg">Consumo habitual</span><span class="sm">Hab. día</span></th></tr></thead><tbody id="planBody"></tbody></table></div>
+  <p class="small muted plan-ley" style="display:none;margin:0">Hab.: habilitados · Aus.: ausencias avisadas · Norm., Hipo. y Veg.: menú normal, hipocalórico y vegano · Inv.: almuerzos de invitados · Rac.: raciones planificadas · Hab. día: consumo habitual.</p>
   <div class="grid2">
     <div class="panel"><h3>No almorzarán · <span id="planDiaT"></span></h3><ul class="tight" id="planAus"></ul></div>
     <div class="panel"><h3>Almuerzos con invitados</h3><ul class="tight" id="planInv"></ul></div>
@@ -586,7 +586,6 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <li>Cómo verificará el personal del casino que el nombre del ticket corresponde a quien lo entrega.</li>
       <li>Formato que requiere Remuneraciones para el descuento.</li>
       <li>Plazo para elegir el menú del mes (la maqueta usa el día 25 del mes anterior). Los avisos de ausencia e invitaciones se aceptan hasta las 23:59 del día anterior.</li>
-      <li>Si el plato vegano será también una opción de menú mensual para elegir, además de normal e hipocalórico.</li>
       <li>Cómo ingresará el funcionario a «Mi casino» (por ejemplo, RUT y código al correo, como en el sistema de reservas).</li>
       <li>Deber de reserva del Jefe Casino sobre los datos de los comensales y registro de quién consulta el detalle.</li>
     </ul></div>
@@ -717,7 +716,7 @@ const descC=c=>`${fechasC(c)}, ${horarioC(c)} · ${c.motivo}${c.detalle?` (${c.d
 
 /* registros: {n, fecha, hora, key, origen, estado, motivo} — año en curso hasta hoy */
 /* ---- Solicitudes del funcionario: menú del mes, ausencias e invitados ---- */
-const MENUS=["Normal","Hipocalórico"];
+const MENUS=["Normal","Hipocalórico","Vegano"];
 const MENU={},AUS=[],INV=[];
 const hkey=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
 const ymOf=f=>f.slice(0,7);
@@ -774,8 +773,8 @@ function proxHabiles(n){const out=[];const d=D(TODAY);while(out.length<n){d.setD
 function seedSolicitudes(){
   for(const k in MENU)delete MENU[k];AUS.length=0;INV.length=0;
   const cm=ymOf(TODAY),nm=ymNext(cm);
-  P.forEach(p=>{[ymPrev(ymPrev(cm)),ymPrev(cm),cm].forEach(ym=>{if(hkey(p.key+ym)%5===0)MENU[p.key+"|"+ym]="Hipocalórico"});
-    if(hkey(p.key+nm)%4===0)MENU[p.key+"|"+nm]="Hipocalórico"});
+  P.forEach(p=>{[ymPrev(ymPrev(cm)),ymPrev(cm),cm].forEach(ym=>{const h=hkey(p.key+ym);if(h%5===0)MENU[p.key+"|"+ym]="Hipocalórico";else if(h%11===0)MENU[p.key+"|"+ym]="Vegano"});
+    const hn=hkey(p.key+nm);if(hn%4===0)MENU[p.key+"|"+nm]="Hipocalórico";else if(hn%9===0)MENU[p.key+"|"+nm]="Vegano"});
   MENU[P[4].key+"|"+cm]="Hipocalórico";
   const dias=proxHabiles(10);const cre=`${fmtD(TODAY)} 09:12`;
   P.forEach((p,i)=>{if(i<12&&i!==4)return;dias.forEach(f=>{const h=hkey(p.key+f);
@@ -1317,7 +1316,7 @@ $("#v-micasino").addEventListener("click",e=>{const b=e.target.closest("[data-qu
 let miSem=null;
 function renderMiSem(p){const l0=lunesDe(TODAY);if(!miSem)miSem=l0;const s=MSEM[miSem];const pub=s&&s.pub;
   $("#miSemLbl").textContent=`Semana del ${fmtD(miSem)}`;$("#miSemPrev").disabled=miSem<=sumDias(l0,-7);$("#miSemNext").disabled=miSem>=sumDias(l0,7);
-  const mio=menuDe(p,miSem>TODAY?miSem:TODAY);const col={Normal:"normal",Hipocalórico:"hipo"}[mio];
+  const mio=menuDe(p,miSem>TODAY?miSem:TODAY);const col={Normal:"normal",Hipocalórico:"hipo",Vegano:"vegano"}[mio];
   $("#miSemLead").innerHTML=pub?`Publicado por el Jefe Casino el ${fmtD(pub.fecha)} a las ${pub.hora} · servicio de ${cfg.ini} a ${cfg.fin} horas. Su menú este mes: <b>${esc(mio.toLowerCase())}</b>.`:"El Jefe Casino publica la minuta cada lunes; la de esta semana aún no está publicada.";
   $("#miSemBox").innerHTML=pub?`<table class="msem"><thead><tr><th>Día</th>${MCAMPOS.map(([k,t])=>`<th class="${k===col?"mio":""}">${t}${k===col?" · su menú":""}</th>`).join("")}</tr></thead><tbody>${Object.entries(pub.dias).map(([f,o])=>{const cerr=!habil(D(f))||diaCerrado(f);
     return`<tr class="${f===TODAY?"hoy":""}"><td><b>${cap(D(f).toLocaleDateString("es-CL",{weekday:"long"}))}</b><br><span class="small muted">${fmtD(f)}${f===TODAY?" · hoy":""}</span></td>${cerr?`<td colspan="5"><span class="pill bad">Sin servicio</span></td>`:MCAMPOS.map(([k])=>`<td class="${k===col?"mio":""}">${esc(o[k])||'<span class="muted">—</span>'}</td>`).join("")}</tr>`}).join("")}</tbody></table>`
@@ -1338,8 +1337,8 @@ $("#msBody").addEventListener("input",e=>{const t=e.target.dataset.ms;if(!t)retu
 function msEstado(){const s=MSEM[msSel];const cambios=s.pub&&(JSON.stringify(s.pub.dias)!==JSON.stringify(s.borrador)||(s.pub.msg||"")!==(s.msgB||""));$("#msPub").disabled=!!s.pub&&!cambios;
   $("#msEstado").innerHTML=s.pub?`<span class="pill ok">Publicado el ${fmtD(s.pub.fecha)} a las ${s.pub.hora}</span>${cambios?' <span class="pill warn">Cambios sin publicar</span>':""}`:'<span class="pill warn">Borrador · no publicado</span>'}
 $("#msPrev").onclick=()=>{msSel=sumDias(msSel,-7);renderMenuSem()};$("#msNext").onclick=()=>{msSel=sumDias(msSel,7);renderMenuSem()};
-$("#msPub").onclick=()=>{const s=MSEM[msSel];const falt=Object.entries(s.borrador).filter(([f,o])=>habil(D(f))&&!diaCerrado(f)&&MCAMPOS.some(([k])=>k!=="vegano"&&!o[k].trim())).length;
-  if(falt&&!confirmPub){confirmPub=true;$("#msMsg").innerHTML=`<span style="color:var(--warn)">${falt} día(s) tienen entrada, plato normal, hipocalórico o postre vacíos. Presione de nuevo para publicar igual.</span>`;return}
+$("#msPub").onclick=()=>{const s=MSEM[msSel];const falt=Object.entries(s.borrador).filter(([f,o])=>habil(D(f))&&!diaCerrado(f)&&MCAMPOS.some(([k])=>(k!=="vegano"||P.some(p=>p.hab&&menuDe(p,f)==="Vegano"))&&!o[k].trim())).length;
+  if(falt&&!confirmPub){confirmPub=true;$("#msMsg").innerHTML=`<span style="color:var(--warn)">${falt} día(s) tienen platos vacíos (el vegano es obligatorio cuando hay funcionarios con menú vegano). Presione de nuevo para publicar igual.</span>`;return}
   confirmPub=false;s.pub={dias:JSON.parse(JSON.stringify(s.borrador)),msg:s.msgB||"",fecha:TODAY,hora:hhmm(now())};$("#msMsg").innerHTML=`<span style="color:var(--ok)">Minuta publicada. Los funcionarios la ven en «Mi casino»; no es necesario enviarla por correo.</span>`;renderMenuSem()};
 let confirmPub=false;
 
@@ -1349,9 +1348,9 @@ function renderPlan(){
   const dias=proxHabiles(10);if(!planSel||!dias.includes(planSel))planSel=dias[0];
   const hab=P.filter(p=>p.hab);
   const filas=dias.map(f=>{const cerr=diaCerrado(f);const base=Math.round(avgDia(f));const ausK=new Set(AUS.filter(x=>x.fecha===f).map(x=>x.key));const inv=INV.filter(x=>x.fecha===f);const extra=inv.reduce((a,x)=>a+x.cant-1,0);
-    const pres=hab.filter(p=>!ausK.has(p.key));const hipo=pres.filter(p=>menuDe(p,f)==="Hipocalórico").length;const norm=pres.length-hipo+extra;
-    return{f,cerr,hab:hab.length,aus:hab.filter(p=>ausK.has(p.key)).length,extra,hipo,norm,tot:hipo+norm,inv,base}});
-  $("#planBody").innerHTML=filas.map(x=>`<tr class="${x.f===planSel?"sel":""}" data-plan="${x.f}" tabindex="0"><td><span class="lg">${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short",day:"numeric",month:"short"}))}</span><span class="sm">${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short"}).replace(".",""))} ${D(x.f).getDate()}/${D(x.f).getMonth()+1}</span></td>${x.cerr?'<td colspan="7"><span class="pill bad">Casino cerrado</span></td>':`<td class="num">${x.hab}</td><td class="num">−${x.aus}</td><td class="num">${x.norm}</td><td class="num">${x.hipo}</td><td class="num">${x.extra?"+"+x.extra:"0"}</td><td class="num"><b>${x.tot}</b></td><td class="num muted">${x.base}</td>`}</tr>`).join("");
+    const pres=hab.filter(p=>!ausK.has(p.key));const hipo=pres.filter(p=>menuDe(p,f)==="Hipocalórico").length;const veg=pres.filter(p=>menuDe(p,f)==="Vegano").length;const norm=pres.length-hipo-veg+extra;
+    return{f,cerr,hab:hab.length,aus:hab.filter(p=>ausK.has(p.key)).length,extra,hipo,veg,norm,tot:hipo+veg+norm,inv,base}});
+  $("#planBody").innerHTML=filas.map(x=>`<tr class="${x.f===planSel?"sel":""}" data-plan="${x.f}" tabindex="0"><td><span class="lg">${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short",day:"numeric",month:"short"}))}</span><span class="sm">${cap(D(x.f).toLocaleDateString("es-CL",{weekday:"short"}).replace(".",""))} ${D(x.f).getDate()}/${D(x.f).getMonth()+1}</span></td>${x.cerr?'<td colspan="8"><span class="pill bad">Casino cerrado</span></td>':`<td class="num">${x.hab}</td><td class="num">−${x.aus}</td><td class="num">${x.norm}</td><td class="num">${x.hipo}</td><td class="num">${x.veg}</td><td class="num">${x.extra?"+"+x.extra:"0"}</td><td class="num"><b>${x.tot}</b></td><td class="num muted">${x.base}</td>`}</tr>`).join("");
   const s=filas.find(x=>x.f===planSel);
   $("#planDiaT").textContent=cap(D(planSel).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}));
   const ausL=AUS.filter(x=>x.fecha===planSel).map(x=>byKey(x.key));

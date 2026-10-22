@@ -35,14 +35,14 @@ para una versión futura.
 **Mi casino (funcionario):** muestra el menú de la semana publicado por el Jefe Casino
 (entrada, plato normal, hipocalórico y vegano, y postre), sus asistencias por mes y un
 reporte del mes en CSV para Excel (ID de ticket, fecha, hora, almuerzos, menú y monto), y
-permite elegir el menú de cada mes (normal o hipocalórico, hasta el día 25 del mes anterior),
+permite elegir el menú de cada mes (normal, hipocalórico o vegano, hasta el día 25 del mes anterior),
 avisar los días en que no almorzará (un día o un rango) y registrar almuerzos con invitados.
 El funcionario es responsable de avisar sus ausencias hasta las 23:59 del día anterior, para
 planificar las raciones; solo se descuentan los almuerzos consumidos. Los almuerzos con
 invitados se descuentan al funcionario según su tramo.
 
 **Planificación (Jefe Casino):** próximos 10 días hábiles con habilitados, ausencias
-avisadas, menú normal, menú hipocalórico, almuerzos de invitados, raciones planificadas y
+avisadas, menú normal, hipocalórico y vegano, almuerzos de invitados, raciones planificadas y
 consumo habitual como referencia.
 
 **Menú semanal (Jefe Casino):** cada lunes publica la minuta de la semana (entrada, plato
