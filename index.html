@@ -329,7 +329,6 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <div class="row spread" style="align-items:baseline"><div><h3>Afluencia por franja horaria</h3><p class="small muted" style="margin:2px 0 0" id="afSub"></p></div><span class="small muted">Franjas de 15 minutos dentro del horario del servicio</span></div>
     <div class="afkpi" id="afKpi"></div>
     <div id="afMapa"></div>
-    <div class="grid2" style="gap:16px" id="afRank"></div>
     <p class="small muted" style="margin:0" id="afLectura"></p>
   </div>
   <div class="panel">
@@ -1031,7 +1030,7 @@ function renderAfluencia(rows,k){
   const dias=Math.max(1,k.dias);const avg=tot.map(v=>v/dias);const total=rows.length;
   const un=dia?"personas":"personas en promedio";
   $("#afSub").textContent=dia?(hoyEnCurso?`Ingresos de hoy por franja, hasta las ${hhmm(now())}.`:"Ingresos registrados en cada franja del día."):`Promedio de ingresos por franja en un día de servicio (${k.dias} días${parcial?"; excluye hoy, que aún está en curso":""}).`;
-  if(!total){["#afKpi","#afMapa","#afRank"].forEach(x=>$(x).innerHTML="");$("#afLectura").textContent="Sin ingresos en el período.";return}
+  if(!total){["#afKpi","#afMapa"].forEach(x=>$(x).innerHTML="");$("#afLectura").textContent="Sin ingresos en el período.";return}
   const idx=[...avg.keys()];
   const max=idx.reduce((a,b)=>avg[b]>avg[a]?b:a,0);const min=idx.reduce((a,b)=>avg[b]<avg[a]?b:a,0);
   // ventana más corta que concentra la mitad de los ingresos
@@ -1055,11 +1054,6 @@ function renderAfluencia(rows,k){
     $("#afMapa").innerHTML=`<div class="tablebox"><table class="hm"><thead><tr><th></th>${base.map(b=>`<th>${b.label}</th>`).join("")}</tr></thead><tbody>
       ${rowsH.map(r=>`<tr class="${r.avg?"hm-avg":""}"><th scope="row">${r.d}</th>${r.vals.map(cell).join("")}</tr>`).join("")}</tbody></table></div>
       <div class="hm-ley small muted"><span>Menos</span><i></i><span>Más personas por franja</span></div>`}
-  // ranking de franjas
-  const ord=idx.slice().sort((a,b)=>avg[b]-avg[a]);
-  const li=i=>`<li><span class="mono">${rango(base[i])}</span><span class="afbar"><i style="width:${avg[i]/avg[max]*100}%"></i></span><b>${val(avg[i])}</b></li>`;
-  $("#afRank").innerHTML=`<div><h4 class="afh">Franjas más concurridas</h4><ol class="afl">${ord.slice(0,3).map(li).join("")}</ol></div>
-    <div><h4 class="afh">Franjas con menos personas</h4><ol class="afl">${ord.slice(-3).reverse().map(li).join("")}</ol></div>`;
   // lectura
   const holg=idx.filter(i=>avg[i]<=avg[max]*0.35);
   const tramos=[];holg.forEach(i=>{const t=tramos[tramos.length-1];if(t&&t[1]===i-1)t[1]=i;else tramos.push([i,i])});
