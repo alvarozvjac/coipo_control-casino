@@ -463,12 +463,11 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <label class="f">Ubicación<input id="cUbicacion" value="Casino Institucional · Oficina Central"></label>
       <label class="f">Hora de inicio<input id="cIni" type="time" value="12:30"></label>
       <label class="f">Hora de término<input id="cFin" type="time" value="15:00"></label>
-      <label class="f">Límite por persona y día<input id="cLimite" type="number" min="1" max="3" value="1"></label>
       <label class="f">Plazo del menú: día del mes anterior<input id="cMenuDia" type="number" min="1" max="31" value="25"></label>
       <label class="f">Plazo de avisos e invitaciones<input value="Hasta las 23:59 del día anterior" disabled></label>
       <label class="f">Hora simulada (solo maqueta)<input id="cSim" type="time" value="13:05"></label>
     </dl>
-    <p class="small muted" style="margin:14px 0 0">Los cambios se aplican de inmediato en la terminal. El plazo del menú mensual es un valor de ejemplo que define Bienestar; los avisos de ausencia e invitaciones se aceptan hasta las 23:59 del día anterior. La hora simulada permite probar la regla de horario sin esperar al mediodía.</p>
+    <p class="small muted" style="margin:14px 0 0">Los cambios se aplican de inmediato en la terminal. Cada persona puede obtener un solo ticket al día (los almuerzos con invitados van en ese mismo ticket). El plazo del menú mensual es un valor de ejemplo que define Bienestar; los avisos de ausencia e invitaciones se aceptan hasta las 23:59 del día anterior. La hora simulada permite probar la regla de horario sin esperar al mediodía.</p>
   </div>
   <div class="panel" style="display:grid;gap:12px">
     <div><h3>Valor del almuerzo por tramo</h3><p class="small muted" style="margin:2px 0 0">El tramo se define por el grado del funcionario. Quienes no tienen grado (plazo fijo y honorarios) reciben el tramo que asigna el Jefe Casino en «Personas habilitadas».</p></div>
@@ -638,7 +637,7 @@ function seedPersonas(){
 }
 const byKey=k=>P.find(p=>p.key===k);
 
-const CFG0={servicio:"Almuerzo",ubic:"Casino Institucional · Oficina Central",ini:"12:30",fin:"15:00",limite:1,intentos:3,menuDia:25,avisoDias:1,sim:"13:05",
+const CFG0={servicio:"Almuerzo",ubic:"Casino Institucional · Oficina Central",ini:"12:30",fin:"15:00",intentos:3,menuDia:25,avisoDias:1,sim:"13:05",
   tramos:[{n:1,desde:3,hasta:11,valor:3000},{n:2,desde:12,hasta:14,valor:2500},{n:3,desde:15,hasta:21,valor:2000}]};
 const copiaCfg=()=>({...CFG0,tramos:CFG0.tramos.map(t=>({...t}))});
 const cfg=copiaCfg();
@@ -879,7 +878,7 @@ function reglas(p){
   if(!p.hab){result("bad","Habilitación suspendida","Su habilitación para el casino está suspendida. Consulte con el Jefe Casino.",p.nombre);return false}
   if(!inHours()){result("warn","Fuera del horario del servicio",`El ${esc(cfg.servicio.toLowerCase())} se registra entre ${cfg.ini} y ${cfg.fin} horas.`);return false}
   const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");
-  if(ya.length>=cfg.limite){result("warn","Ya registró su almuerzo hoy",`Su ticket se emitió a las ${ya[0].hora}.`,p.nombre);return false}
+  if(ya.length){result("warn","Ya registró su almuerzo hoy",`Su ticket se emitió a las ${ya[0].hora}.`,p.nombre);return false}
   return true}
 function checkRut(){
   if(!rutOk(T.rut)){T.err="El RUT no es válido. Revise el dígito verificador.";noEmite("RUT mal digitado",true);return renderScreen()}
@@ -1142,7 +1141,7 @@ $("#manualForm").addEventListener("submit",e=>{e.preventDefault();const msg=$("#
   const p=byKey(cleanRut(v));if(!p){msg.innerHTML='<span style="color:var(--bad)">No está en la nómina de habilitados.</span>';return}
   if(!p.hab){msg.innerHTML='<span style="color:var(--bad)">Habilitación suspendida.</span>';return}
   if(cierreEn(TODAY,hhmm(now()))){msg.innerHTML='<span style="color:var(--warn)">El casino está cerrado en este horario; no se registran almuerzos.</span>';return}
-  const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");if(ya.length>=cfg.limite){msg.innerHTML=`<span style="color:var(--warn)">Ya tiene el ticket N° ${ya[0].id} hoy.</span>`;return}
+  const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");if(ya.length){msg.innerHTML=`<span style="color:var(--warn)">Ya tiene el ticket N° ${ya[0].id} hoy.</span>`;return}
   const r=emit(p,"Manual",$("#manMotivo").value);$("#manRut").value="";msg.innerHTML=`<span style="color:var(--ok)">Ticket N° ${r.id} emitido para ${esc(p.nombre)}.${r.conAviso?" Tenía aviso de ausencia para hoy: quedó anulado.":""}</span>`;det.desde=det.hasta=TODAY;renderDet()});
 $("#manRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)});
 
@@ -1360,7 +1359,7 @@ function renderTramos(){
 $("#tramosBody").addEventListener("change",e=>{const i=e.target.dataset.tr;if(i===undefined)return;const v=Number(e.target.value);if(!Number.isFinite(v))return;cfg.tramos[i][e.target.dataset.k]=v;renderTramos()});
 
 /* ---- Configuración ---- */
-const bind=[["#cServicio","servicio"],["#cUbicacion","ubic"],["#cIni","ini"],["#cFin","fin"],["#cLimite","limite",Number],["#cMenuDia","menuDia",Number],["#cSim","sim"]];
+const bind=[["#cServicio","servicio"],["#cUbicacion","ubic"],["#cIni","ini"],["#cFin","fin"],["#cMenuDia","menuDia",Number],["#cSim","sim"]];
 bind.forEach(([s,k,f])=>$(s).addEventListener("input",e=>{cfg[k]=f?f(e.target.value):e.target.value}));
 
 /* ---- Reiniciar maqueta ---- */
