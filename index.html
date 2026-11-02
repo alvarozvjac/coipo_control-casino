@@ -267,7 +267,11 @@ select.sel-warn{border-color:var(--warn);color:var(--warn);font-weight:700}
 .menu-mes{display:grid;gap:6px}.menu-mes .seg button:disabled{cursor:not-allowed;opacity:.6}
 ul.avisos{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 ul.avisos li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;flex-wrap:wrap}
-.grid-mi{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.inv-form{display:grid;grid-template-columns:minmax(150px,200px) minmax(220px,300px) minmax(200px,1fr) auto;gap:14px;align-items:end}
+.inv-form label.f span{display:flex;gap:6px;align-items:center}
+.inv-costo{display:grid;gap:2px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}.inv-costo b#miInvCosto{font-size:20px;font-variant-numeric:tabular-nums}
+.paso{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:11px}
+@media (max-width:860px){.inv-form{grid-template-columns:minmax(0,1fr)}}
 table.msem td:first-child{white-space:nowrap}.min-msg{margin:0;padding:12px 14px;text-align:center;font-style:italic;color:var(--muted);border-top:1px solid var(--line)}table.msem{min-width:860px}table.msem td,table.msem th{vertical-align:top}table.msem td{font-size:13.5px;line-height:1.4}
 table.msem th.mio{color:var(--accent)}table.msem td.mio{background:var(--accent-soft);font-weight:600}table.msem tr.hoy td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 table.msem.edit textarea{width:100%;min-width:130px;font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;resize:vertical;background:var(--surface);color:var(--ink)}
@@ -358,11 +362,6 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <button class="btn primary" type="submit">Registrar y emitir ticket</button>
       <span id="manMsg" class="small"></span>
     </form>
-  </div>
-  <div class="panel" style="display:grid;gap:10px">
-    <div class="row spread"><h3>Avisos de ausencia de hoy</h3><span class="muted small">Si una persona avisó por error que no almorzaría, anule su aviso para que pueda registrar su RUT en la terminal.</span></div>
-    <ul class="avisos" id="ausHoy"></ul>
-    <span id="ausHoyMsg" class="small"></span>
   </div>
   <div class="panel row" style="align-items:end">
     <label class="f">Desde<input type="date" id="detDesde"></label>
@@ -522,34 +521,31 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   </div>
   <div class="grid2">
     <div class="panel" style="display:grid;gap:12px;align-content:start">
-      <div><h3>Menú del mes</h3><p class="small muted" style="margin:2px 0 0">Elija el menú que solicitará durante cada mes: normal, hipocalórico o vegano.</p></div>
+      <div><h3>Selecciona tu menú mensual</h3><p class="small muted" style="margin:2px 0 0">Elige el menú que recibirás todos los días del mes: normal, hipocalórico o vegano. Se elige mes a mes, hasta el día 25 del mes anterior.</p></div>
       <div id="miMenu" style="display:grid;gap:12px"></div>
     </div>
     <div class="panel" style="display:grid;gap:12px;align-content:start">
-      <div><h3>Días en que no almorzaré</h3><p class="small muted" style="margin:2px 0 0">Usted es responsable de avisar los días en que no usará el casino, hasta las 23:59 del día anterior, para que se preparen las raciones justas. Ese día, la terminal no aceptará su RUT.</p></div>
-      <form id="miAusForm" novalidate class="row" style="align-items:end"><label class="f">Desde<input type="date" id="miAusF"></label><label class="f">Hasta (opcional)<input type="date" id="miAusH"></label><button class="btn primary" type="submit">Registrar aviso</button></form>
+      <div><h3>Avisa los días que no almorzarás</h3><p class="small muted" style="margin:2px 0 0">Si un día no usarás el casino (reunión, terreno, vacaciones), avísalo aquí hasta las 23:59 del día anterior, para que se preparen las raciones justas.</p></div>
+      <form id="miAusForm" novalidate class="row" style="align-items:end"><label class="f">Desde<input type="date" id="miAusF"></label><label class="f">Hasta (opcional, para varios días)<input type="date" id="miAusH"></label><button class="btn primary" type="submit">Avisar</button></form>
       <span id="miAusMsg" class="small"></span>
-      <ul class="avisos" id="miAusList"></ul>
+      <p class="small" style="margin:0;padding:8px 10px;border-radius:8px;background:var(--accent-soft)"><b>¿Cambiaste de planes?</b> Igual puedes almorzar: digita tu RUT en la terminal y tu aviso se anula solo.</p>
+      <div><b class="small">Tus avisos</b><ul class="avisos" id="miAusList" style="margin-top:6px"></ul></div>
     </div>
   </div>
-  <div class="panel" style="display:grid;gap:12px">
-    <div><h3>Almuerzo con invitados</h3><p class="small muted" style="margin:2px 0 0">Indique el día y cuántos almuerzos necesitará a su nombre, incluido el suyo.</p></div>
-    <form id="miInvForm" novalidate class="row" style="align-items:end">
-      <label class="f">Día<input type="date" id="miInvF"></label>
-      <label class="f">Almuerzos a mi nombre<select id="miInvC"><option value="2">2 almuerzos</option><option value="3">3 almuerzos</option><option value="4">4 almuerzos</option><option value="5">5 almuerzos</option></select></label>
-      <button class="btn primary" type="submit">Registrar invitación</button>
+  <div class="panel" style="display:grid;gap:14px">
+    <div><h3>Almuerzo con invitados</h3><p class="small muted" style="margin:2px 0 0">¿Almorzarás con invitados? Pide los almuerzos a tu nombre, a más tardar a las 23:59 del día anterior. El ticket indicará la cantidad.</p></div>
+    <form id="miInvForm" novalidate class="inv-form">
+      <label class="f"><span><b class="paso">1</b> Día</span><input type="date" id="miInvF"></label>
+      <label class="f"><span><b class="paso">2</b> Almuerzos a tu nombre</span><select id="miInvC"><option value="2">2 almuerzos (tú + 1 invitado)</option><option value="3">3 almuerzos (tú + 2 invitados)</option><option value="4">4 almuerzos (tú + 3 invitados)</option><option value="5">5 almuerzos (tú + 4 invitados)</option></select></label>
+      <div class="inv-costo"><span class="small muted"><b class="paso">3</b> Se descontará de tu planilla</span><b id="miInvCosto"></b><span class="small muted" id="miInvNota"></span></div>
+      <button class="btn primary" type="submit">Pedir almuerzos</button>
     </form>
     <span id="miInvMsg" class="small"></span>
-    <p class="small muted" id="miInvNota" style="margin:0"></p>
-    <ul class="avisos" id="miInvList"></ul>
+    <div><b class="small">Tus almuerzos con invitados</b><ul class="avisos" id="miInvList" style="margin-top:6px"></ul></div>
   </div>
-  <div class="grid2">
-    <div class="panel" style="display:grid;gap:10px;align-content:start"><h3>Mis asistencias por mes</h3>
-      <div class="tablebox"><table><thead><tr><th>Mes</th><th class="num">Días</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="miMeses"></tbody></table></div></div>
-    <div class="panel" style="display:grid;gap:12px;align-content:start"><div><h3>Reporte de mis almuerzos</h3><p class="small muted" style="margin:2px 0 0">Descargue el detalle del mes en un archivo CSV que se abre en Excel: ID de ticket, fecha, hora, almuerzos, menú y monto.</p></div>
-      <div class="row" style="align-items:end"><label class="f">Mes<select id="miCsvMes"></select></label><button class="btn primary" type="button" id="miCsv">Descargar CSV</button></div>
-      <span class="small muted" id="miCsvInfo"></span><span class="small" id="miCsvMsg"></span></div>
-  </div>
+  <div class="panel" style="display:grid;gap:12px;align-content:start"><div><h3>Reporte de mis almuerzos</h3><p class="small muted" style="margin:2px 0 0">Descarga el detalle de un mes en un archivo CSV que se abre en Excel: ID de ticket, fecha, hora, almuerzos, menú y monto.</p></div>
+    <div class="row" style="align-items:end"><label class="f">Mes<select id="miCsvMes"></select></label><button class="btn primary" type="button" id="miCsv">Descargar CSV</button></div>
+    <span class="small muted" id="miCsvInfo"></span><span class="small" id="miCsvMsg"></span></div>
 </section>
 
 <!-- PLANIFICACION (Jefe Casino) -->
@@ -561,7 +557,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   </div>
   <span id="msMsg" class="small"></span>
   <div class="tablebox"><table class="msem edit"><thead><tr><th>Día</th><th>Entrada</th><th>Plato normal</th><th>Plato hipocalórico</th><th>Plato vegano</th><th>Postre</th></tr></thead><tbody id="msBody"></tbody></table></div>
-  <p class="small muted" style="margin:0">Los cambios quedan como borrador hasta que presione «Publicar». El plato vegano debe completarse todos los días en que haya funcionarios con menú vegano. En la maqueta, las semanas del 5, 13 y 19 de octubre usan las minutas reales del casino; la del 26 es un borrador de ejemplo.</p>
+  <p class="small muted" style="margin:0">Los cambios quedan como borrador hasta que presione «Publicar». El plato vegano debe completarse todos los días en que haya funcionarios con menú vegano. En la maqueta, la semana actual y las dos anteriores usan como ejemplo las minutas reales del casino de octubre de 2026; la siguiente es un borrador.</p>
 </section>
 <section class="view" id="v-plan" data-label="Planificación" hidden>
   <div><h2>Planificación de raciones</h2><p class="lead">Próximos 10 días hábiles. Como cada funcionario debe avisar cuando no almorzará, las raciones planificadas son las personas habilitadas sin aviso de ausencia, según su menú (normal, hipocalórico o vegano), más los almuerzos de invitados. Elija un día para ver el detalle.</p></div>
@@ -733,9 +729,10 @@ const MINUTAS={
   ["Lechuga, tomate, sopa, porotos verdes","Charquicán","Merluza al vapor c/ ensalada","","Sémola, fruta natural"],
   ["Lechuga, zanahoria, sopa, pepino","Lentejas c/ longaniza","Ensalada César","Lentejas c/ longaniza vegana",""],null,null]};
 function seedMenuSem(){for(const k in MSEM)delete MSEM[k];
-  const pubs={"2026-10-05":["2026-10-05","08:40"],"2026-10-12":["2026-10-13","08:45"],"2026-10-19":["2026-10-19","08:42"]};
-  Object.entries(MINUTAS).forEach(([l,rows])=>{const dias=semVacia(l);Object.keys(dias).forEach((f,i)=>{const r=rows[i];if(r)dias[f]={entrada:r[0],normal:r[1],hipo:r[2],vegano:r[3],postre:r[4]}});
-    const msg="";const pb=pubs[l];
+  /* Las minutas reales de octubre se usan como ejemplo de la semana actual (19-10), las dos anteriores (12-10 y 05-10) y un borrador de la siguiente (26-10) */
+  const l0=lunesDe(TODAY),orden=[["2026-10-05",-14,"08:40"],["2026-10-12",-7,"08:45"],["2026-10-19",0,"08:42"],["2026-10-26",7,null]];
+  orden.forEach(([orig,off,hora])=>{const l=sumDias(l0,off);const rows=MINUTAS[orig];const dias=semVacia(l);Object.keys(dias).forEach((f,i)=>{const r=rows[i]||(off<=0?MINUTAS["2026-10-05"][i]:null);if(r)dias[f]={entrada:r[0],normal:r[1],hipo:r[2],vegano:r[3],postre:r[4]}});
+    const msg="";const pb=hora?[l,hora]:null;
     MSEM[l]={borrador:JSON.parse(JSON.stringify(dias)),msgB:msg,pub:pb?{dias:JSON.parse(JSON.stringify(dias)),msg,fecha:pb[0],hora:pb[1]}:null}})}
 /* Cobro: se descuenta solo lo consumido (tickets válidos). Los avisos de ausencia sirven para planificar raciones. */
 function cargos(a,b,key){return R.filter(r=>r.estado==="Válido"&&r.fecha>=a&&r.fecha<=b&&(!key||r.key===key)).map(r=>({tipo:"Ticket",fecha:r.fecha,hora:r.hora,id:r.id,key:r.key,cant:cantR(r),monto:montoR(r),menu:r.menu}))}
@@ -880,7 +877,6 @@ function resetT(){clearTimeout(resetTimer);Object.assign(T,{step:"rut",rut:"",re
 function reglas(p){
   const ci=cierreEn(TODAY,hhmm(now()));if(ci){result("warn","Casino cerrado",`${esc(horarioC(ci)==="día completo"?"Cerrado todo el día":"Cerrado "+horarioC(ci))} por ${esc(ci.motivo.toLowerCase())}. No se registran almuerzos mientras dure el cierre.`);return false}
   if(!p.hab){result("bad","Habilitación suspendida","Su habilitación para el casino está suspendida. Consulte con el Jefe Casino.",p.nombre);return false}
-  if(ausDe(p,TODAY)){result("bad","No disponible hoy","Usted informó en «Mi casino» que hoy no almorzará.",p.nombre);return false}
   if(!inHours()){result("warn","Fuera del horario del servicio",`El ${esc(cfg.servicio.toLowerCase())} se registra entre ${cfg.ini} y ${cfg.fin} horas.`);return false}
   const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");
   if(ya.length>=cfg.limite){result("warn","Ya registró su almuerzo hoy",`Su ticket se emitió a las ${ya[0].hora}.`,p.nombre);return false}
@@ -892,10 +888,10 @@ function checkRut(){
   previewPersona(p,"RUT reconocido · validando reglas");
   if(!reglas(p))return;
   const r=emit(p,"Terminal");
-  result("ok",r.cant>1?`${r.cant} almuerzos registrados`:"Almuerzo registrado",`${r.cant>1?`Retire su ticket por ${r.cant} almuerzos (usted y sus invitados)`:"Retire su ticket"}. Menú ${r.menu.toLowerCase()}. ¡Buen provecho!`,p.nombre);
+  result("ok",r.cant>1?`${r.cant} almuerzos registrados`:"Almuerzo registrado",`${r.cant>1?`Retire su ticket por ${r.cant} almuerzos (usted y sus invitados)`:"Retire su ticket"}. Menú ${r.menu.toLowerCase()}.${r.conAviso?" Tenías aviso de ausencia para hoy: quedó anulado.":""} ¡Buen provecho!`,p.nombre);
 }
-function emit(p,origen,motivo){const iv=invDe(p,TODAY);
-  const r={n:nextN(),id:nextId(TODAY),fecha:TODAY,hora:hhmm(now()),key:p.key,valor:valorDe(p),cant:iv?iv.cant:1,menu:menuDe(p,TODAY),origen,estado:"Válido",motivo};R.push(r);printTicket(r);return r}
+function emit(p,origen,motivo){const iv=invDe(p,TODAY);const av=ausDe(p,TODAY);if(av)AUS.splice(AUS.indexOf(av),1);
+  const r={n:nextN(),id:nextId(TODAY),fecha:TODAY,hora:hhmm(now()),key:p.key,valor:valorDe(p),cant:iv?iv.cant:1,menu:menuDe(p,TODAY),origen,estado:"Válido",motivo,conAviso:!!av};R.push(r);printTicket(r);return r}
 function ticketHTML(r,o={}){const p=o.persona||byKey(r.key);const f=D(r.fecha);
   const fecha=cap(f.toLocaleDateString("es-CL",{weekday:"long"}))+" "+String(f.getDate()).padStart(2,"0")+"-"+String(f.getMonth()+1).padStart(2,"0")+"-"+f.getFullYear();
   const F=(k,html)=>o.anot?`<div class="tk-f" data-n="${k}">${html}</div>`:html;
@@ -929,7 +925,7 @@ setInterval(()=>{const c=$("#clk");if(c)c.textContent=hhmm(now())},15000);
 /* Panel de simulación: digita el RUT de una persona de prueba en el teclado */
 function renderDemo(){
   $("#demoList").innerHTML=P.slice(0,12).map(p=>{
-    const est=!p.hab?' <span class="pill neu">suspendida</span>':todays().some(r=>r.key===p.key&&r.estado==="Válido")?' <span class="pill warn">ya almorzó</span>':ausDe(p,TODAY)?' <span class="pill bad">avisó que no almuerza hoy</span>':invDe(p,TODAY)?` <span class="pill ok">${invDe(p,TODAY).cant} almuerzos hoy</span>`:"";
+    const est=!p.hab?' <span class="pill neu">suspendida</span>':todays().some(r=>r.key===p.key&&r.estado==="Válido")?' <span class="pill warn">ya almorzó</span>':ausDe(p,TODAY)?' <span class="pill warn">avisó que no almuerza hoy</span>':invDe(p,TODAY)?` <span class="pill ok">${invDe(p,TODAY).cant} almuerzos hoy</span>`:"";
     return `<tr><td>${esc(p.nombre)}${est}</td><td class="mono">${fmtRut(p.key)}</td><td><button class="btn small primary" data-rut="${p.key}">Digitar RUT</button></td></tr>`}).join("")+
    `<tr><td>RUT que no está en la nómina</td><td class="mono">${fmtRut("21654321"+dv(21654321))}</td><td><button class="btn small" data-rut="${"21654321"+dv(21654321)}">Digitar RUT</button></td></tr>
     <tr><td>RUT mal digitado</td><td class="mono">${fmtRut("152348712")}</td><td><button class="btn small" data-rut="152348712">Digitar RUT</button></td></tr>`}
@@ -1119,15 +1115,7 @@ let anulando=null;const det={desde:TODAY,hasta:TODAY,q:"",estado:""};
 function detRows(){const q=det.q.trim().toLowerCase(),qr=cleanRut(q);
   return R.filter(r=>r.fecha>=det.desde&&r.fecha<=det.hasta&&(!det.estado||r.estado===det.estado)&&(!q||(r.id||"").includes(q)||(p=>p.nombre.toLowerCase().includes(q)||p.unidad.toLowerCase().includes(q)||(qr.length>2&&p.key.includes(qr)))(byKey(r.key))))
    .sort((a,b)=>a.fecha===b.fecha?(a.hora<b.hora?1:-1):(a.fecha<b.fecha?1:-1))}
-let anulAus=null;
-function renderAusHoy(){const L=AUS.filter(x=>x.fecha===TODAY).map(x=>({x,p:byKey(x.key)})).sort((a,b)=>a.p.nombre.localeCompare(b.p.nombre,"es"));
-  $("#ausHoy").innerHTML=L.map(({x,p})=>`<li><span><b>${esc(p.nombre)}</b> <span class="muted">· ${fmtRut(p.key)} · ${esc(p.unidad)} · avisado el ${esc(x.creado)}</span></span>${anulAus===p.key?
-    `<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn small danger" data-aus-ok="${p.key}">Confirmar anulación</button><button class="btn small" data-aus-cancel>Cancelar</button></span>`:
-    `<button class="btn small" data-aus-anular="${p.key}">Anular aviso</button>`}</li>`).join("")+
-    AUS_ANUL.filter(a=>a.fecha===TODAY).map(a=>{const p=byKey(a.key);return`<li class="muted"><span>${esc(p.nombre)} · aviso anulado a las ${a.hora} por ${esc(a.por)}</span></li>`}).join("")
-    ||'<li class="muted">Nadie avisó que no almorzará hoy.</li>'}
-function anularAus(key){const i=AUS.findIndex(x=>x.key===key&&x.fecha===TODAY);if(i<0)return false;AUS.splice(i,1);AUS_ANUL.push({key,fecha:TODAY,hora:hhmm(now()),por:USR.casino.n});return true}
-function renderDet(){renderAusHoy();
+function renderDet(){
   $("#detDesde").value=det.desde;$("#detHasta").value=det.hasta;$("#detEstado").value=det.estado;
   const rows=detRows();const shown=rows.slice(0,300);const val=rows.filter(r=>r.estado==="Válido").length;
   $("#detCount").textContent=`${rows.length.toLocaleString("es-CL")} registro${rows.length===1?"":"s"} · ${val.toLocaleString("es-CL")} válido${val===1?"":"s"}${rows.length>300?" · se muestran los 300 más recientes; «Copiar detalle» incluye todos":""}`;
@@ -1136,7 +1124,7 @@ function renderDet(){renderAusHoy();
       `<form class="inline-confirm" data-i="${i}"><input id="anMot${i}" placeholder="Motivo de anulación" required><button class="btn small danger">Confirmar</button><button type="button" class="btn small" data-cancel>Cancelar</button></form>`:
       `<div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn small" data-copia="${i}">Reimprimir</button><button class="btn small danger" data-anular="${i}">Anular</button></div>`;
     return `<tr class="${r.estado==="Anulado"?"anulado":""}"><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="num">${cantR(r)}</td><td>${esc(p.nombre)}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.unidad)}</td>
-    <td>${r.origen==="Manual"?`<span class="pill warn" title="${esc(r.motivo||"")}">Manual</span>`:`<span class="pill neu">${esc(r.origen)}</span>`}</td>
+    <td>${r.origen==="Manual"?`<span class="pill warn" title="${esc(r.motivo||"")}">Manual</span>`:`<span class="pill neu">${esc(r.origen)}</span>`}${r.conAviso?' <span class="pill warn" title="Había avisado que no almorzaría; el aviso se anuló al registrar el ingreso">Asistió pese a aviso</span>':""}</td>
     <td>${r.estado==="Válido"?'<span class="pill ok">Válido</span>':'<span class="pill bad">Anulado</span>'}</td><td>${acc}</td></tr>`}).join("")||`<tr><td colspan="10" class="muted">Sin registros para los filtros elegidos.</td></tr>`;
 }
 ["detDesde","detHasta"].forEach(id=>$("#"+id).addEventListener("change",e=>{det[id==="detDesde"?"desde":"hasta"]=e.target.value||TODAY;if(det.desde>det.hasta)[det.desde,det.hasta]=[det.hasta,det.desde];renderDet()}));
@@ -1153,17 +1141,10 @@ $("#manualForm").addEventListener("submit",e=>{e.preventDefault();const msg=$("#
   if(!rutOk(v)){msg.innerHTML='<span style="color:var(--bad)">RUT no válido.</span>';return}
   const p=byKey(cleanRut(v));if(!p){msg.innerHTML='<span style="color:var(--bad)">No está en la nómina de habilitados.</span>';return}
   if(!p.hab){msg.innerHTML='<span style="color:var(--bad)">Habilitación suspendida.</span>';return}
-  if(ausDe(p,TODAY)){msg.innerHTML=`<span style="color:var(--bad)">No disponible hoy: informó en «Mi casino» que no almorzará.</span> <button type="button" class="btn small" data-man-anular="${p.key}">Anular aviso</button>`;return}
   if(cierreEn(TODAY,hhmm(now()))){msg.innerHTML='<span style="color:var(--warn)">El casino está cerrado en este horario; no se registran almuerzos.</span>';return}
   const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");if(ya.length>=cfg.limite){msg.innerHTML=`<span style="color:var(--warn)">Ya tiene el ticket N° ${ya[0].id} hoy.</span>`;return}
-  const r=emit(p,"Manual",$("#manMotivo").value);$("#manRut").value="";msg.innerHTML=`<span style="color:var(--ok)">Ticket N° ${r.id} emitido para ${esc(p.nombre)}.</span>`;det.desde=det.hasta=TODAY;renderDet()});
+  const r=emit(p,"Manual",$("#manMotivo").value);$("#manRut").value="";msg.innerHTML=`<span style="color:var(--ok)">Ticket N° ${r.id} emitido para ${esc(p.nombre)}.${r.conAviso?" Tenía aviso de ausencia para hoy: quedó anulado.":""}</span>`;det.desde=det.hasta=TODAY;renderDet()});
 $("#manRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)});
-$("#ausHoy").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
-  if(b.dataset.ausAnular){anulAus=b.dataset.ausAnular;renderAusHoy()}
-  else if(b.hasAttribute("data-aus-cancel")){anulAus=null;renderAusHoy()}
-  else if(b.dataset.ausOk){const p=byKey(b.dataset.ausOk);anulAus=null;if(anularAus(p.key)){$("#ausHoyMsg").innerHTML=`<span style="color:var(--ok)">Aviso de ${esc(p.nombre)} anulado. Ya puede registrar su RUT en la terminal.</span>`;$("#manMsg").textContent="";renderAusHoy();renderDemo()}}});
-$("#manMsg").addEventListener("click",e=>{const b=e.target.closest("[data-man-anular]");if(!b)return;const p=byKey(b.dataset.manAnular);
-  if(anularAus(p.key)){$("#manMsg").innerHTML=`<span style="color:var(--ok)">Aviso anulado. Presione «Registrar y emitir ticket» para emitirlo.</span>`;renderAusHoy();renderDemo()}});
 
 /* ---- Reportes (Jefe Casino emite y envía; Jefa de Bienestar consulta y copia) ---- */
 let repMes=`${YEAR}-${pad(today.getMonth())}`;if(today.getMonth()===0)repMes=`${YEAR}-01`;
@@ -1261,29 +1242,27 @@ function renderMi(){
   const p=YO();const cm=ymOf(TODAY),nm=ymNext(cm);const t=tramoDe(p);
   $("#miLead").textContent=`${p.nombre} · ${p.unidad} · ${t?`tramo ${t}, ${clp(valorDe(p))} por almuerzo`:"sin tramo asignado"}`;
   const mes=R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(cm));
-  const anio=R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(String(YEAR)));
   // menú
   const opt=ym=>{const ed=menuEditable(ym);const v=MENU[p.key+"|"+ym]||"Normal";const ex=MENU_EXC.filter(x=>x.key===p.key&&x.ym===ym).pop();const def=!MENU[p.key+"|"+ym];
     return `<div class="menu-mes"><b>${cap(MES[+ym.slice(5)-1])} ${ym.slice(0,4)}</b><div class="seg" role="group">${MENUS.map(m=>`<button type="button" data-menu="${ym}|${m}" aria-pressed="${v===m}" ${ed?"":"disabled"}>${m}</button>`).join("")}</div>
-    <small class="muted">${ex?`Cambiado por el Jefe Casino el ${esc(ex.cuando.slice(0,10))} (${esc(ex.motivo.toLowerCase())}). `:""}${def?"Sin elección: menú normal por defecto. ":""}${ed?`Puede cambiarlo hasta el ${fmtD(menuLimite(ym))}.`:`Plazo cerrado el ${fmtD(menuLimite(ym))}.`}</small></div>`};
+    <small class="muted">${ex?`Cambiado por el Jefe Casino el ${esc(ex.cuando.slice(0,10))} (${esc(ex.motivo.toLowerCase())}). `:""}${def?"Aún no eliges: quedas con menú normal. ":""}${ed?`Puedes elegir o cambiar hasta el ${fmtD(menuLimite(ym))}.`:`Ya no se puede cambiar (plazo: ${fmtD(menuLimite(ym))}).`}</small></div>`};
   let ab=nm;while(!menuEditable(ab))ab=ymNext(ab);const mesesM=[cm,nm];if(ab!==nm)mesesM.push(ab);
-  $("#miMenu").innerHTML=mesesM.map(opt).join("")+`<p class="small muted" style="margin:0">Si no elige, su menú es <b>Normal</b>. Para un cambio fuera de plazo por un caso justificado (ingreso nuevo, indicación médica), solicítelo al Jefe Casino.</p>`;
+  $("#miMenu").innerHTML=mesesM.map(opt).join("")+`<p class="small muted" style="margin:0">Si no eliges, tu menú es <b>Normal</b>. Si necesitas un cambio fuera de plazo por un caso justificado (ingreso nuevo, indicación médica), pídeselo al Jefe Casino.</p>`;
   // avisos
   const min=avisoMin();["#miAusF","#miInvF"].forEach(s=>{$(s).min=min;if(!$(s).value||$(s).value<min)$(s).value=min});$("#miAusH").min=min;if($("#miAusH").value&&$("#miAusH").value<min)$("#miAusH").value="";
   renderMiSem(p);
   const fut=x=>x.key===p.key&&x.fecha>=TODAY;
-  const quitar=(tipo,x)=>x.fecha>=min?`<button class="btn small" data-quitar="${tipo}|${x.fecha}">Quitar</button>`:'<span class="small muted">fuera de plazo</span>';
-  $("#miAusList").innerHTML=AUS.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))}</span>${quitar("aus",x)}</li>`).join("")||'<li class="muted">No hay avisos registrados.</li>';
-  $("#miInvList").innerHTML=INV.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))} · <b>${x.cant} almuerzos</b> (${clp(x.cant*valorDe(p))})</span>${quitar("inv",x)}</li>`).join("")||'<li class="muted">No hay invitaciones registradas.</li>';
-  $("#miInvNota").textContent=`Se descuentan de su planilla todos los almuerzos de ese día, a ${clp(valorDe(p))} cada uno. El ticket indicará la cantidad de almuerzos.`;
-  // asistencias
-  const meses=Array.from({length:today.getMonth()+1},(_,m)=>{const k=`${YEAR}-${pad(m+1)}`;const v=anio.filter(r=>r.fecha.startsWith(k));return{m,v}}).reverse();
-  $("#miMeses").innerHTML=meses.map(({m,v})=>`<tr><td>${cap(MES[m])}</td><td class="num">${new Set(v.map(r=>r.fecha)).size}</td><td class="num">${sumCant(v)}</td><td class="num">${clp(sumaM(v))}</td></tr>`).join("");
-  const sel=$("#miCsvMes");const prev=sel.value;sel.innerHTML=Array.from({length:today.getMonth()+1},(_,m)=>`<option value="${YEAR}-${pad(m+1)}">${cap(MES[m])} ${YEAR}</option>`).reverse().join("");sel.value=prev||cm;miCsvInfo();
+  const quitar=(tipo,x)=>x.fecha>=min?`<button class="btn small" data-quitar="${tipo}|${x.fecha}">Quitar</button>`:'<span class="small muted">ya no se puede quitar</span>';
+  $("#miAusList").innerHTML=AUS.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))}</span>${quitar("aus",x)}</li>`).join("")||'<li class="muted">No tienes avisos.</li>';
+  $("#miInvList").innerHTML=INV.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))} · <b>${x.cant} almuerzos</b> (tú + ${x.cant-1} invitado${x.cant>2?"s":""}) · ${clp(x.cant*valorDe(p))}</span>${quitar("inv",x)}</li>`).join("")||'<li class="muted">No hay invitaciones registradas.</li>';
+  miInvCosto();
+  const sel=$("#miCsvMes");const prev=sel.value;sel.innerHTML=Array.from({length:today.getMonth()+1},(_,m)=>`<option value="${YEAR}-${pad(m+1)}">${cap(MES[m])} ${YEAR}</option>`).reverse().join("");sel.value=prev||(miCsvRows(cm).length?cm:ymPrev(cm));miCsvInfo();
 }
 function miCsvRows(ym){const p=YO();return R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(ym)).sort((a,b)=>a.id<b.id?-1:1)}
 function miCsvInfo(){const ym=$("#miCsvMes").value;const rr=miCsvRows(ym);$("#miCsvInfo").textContent=rr.length?`${cap(MES[+ym.slice(5)-1])}: ${sumCant(rr)} almuerzo${sumCant(rr)===1?"":"s"} en ${rr.length} ticket${rr.length===1?"":"s"} · ${clp(sumaM(rr))}`:`${cap(MES[+ym.slice(5)-1])}: sin almuerzos registrados.`;$("#miCsv").disabled=!rr.length;$("#miCsvMsg").textContent=""}
 $("#miCsvMes").addEventListener("change",miCsvInfo);
+function miInvCosto(){const p=YO(),c=+$("#miInvC").value,v=valorDe(p)||0;$("#miInvCosto").textContent=clp(c*v);$("#miInvNota").textContent=`${c} × ${clp(v)} (tu tramo)`}
+$("#miInvC").addEventListener("change",miInvCosto);
 /* CSV con separador «;» y BOM UTF-8, como lo abre Excel con configuración regional de Chile */
 function csvTxt(rows){return "\uFEFF"+rows.map(r=>r.map(v=>{const t=String(v??"");return /[";\n]/.test(t)?`"${t.replace(/"/g,'""')}"`:t}).join(";")).join("\r\n")}
 async function descargarCsv(nombre,txt,msgSel){const m=$(msgSel);
@@ -1295,35 +1274,35 @@ $("#miCsv").addEventListener("click",()=>{const p=YO(),ym=$("#miCsvMes").value;c
   descargarCsv(`casino_${cleanRut(p.key)}_${ym}.csv`,csvTxt(filas),"#miCsvMsg")});
 $("#miMenu").addEventListener("click",e=>{const b=e.target.closest("[data-menu]");if(!b||b.disabled)return;const[ym,m]=b.dataset.menu.split("|");MENU[YO().key+"|"+ym]=m;renderMi();toast(`Menú ${m.toLowerCase()} registrado para ${MES[+ym.slice(5)-1]}`)});
 function validarDia(f,msgSel){const m=$(msgSel);
-  if(!f){m.innerHTML='<span style="color:var(--bad)">Elija una fecha.</span>';return false}
+  if(!f){m.innerHTML='<span style="color:var(--bad)">Elige una fecha.</span>';return false}
   if(f<avisoMin()){m.innerHTML=`<span style="color:var(--bad)">Se puede avisar hasta las 23:59 del día anterior: el primer día disponible es el ${fmtD(avisoMin())}.</span>`;return false}
   if(!habil(D(f))){m.innerHTML='<span style="color:var(--bad)">Ese día no hay servicio de casino (fin de semana o feriado).</span>';return false}
   if(diaCerrado(f)){m.innerHTML='<span style="color:var(--warn)">El casino estará cerrado ese día.</span>';return false}
   return true}
 $("#miAusForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#miAusF").value,h=$("#miAusH").value||f,p=YO(),m=$("#miAusMsg");
-  if(!f){m.innerHTML='<span style="color:var(--bad)">Elija una fecha.</span>';return}
+  if(!f){m.innerHTML='<span style="color:var(--bad)">Elige una fecha.</span>';return}
   if(f<avisoMin()){validarDia(f,"#miAusMsg");return}
   if(h<f){m.innerHTML='<span style="color:var(--bad)">La fecha «Hasta» es anterior a «Desde».</span>';return}
   if(h===f){if(!validarDia(f,"#miAusMsg"))return}
   const cre=`${new Date().toLocaleDateString("es-CL")} ${hhmm(new Date())}`;const ok=[],omit=[];
   for(const d=D(f);ymd(d)<=h;d.setDate(d.getDate()+1)){const x=ymd(d);if(!habil(d)||diaCerrado(x)||ausDe(p,x))continue;if(invDe(p,x)){omit.push(x);continue}AUS.push({key:p.key,fecha:x,creado:cre});ok.push(x)}
-  if(h===f&&!ok.length&&!omit.length){m.innerHTML='<span style="color:var(--warn)">Ya avisó ese día.</span>';return}
-  if(h===f&&omit.length){m.innerHTML='<span style="color:var(--bad)">Ese día tiene invitados registrados; quite la invitación primero.</span>';return}
-  m.innerHTML=`<span style="color:var(--ok)">${ok.length?(ok.length===1?`Aviso registrado para el ${fmtD(ok[0])}.`:`${ok.length} días hábiles avisados, del ${fmtD(ok[0])} al ${fmtD(ok[ok.length-1])}.`):"No había días hábiles nuevos que avisar en ese rango."}</span>${omit.length?` <span style="color:var(--warn)">Se omitieron ${omit.length} día(s) con invitados registrados.</span>`:""}`;
+  if(h===f&&!ok.length&&!omit.length){m.innerHTML='<span style="color:var(--warn)">Ya avisaste ese día.</span>';return}
+  if(h===f&&omit.length){m.innerHTML='<span style="color:var(--bad)">Ese día pediste almuerzos con invitados; quítalos primero.</span>';return}
+  m.innerHTML=`<span style="color:var(--ok)">${ok.length?(ok.length===1?`Aviso registrado para el ${fmtD(ok[0])}.`:`${ok.length} días hábiles avisados, del ${fmtD(ok[0])} al ${fmtD(ok[ok.length-1])}.`):"No había días hábiles nuevos que avisar en ese rango."}</span>${omit.length?` <span style="color:var(--warn)">Se omitieron ${omit.length} día(s) en que pediste almuerzos con invitados.</span>`:""}`;
   $("#miAusH").value="";renderMi()});
 $("#miInvForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#miInvF").value,c=+$("#miInvC").value,p=YO(),m=$("#miInvMsg");if(!validarDia(f,"#miInvMsg"))return;
-  if(ausDe(p,f)){m.innerHTML='<span style="color:var(--bad)">Avisó que no almorzará ese día; quite el aviso primero.</span>';return}
+  if(ausDe(p,f)){m.innerHTML='<span style="color:var(--bad)">Ese día avisaste que no almorzarás; quita el aviso primero.</span>';return}
   const ex=invDe(p,f);if(ex)ex.cant=c;else INV.push({key:p.key,fecha:f,cant:c,creado:`${new Date().toLocaleDateString("es-CL")} ${hhmm(new Date())}`});
-  m.innerHTML=`<span style="color:var(--ok)">${c} almuerzos registrados a su nombre para el ${fmtD(f)}.</span>`;renderMi()});
+  m.innerHTML=`<span style="color:var(--ok)">${c} almuerzos pedidos a tu nombre para el ${fmtD(f)}.</span>`;renderMi()});
 $("#v-micasino").addEventListener("click",e=>{const b=e.target.closest("[data-quitar]");if(!b)return;const[t,f]=b.dataset.quitar.split("|");const L=t==="aus"?AUS:INV;
-  const i=L.findIndex(x=>x.key===YO().key&&x.fecha===f);if(i>=0)L.splice(i,1);renderMi();toast(t==="aus"?"Aviso quitado":"Invitación quitada")});
+  const i=L.findIndex(x=>x.key===YO().key&&x.fecha===f);if(i>=0)L.splice(i,1);renderMi();toast(t==="aus"?"Aviso quitado":"Almuerzos con invitados quitados")});
 
 let miSem=null;
 function renderMiSem(p){const l0=lunesDe(TODAY);if(!miSem)miSem=l0;const s=MSEM[miSem];const pub=s&&s.pub;
   $("#miSemLbl").textContent=`Semana del ${fmtD(miSem)}`;$("#miSemPrev").disabled=miSem<=sumDias(l0,-7);$("#miSemNext").disabled=miSem>=sumDias(l0,7);
   const mio=menuDe(p,miSem>TODAY?miSem:TODAY);const col={Normal:"normal",Hipocalórico:"hipo",Vegano:"vegano"}[mio];
-  $("#miSemLead").innerHTML=pub?`Publicado por el Jefe Casino el ${fmtD(pub.fecha)} a las ${pub.hora} · servicio de ${cfg.ini} a ${cfg.fin} horas. Su menú este mes: <b>${esc(mio.toLowerCase())}</b>.`:"El Jefe Casino publica la minuta cada lunes; la de esta semana aún no está publicada.";
-  $("#miSemBox").innerHTML=pub?`<table class="msem"><thead><tr><th>Día</th>${MCAMPOS.map(([k,t])=>`<th class="${k===col?"mio":""}">${t}${k===col?" · su menú":""}</th>`).join("")}</tr></thead><tbody>${Object.entries(pub.dias).map(([f,o])=>{const cerr=!habil(D(f))||diaCerrado(f);
+  $("#miSemLead").innerHTML=pub?`Publicado por el Jefe Casino el ${fmtD(pub.fecha)} a las ${pub.hora} · servicio de ${cfg.ini} a ${cfg.fin} horas. Tu menú este mes: <b>${esc(mio.toLowerCase())}</b>.`:"El Jefe Casino publica la minuta cada lunes; la de esta semana aún no está publicada.";
+  $("#miSemBox").innerHTML=pub?`<table class="msem"><thead><tr><th>Día</th>${MCAMPOS.map(([k,t])=>`<th class="${k===col?"mio":""}">${t}${k===col?" · tu menú":""}</th>`).join("")}</tr></thead><tbody>${Object.entries(pub.dias).map(([f,o])=>{const cerr=!habil(D(f))||diaCerrado(f);
     return`<tr class="${f===TODAY?"hoy":""}"><td><b>${cap(D(f).toLocaleDateString("es-CL",{weekday:"long"}))}</b><br><span class="small muted">${fmtD(f)}${f===TODAY?" · hoy":""}</span></td>${cerr?`<td colspan="5"><span class="pill bad">Sin servicio</span></td>`:MCAMPOS.map(([k])=>`<td class="${k===col?"mio":""}">${esc(o[k])||'<span class="muted">—</span>'}</td>`).join("")}</tr>`}).join("")}</tbody></table>`
     :`<p class="muted" style="margin:12px">Minuta no publicada.</p>`}
 $("#miSemPrev").onclick=()=>{miSem=sumDias(miSem,-7);renderMi()};$("#miSemNext").onclick=()=>{miSem=sumDias(miSem,7);renderMi()};
