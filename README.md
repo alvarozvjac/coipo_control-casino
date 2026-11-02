@@ -53,6 +53,17 @@ elegir, y aclara que sin elección el menú es Normal. Para casos justificados (
 indicación médica) el Jefe Casino registra un **cambio de menú por excepción** en Personas
 habilitadas, para el mes actual o el siguiente, con motivo y registro de quién y cuándo.
 
+**Propuestas a las preguntas del Jefe Casino (02-11-2026), rotuladas en la maqueta:**
+- *Venta en efectivo* (externos o acompañantes) y *visita institucional* con cargo a la
+  Dirección Ejecutiva, en Detalle de ingresos: ticket con su marca, sin descuento por planilla.
+  Valores de ejemplo en Configuración.
+- *Forma de pago* por persona en Personas habilitadas (Planilla o Efectivo mensual), para
+  personal en convenio como FAO; queda fuera del descuento y tiene su propio reporte.
+- *Planilla de contingencia*: si el sistema completo no está disponible, se descarga una
+  planilla en blanco y luego se carga al sistema.
+- Reportes nuevos: cobro mensual en efectivo, caja de ventas en efectivo y visitas
+  institucionales.
+
 **Menú semanal (Jefe Casino):** cada lunes publica la minuta de la semana (entrada, plato
 normal, hipocalórico y vegano, y postre), que reemplaza el envío de la
 minuta por correo electrónico. Los cambios quedan como borrador hasta publicarlos. La maqueta
