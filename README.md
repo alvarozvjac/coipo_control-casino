@@ -57,6 +57,8 @@ habilitadas, para el mes actual o el siguiente, con motivo y registro de quién 
 **Propuestas a las preguntas del Jefe Casino (02-11-2026), rotuladas en la maqueta:**
 - *Venta en efectivo* (externos o acompañantes) y *visita institucional* con cargo a la
   Dirección Ejecutiva, en Detalle de ingresos: ticket con su marca, sin descuento por planilla.
+  En la venta en efectivo el sistema asigna un folio correlativo anual (`EF-AAAA-NNNN`), que se
+  imprime en el ticket como comprobante de pago y aparece en el reporte de caja.
   Valores de ejemplo en Configuración.
 - *Forma de pago* por persona en Personas habilitadas (Planilla o Efectivo mensual), para
   personal en convenio como FAO; queda fuera del descuento y tiene su propio reporte.
