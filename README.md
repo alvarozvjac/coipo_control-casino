@@ -59,7 +59,7 @@ minuta por correo electrónico. Los cambios quedan como borrador hasta publicarl
 usa como ejemplo las minutas reales de octubre de 2026, ajustadas a la semana actual y las dos
 anteriores.
 
-**Reportes:** la pantalla muestra el descuento por planilla del mes. El botón «Emisión reporte
+**Reportes:** la pantalla muestra el resumen del descuento por planilla del mes, una revisión antes de emitir (mes en curso, personas sin tramo, anulados y registros manuales) y el desglose por tramo; el detalle por trabajador y por ticket va en el CSV. El botón «Emisión reporte
 mensual» despliega tres reportes que se descargan en CSV para Excel: 1) reporte descuento
 mensual (por trabajador y detalle por ticket), 2) reporte consumo por unidad y 3) reporte
 anual por mes.

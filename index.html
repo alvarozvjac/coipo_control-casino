@@ -280,6 +280,10 @@ table.plan{table-layout:fixed;width:100%}table.plan th{white-space:normal;line-h
 .menu-wrap{position:relative}.menu-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:20;min-width:300px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.14);padding:6px;display:grid;gap:2px}
 .menu-pop button{display:grid;gap:2px;text-align:left;font:inherit;background:none;border:0;border-radius:8px;padding:9px 12px;cursor:pointer;color:var(--ink)}.menu-pop button:hover,.menu-pop button:focus-visible{background:var(--accent-soft);outline:none}.menu-pop small{color:var(--muted);font-size:12px}
 @media (max-width:640px){.menu-pop{position:static;min-width:0;width:100%;margin-top:6px}.menu-wrap{width:100%}.menu-wrap #repBtn{width:100%}}
+ul.checks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ul.checks li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+.chk-ic{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;font-weight:700;font-size:12px}
+.chk-ok .chk-ic{background:var(--ok-soft);color:var(--ok)}.chk-warn{border-color:var(--warn)!important;background:var(--warn-soft)}.chk-warn .chk-ic{background:var(--warn);color:#fff}.chk-info .chk-ic{background:var(--sunken);color:var(--muted)}
 table.plan .sm{display:none}
 @media (max-width:640px){table.plan .lg{display:none}table.plan .sm{display:inline}table.plan td:first-child{white-space:normal}.plan-ley{display:block!important}}
 table.plan tbody tr{cursor:pointer}table.plan tbody tr:hover td{background:var(--sunken)}table.plan tr.sel td{background:var(--accent-soft)}
@@ -441,15 +445,17 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   <div><h2>Reportes</h2><p class="lead" id="repLead"></p></div>
   <div class="panel" style="display:grid;gap:14px">
     <div class="row spread" style="align-items:end">
-      <div><h3>Descuento por planilla</h3><p class="small muted" style="margin:2px 0 0">Almuerzos válidos del mes por trabajador, para Remuneraciones.</p></div>
+      <div><h3>Descuento por planilla</h3><p class="small muted" style="margin:2px 0 0">Resumen del mes para revisar antes de emitir los reportes a Remuneraciones.</p></div>
       <label class="f">Mes<select id="repMesSel"></select></label>
     </div>
     <div class="row spread" id="repEstado"></div>
     <div class="stats" id="repStats"></div>
-    <div class="tablebox"><table><thead><tr><th>RUT</th><th>Nombre completo</th><th>Unidad</th><th class="num">Grado</th><th>Tramo</th><th class="num">Almuerzos</th><th class="num">Valor unitario</th><th class="num">Monto a descontar</th></tr></thead><tbody id="repBody"></tbody><tfoot id="repFoot"></tfoot></table></div>
-    <details class="rep-tk"><summary id="repTkSum">Detalle por ticket</summary>
-      <div class="tablebox" style="margin-top:10px"><table><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th>RUT</th><th>Nombre completo</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="repTkBody"></tbody></table></div>
-      <p class="small muted" style="margin:6px 0 0" id="repTkNota"></p></details>
+    <div class="grid2" style="gap:16px">
+      <div style="display:grid;gap:8px;align-content:start"><h3>Revisión antes de emitir</h3><ul class="checks" id="repCheck"></ul></div>
+      <div style="display:grid;gap:8px;align-content:start"><h3>Desglose por tramo</h3>
+        <div class="tablebox"><table><thead><tr><th>Tramo</th><th class="num">Valor</th><th class="num">Personas</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="repTramos"></tbody><tfoot id="repTramosFoot"></tfoot></table></div>
+        <p class="small muted" style="margin:0">El detalle por trabajador y por ticket va en el «Reporte descuento mensual».</p></div>
+    </div>
   </div>
   <p class="small muted" style="margin:0">«Emisión reporte mensual» descarga el reporte elegido como archivo CSV (separador punto y coma), que se abre directamente en Excel.</p>
 </section>
@@ -1167,14 +1173,22 @@ function renderRepo(){
   const porT=cfg.tramos.map(t=>{const rr=rows.filter(x=>tramoDe(x.p)===t.n);return`T${t.n}: ${rr.length}`}).join(" · ");
   $("#repStats").innerHTML=[["Almuerzos del mes",sumCant(val).toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Personas habilitadas antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
     .map(([a,b,c],i)=>`<div class="stat ${i===2&&sinT.length?"stat-warn":""}"><span>${a}</span><b>${b}</b>${c?`<small>${c}</small>`:""}</div>`).join("");
-  $("#repBody").innerHTML=rows.map(({p,n,monto,vals})=>{const t=tramoDe(p);return`<tr class="${t?"":"row-warn"}"><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.nombre)}</td><td>${esc(p.unidad)}</td><td class="num">${p.grado??"—"}</td><td>${t?`Tramo ${t}`:'<span class="pill warn">Sin tramo</span>'}</td><td class="num">${n}</td><td class="num">${!monto?"—":vals.length>1?"varios":clp(vals[0])}</td><td class="num"><b>${monto?clp(monto):"—"}</b></td></tr>`}).join("")||`<tr><td colspan="8" class="muted">Sin consumo en el mes.</td></tr>`;
-  const tks=val.slice().sort((a,b)=>a.id<b.id?-1:1);
-  $("#repTkSum").textContent=`Detalle por ticket · ${tks.length.toLocaleString("es-CL")} tickets válidos del mes`;
-  $("#repTkBody").innerHTML=tks.slice(0,300).map(r=>{const p=byKey(r.key);return`<tr><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.nombre)}</td><td class="num">${cantR(r)}</td><td class="num">${clp(montoR(r))}</td></tr>`}).join("")||`<tr><td colspan="7" class="muted">Sin tickets en el mes.</td></tr>`;
-  $("#repTkNota").textContent=tks.length>300?"Se muestran los primeros 300; el «Reporte descuento mensual» incluye todos los tickets.":"El «Reporte descuento mensual» incluye este detalle a continuación del resumen por trabajador.";
-  $("#repFoot").innerHTML=`<tr><td colspan="5"><b>Total</b></td><td class="num"><b>${sumCant(val).toLocaleString("es-CL")}</b></td><td></td><td class="num"><b>${clp(total)}</b></td></tr>`;
+  // revisión antes de emitir
+  const anul=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Anulado").length,man=val.filter(r=>r.origen==="Manual").length;
+  const puedeHab=PERF[perfil].views.includes("habilitados");
+  const chk=[[enCurso?"warn":"ok",enCurso?`El mes está en curso (datos al ${fmtD(TODAY)}): conviene emitir después del último día hábil.`:"Mes cerrado: los datos están completos."],
+    [sinT.length?"warn":"ok",sinT.length?`${sinT.length} persona${sinT.length===1?"":"s"} con almuerzos y sin tramo asignado (${sinT.slice(0,3).map(x=>esc(x.p.nombre)).join(", ")}${sinT.length>3?"…":""}): su almuerzo no tiene valor.${puedeHab?' <button class="link" data-ir="habilitados">Asignar tramo</button>':""}`:"Todas las personas con almuerzos tienen tramo asignado."],
+    [anul?"info":"ok",anul?`${anul} ticket${anul===1?"":"s"} anulado${anul===1?"":"s"} en el mes: no se descuentan.`:"Sin tickets anulados."],
+    [man?"info":"ok",man?`${man} registro${man===1?"":"s"} manual${man===1?"":"es"} de contingencia: revise los motivos en Detalle de ingresos.`:"Sin registros manuales."]];
+  $("#repCheck").innerHTML=chk.map(([k,t])=>`<li class="chk-${k}"><span class="chk-ic" aria-hidden="true">${k==="ok"?"✓":k==="warn"?"!":"i"}</span><span>${t}</span></li>`).join("");
+  // desglose por tramo
+  const grupos=cfg.tramos.map(t=>({lbl:`Tramo ${t.n}<br><span class="muted small" style="white-space:nowrap">Grados ${t.desde} a ${t.hasta}</span>`,valor:clp(t.valor),xs:rows.filter(x=>tramoDe(x.p)===t.n)}));
+  if(sinT.length)grupos.push({lbl:'<span class="pill warn">Sin tramo</span>',valor:"—",xs:sinT,warn:true});
+  $("#repTramos").innerHTML=grupos.map(g=>`<tr class="${g.warn?"row-warn":""}"><td>${g.lbl}</td><td class="num">${g.valor}</td><td class="num">${g.xs.length}</td><td class="num">${g.xs.reduce((a,x)=>a+x.n,0).toLocaleString("es-CL")}</td><td class="num">${clp(g.xs.reduce((a,x)=>a+x.monto,0))}</td></tr>`).join("");
+  $("#repTramosFoot").innerHTML=`<tr><td><b>Total</b></td><td></td><td class="num"><b>${rows.length}</b></td><td class="num"><b>${sumCant(val).toLocaleString("es-CL")}</b></td><td class="num"><b>${clp(total)}</b></td></tr>`;
 }
 $("#repMesSel").addEventListener("change",e=>{repMes=e.target.value;renderRepo()});
+$("#repCheck").addEventListener("click",e=>{const b=e.target.closest("[data-ir]");if(b)show(b.dataset.ir,true)});
 function repMenu(open){const m=$("#repMenu"),b=$("#repBtn");if(!m)return;m.hidden=!open;b.setAttribute("aria-expanded",open);if(open)m.querySelector("button").focus()}
 $("#repEstado").addEventListener("click",e=>{if(e.target.closest("#repBtn")){repMenu($("#repMenu").hidden);return}
   const it=e.target.closest("[data-rep]");if(!it)return;repMenu(false);const ym=repMes,mes=MES[+ym.slice(5)-1];let filas,nombre;
