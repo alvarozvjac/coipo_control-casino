@@ -377,13 +377,13 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 
 <!-- DETALLE -->
 <section class="view" id="v-comensales" data-label="Comensales" hidden>
-  <div><h2>Comensales</h2><p class="lead">Quién puede almorzar y quién almorzó. Cada persona aparece con su tramo, su forma de pago y sus almuerzos del período; ábrala para ver sus tickets, reimprimir o anular, y cambiar su tramo, forma de pago o habilitación.</p></div>
+  <div><h2>Comensales</h2><p class="lead">Quién puede almorzar y quién almorzó. Cada persona aparece con su nivel, su forma de pago y sus almuerzos del período; ábrala para ver sus tickets, reimprimir o anular, y cambiar su nivel, forma de pago o habilitación.</p></div>
   <div class="panel row com-bar" style="align-items:end">
     <div class="row" style="gap:6px"><button class="btn small" data-rango="hoy">Hoy</button><button class="btn small" data-rango="semana">Esta semana</button><button class="btn small" data-rango="mes">Este mes</button></div>
     <label class="f">Desde<input type="date" id="detDesde"></label>
     <label class="f">Hasta<input type="date" id="detHasta"></label>
     <label class="f" style="flex:1;min-width:200px">Buscar<input id="detQ" placeholder="Nombre, RUT, unidad o ID de ticket" autocomplete="off"></label>
-    <label class="f">Mostrar<select id="comFiltro"><option value="">Todas las personas</option><option value="con">Con almuerzos en el período</option><option value="sin">Sin almuerzos en el período</option><option value="anul">Con tickets anulados</option><option value="manual">Con registro manual</option><option value="sintramo">Sin tramo asignado</option><option value="efm">Pagan en efectivo mensual</option><option value="susp">Suspendidas</option></select></label>
+    <label class="f">Mostrar<select id="comFiltro"><option value="">Todas las personas</option><option value="con">Con almuerzos en el período</option><option value="sin">Sin almuerzos en el período</option><option value="anul">Con tickets anulados</option><option value="manual">Con registro manual</option><option value="sintramo">Sin nivel asignado</option><option value="efm">Pagan en efectivo mensual</option><option value="susp">Suspendidas</option></select></label>
   </div>
   <div class="row spread com-acc">
     <span id="detCount" class="small muted"></span>
@@ -404,7 +404,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <div class="menu-wrap"><button class="btn" data-dd="crep" aria-haspopup="menu" aria-expanded="false">Reportes ▾</button>
         <div class="menu-pop" data-pop="crep" role="menu" hidden>
           <button role="menuitem" data-crep="ing"><b>Ingresos del período (CSV)</b><small>Todos los tickets del período elegido</small></button>
-          <button role="menuitem" data-crep="nom"><b>Nómina de habilitados (CSV)</b><small>Calidad, grado, tramo, valor, forma de pago y estado</small></button>
+          <button role="menuitem" data-crep="nom"><b>Nómina de habilitados (CSV)</b><small>Calidad, nivel, valor, forma de pago y estado</small></button>
           <button role="menuitem" data-crep="ficha"><b>Ficha por persona (CSV)</b><small>Tickets de la persona abierta en la tabla</small></button>
           <button role="menuitem" data-crep="ext"><b>Externos y visitas (CSV)</b><small>Ventas con folio y visitas del período</small></button>
         </div></div>
@@ -452,16 +452,16 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <label class="f" style="flex:1;min-width:200px">Nombre completo<input id="nNombre" autocomplete="off"></label>
       <label class="f">Unidad<input id="nUnidad" style="width:200px" autocomplete="off"></label>
       <label class="f">Calidad jurídica<select id="nTipo"><option>Dotación</option><option>Plazo fijo</option><option>Honorarios</option></select></label>
-      <label class="f">Grado<input id="nGrado" type="number" min="1" max="30" style="width:90px"></label>
-      <label class="f" id="nTramoL" hidden>Tramo<select id="nTramo"><option value="">Asignar después</option><option value="1">Tramo 1</option><option value="2">Tramo 2</option><option value="3">Tramo 3</option></select></label>
+      
+      <label class="f">Nivel (Remuneraciones)<select id="nTramo"><option value="">Asignar después</option><option value="1">Nivel 1</option><option value="2">Nivel 2</option><option value="3">Nivel 3</option></select></label>
       <button class="btn primary" type="submit">Guardar</button>
     </div>
-    <p class="small muted" id="nMsg" style="margin:8px 0 0">Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT.</p>
+    <p class="small muted" id="nMsg" style="margin:8px 0 0">Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT. Si aún no tiene nivel, se asigna en la próxima actualización mensual de Remuneraciones.</p>
   </form>
   <form class="panel" id="masivaForm" hidden>
     <div class="row spread"><h3>Carga masiva</h3><button type="button" class="btn small" data-cerrar>Cerrar</button></div>
-    <p class="small muted" style="margin:4px 0 8px">Pegue filas copiadas desde Excel: RUT, nombre, unidad, calidad jurídica (Dotación, Plazo fijo u Honorarios) y grado (separadas por tabulación o punto y coma). Solo Dotación tiene grado; para Plazo fijo y Honorarios el tramo se asigna después en la tabla.</p>
-    <textarea id="masivaTxt" rows="4">16.459.212-K;Ejemplo Persona Uno;Gerencia de Finanzas;Dotación;13
+    <p class="small muted" style="margin:4px 0 8px">Pegue filas copiadas desde Excel: RUT, nombre, unidad, calidad jurídica (Dotación, Plazo fijo u Honorarios) y nivel 1, 2 o 3 según Remuneraciones (separadas por tabulación o punto y coma). El nivel puede quedar vacío y cargarse en la actualización mensual.</p>
+    <textarea id="masivaTxt" rows="4">16.459.212-K;Ejemplo Persona Uno;Gerencia de Finanzas;Dotación;2
 9.877.512-9;Ejemplo Persona Dos;Fiscalía;PLAZO FIJO;</textarea>
     <div class="row" style="margin-top:8px"><button class="btn primary" type="submit">Validar e importar</button><span id="masivaMsg" class="small"></span></div>
   </form>
@@ -477,7 +477,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <span id="meMsg" class="small"></span>
     <div class="tablebox"><table><thead><tr><th>Registrado</th><th>Persona</th><th>Mes</th><th>Cambio</th><th>Motivo</th></tr></thead><tbody id="meBody"></tbody></table></div>
   </form>
-  <div class="tablebox"><table class="com"><thead><tr><th>Nombre completo</th><th>RUT</th><th>Unidad</th><th>Tramo</th><th>Pago</th><th class="num">Almuerzos</th><th>Último ingreso</th><th>Estado</th><th aria-label="Abrir"></th></tr></thead><tbody id="comBody"></tbody></table></div>
+  <div class="tablebox"><table class="com"><thead><tr><th>Nombre completo</th><th>RUT</th><th>Unidad</th><th>Nivel</th><th>Pago</th><th class="num">Almuerzos</th><th>Último ingreso</th><th>Estado</th><th aria-label="Abrir"></th></tr></thead><tbody id="comBody"></tbody></table></div>
   <div class="panel" style="display:grid;gap:8px"><div class="row spread"><h3>Externos y visitas del período</h3><span class="small muted" id="comExtN"></span></div><ul class="avisos" id="comExt"></ul></div>
 </section>
 
@@ -516,7 +516,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <div class="grid2" style="gap:16px">
       <div style="display:grid;gap:8px;align-content:start"><h3>Revisión antes de emitir</h3><ul class="checks" id="repCheck"></ul></div>
       <div style="display:grid;gap:8px;align-content:start"><h3>Desglose por tramo</h3>
-        <div class="tablebox"><table><thead><tr><th>Tramo</th><th class="num">Valor</th><th class="num">Personas</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="repTramos"></tbody><tfoot id="repTramosFoot"></tfoot></table></div>
+        <div class="tablebox"><table><thead><tr><th>Nivel</th><th class="num">Valor</th><th class="num">Personas</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="repTramos"></tbody><tfoot id="repTramosFoot"></tfoot></table></div>
         <p class="small muted" style="margin:0">El detalle por trabajador y por ticket va en el «Reporte descuento mensual».</p></div>
     </div>
   </div>
@@ -525,26 +525,35 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 
 <!-- CONFIGURACION -->
 <section class="view" id="v-configuracion" data-label="Configuración" hidden>
-  <div><h2>Configuración del servicio</h2><p class="lead">Servicio, horario, ubicación, límite de consumo y valor del almuerzo según el tramo del grado.</p></div>
+  <div><h2>Configuración del servicio</h2><p class="lead">Servicio, horario, ubicación, valor del almuerzo por nivel de sueldo imponible y actualización mensual de niveles.</p></div>
   <div class="panel">
     <dl class="cfg">
       <label class="f">Servicio<input id="cServicio" value="Almuerzo"></label>
       <label class="f">Ubicación<input id="cUbicacion" value="Casino Institucional · Oficina Central"></label>
       <label class="f">Hora de inicio<input id="cIni" type="time" value="12:30"></label>
       <label class="f">Hora de término<input id="cFin" type="time" value="15:00"></label>
-      <label class="f">Valor almuerzo externo en efectivo ($, propuesta)<input id="cValExt" type="number" min="0" step="100" value="4500"></label>
-      <label class="f">Valor almuerzo de visita institucional ($, propuesta)<input id="cValVis" type="number" min="0" step="100" value="4500"></label>
-      <label class="f">Plazo del menú: día del mes anterior<input id="cMenuDia" type="number" min="1" max="31" value="25"></label>
+            <label class="f">Plazo del menú: día del mes anterior<input id="cMenuDia" type="number" min="1" max="31" value="25"></label>
       <label class="f">Plazo de avisos e invitaciones<input value="Hasta las 23:59 del día anterior" disabled></label>
       <label class="f">Hora simulada (solo maqueta)<input id="cSim" type="time" value="13:05"></label>
     </dl>
     <p class="small muted" style="margin:14px 0 0">Los cambios se aplican de inmediato en la terminal. Cada persona puede obtener un solo ticket al día (los almuerzos con invitados van en ese mismo ticket). El plazo del menú mensual es un valor de ejemplo que define Bienestar; los avisos de ausencia e invitaciones se aceptan hasta las 23:59 del día anterior. La hora simulada permite probar la regla de horario sin esperar al mediodía.</p>
   </div>
   <div class="panel" style="display:grid;gap:12px">
-    <div><h3>Valor del almuerzo por tramo</h3><p class="small muted" style="margin:2px 0 0">El tramo se define por el grado del funcionario. Quienes no tienen grado (plazo fijo y honorarios) reciben el tramo que asigna el Jefe Casino en «Comensales».</p></div>
-    <div class="tablebox"><table><thead><tr><th>Tramo</th><th>Desde grado</th><th>Hasta grado</th><th>Valor del almuerzo (CLP, ejemplo)</th><th class="num">Personas</th></tr></thead><tbody id="tramosBody"></tbody></table></div>
+    <div><h3>Valor del almuerzo por nivel</h3><p class="small muted" style="margin:2px 0 0">El nivel de cada trabajador depende de su sueldo imponible. Valores del Casino Oficina Central informados por Bienestar.</p></div>
+    <div class="row" style="align-items:end"><label class="f">Valores vigentes desde<input id="cVig" value="Marzo 2026" style="width:160px"></label><label class="f">Vale extra ($)<input id="cVale" type="number" min="0" step="10" value="6000" style="width:130px"></label></div>
+    <div class="tablebox"><table><thead><tr><th>Nivel</th><th>Imponible desde ($)</th><th>Imponible hasta ($)</th><th>Valor del almuerzo ($)</th><th class="num">Personas</th></tr></thead><tbody id="tramosBody"></tbody></table></div>
     <p class="small" id="tramosMsg" style="margin:0"></p>
-    <p class="small muted" style="margin:0">Un cambio de valor aplica a los almuerzos que se registren desde ese momento. Los ya registrados conservan el valor con que se emitieron.</p>
+    <p class="small muted" style="margin:0">El <b>vale extra</b> se cobra por cada invitado del funcionario (se descuenta al funcionario), por cada almuerzo vendido en efectivo a externos y por cada almuerzo de visita institucional. Un cambio de valor aplica a los almuerzos que se registren desde ese momento; los ya registrados conservan el valor con que se emitieron.</p>
+  </div>
+  <div class="panel" style="display:grid;gap:12px">
+    <div><h3>Actualización mensual de niveles</h3><p class="small muted" style="margin:2px 0 0">Remuneraciones informa cada mes el nivel (1, 2 o 3) de cada trabajador según su sueldo imponible. Se carga solo el nivel: el sistema no guarda sueldos. Debe cargarse antes de emitir el reporte de descuento del mes.</p></div>
+    <div id="nivEstado"></div>
+    <form id="nivForm" novalidate style="display:grid;gap:8px">
+      <div class="row" style="align-items:end"><label class="f">Mes<select id="nivMes"></select></label><span class="small muted">Filas: RUT;nivel (una por línea, copiadas desde el archivo de Remuneraciones)</span></div>
+      <textarea id="nivTxt" rows="4"></textarea>
+      <div class="row"><button class="btn primary" type="submit">Validar y cargar niveles</button><span id="nivMsg" class="small"></span></div>
+    </form>
+    <div class="tablebox"><table><thead><tr><th>Mes</th><th>Cargado</th><th>Fuente</th><th class="num">Personas</th><th class="num">Cambios de nivel</th><th>Registró</th></tr></thead><tbody id="nivHist"></tbody></table></div>
   </div>
 </section>
 
@@ -707,19 +716,24 @@ function seedPersonas(){
   const GR=[3,5,6,7,8,9,10,10,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,20,21];
   P.forEach((p,i)=>{const h=parseInt(p.key.slice(0,-1),10);
     if(p.tipo==="Dotación"){p.grado=GR[h%GR.length];p.tramoManual=null}
-    else{p.grado=null;p.tramoManual=i===8?null:[1,2,3][h%3]}});
+    else{p.grado=null;p.tramoManual=i===8?null:[1,2,3][h%3]}
+    /* Nivel del almuerzo según sueldo imponible: lo informa Remuneraciones cada mes (dato ficticio en la maqueta) */
+    p.nivel=p.grado!=null?(p.grado<=11?3:p.grado<=14?2:1):p.tramoManual?[3,2,1][p.tramoManual-1]:null});
 }
 const byKey=k=>P.find(p=>p.key===k);
 
-const CFG0={servicio:"Almuerzo",ubic:"Casino Institucional · Oficina Central",ini:"12:30",fin:"15:00",valorExterno:4500,valorVisita:4500,intentos:3,menuDia:25,avisoDias:1,sim:"13:05",
-  tramos:[{n:1,desde:3,hasta:11,valor:3000},{n:2,desde:12,hasta:14,valor:2500},{n:3,desde:15,hasta:21,valor:2000}]};
+const CFG0={servicio:"Almuerzo",ubic:"Casino Institucional · Oficina Central",ini:"12:30",fin:"15:00",valeExtra:6000,vigencia:"Marzo 2026",intentos:3,menuDia:25,avisoDias:1,sim:"13:05",
+  tramos:[{n:1,desde:0,hasta:1200000,valor:2880},{n:2,desde:1200001,hasta:2050000,valor:3380},{n:3,desde:2050001,hasta:null,valor:3980}]};
 const copiaCfg=()=>({...CFG0,tramos:CFG0.tramos.map(t=>({...t}))});
 const cfg=copiaCfg();
-/* Tramo: por grado si la persona tiene grado; si no (plazo fijo, honorarios), el que asignó el Jefe Casino */
-const tramoDe=p=>{if(!p)return null;if(p.grado!=null){const t=cfg.tramos.find(t=>p.grado>=t.desde&&p.grado<=t.hasta);return t?t.n:null}return p.tramoManual||null};
+/* Nivel (1 a 3) según el sueldo imponible; lo informa Remuneraciones en la actualización mensual. No se guarda el sueldo */
+const tramoDe=p=>p&&p.nivel?p.nivel:null;
+const rangoNiv=t=>t.hasta==null?`desde ${clp(t.desde)}`:t.desde<=0?`hasta ${clp(t.hasta)}`:`${clp(t.desde)} a ${clp(t.hasta)}`;
+const NIVCARGA=[];
 const valorDe=p=>{const t=tramoDe(p);return t?cfg.tramos[t-1].valor:0};
 /* Cada almuerzo guarda el valor vigente al emitirse; si la persona no tenía tramo, se calcula con el actual */
-const montoR=r=>(r.valor||valorDe(byKey(r.key)))*(r.cant||1);
+/* Almuerzo propio al valor de su nivel + cada invitado con vale extra */
+const montoR=r=>(r.valor||valorDe(byKey(r.key)))+((r.cant||1)-1)*(r.vale??cfg.valeExtra);
 const sumaM=rows=>rows.reduce((a,r)=>a+montoR(r),0);
 const TRAMO_TXT=t=>t?`Tramo ${t}`:"Sin tramo";
 const now=()=>{const d=new Date();if(cfg.sim){const[h,m]=cfg.sim.split(":");d.setHours(+h,+m,new Date().getSeconds())}return d};
@@ -857,13 +871,14 @@ function seedYear(){
 /* Propuesta (preguntas del Jefe Casino, 02-11-2026): personal en convenio que paga en efectivo cada mes, ventas en efectivo y visitas institucionales. Datos ficticios. */
 function seedPropuestas(){EXTRAS.length=0;P.forEach(p=>{if(!p.pago)p.pago="Planilla"});
   [[23456781,"Andrea Molina Fuentes"],[24567892,"Martín Salas Ortega"]].forEach(([b,n])=>{const key=b+dv(b);if(byKey(key))return;
-    P.push({key,nombre:n,unidad:"FAO · convenio",tipo:"—",pin:"0000",hab:true,fallos:0,bloq:false,prov:false,bio:"enrolada",enrFecha:null,af:0,pref:800,grado:null,tramoManual:1,pago:"Efectivo mensual"});
+    P.push({key,nombre:n,unidad:"FAO · convenio",tipo:"—",pin:"0000",hab:true,fallos:0,bloq:false,prov:false,bio:"enrolada",enrFecha:null,af:0,pref:800,grado:null,tramoManual:1,nivel:1,pago:"Efectivo mensual"});
     for(const d=new Date(YEAR,0,1);ymd(d)<TODAY;d.setDate(d.getDate()+1)){const f=ymd(d);if(!habil(d)||diaCerrado(f)||hkey(key+f)%10<4)continue;
       R.push({n:0,fecha:f,hora:hm(clampMin(790+hkey(f+key)%60)),key,valor:valorDe(byKey(key)),cant:1,menu:"Normal",origen:"Terminal",estado:"Válido"})}});
   const l0=lunesDe(TODAY);const ej=[[-14,0,"Efectivo","Visitante del SAG",1,""],[-14,2,"Visita","Delegación INFOR (3 personas)",3,"Dirección Ejecutiva"],[-7,1,"Efectivo","Acompañante de Jorge Fuentes",1,""],[-7,3,"Visita","Reunión con MINAGRI",2,"Dirección Ejecutiva"],[0,0,"Efectivo","Proveedor en reunión técnica",1,""]];
-  ej.forEach(([off,dd,tipo,nombre,cant,ref])=>{const f=sumDias(sumDias(l0,off),dd);if(f>=TODAY||!habil(D(f)))return;EXTRAS.push({fecha:f,hora:"13:1"+dd,tipo,nombre,cant,valor:tipo==="Efectivo"?cfg.valorExterno:cfg.valorVisita,ref,por:"Rodrigo Salinas Vera"})});
+  ej.forEach(([off,dd,tipo,nombre,cant,ref])=>{const f=sumDias(sumDias(l0,off),dd);if(f>=TODAY||!habil(D(f)))return;EXTRAS.push({fecha:f,hora:"13:1"+dd,tipo,nombre,cant,valor:cfg.valeExtra,ref,por:"Rodrigo Salinas Vera"})});
   asignarIds();asignarFolios()}
-function seedAll(){seed=7;AUS_ANUL.length=0;MENU_EXC.length=0;seedPersonas();seedCierres();seedSolicitudes();seedYear();seedMenuSem();seedPropuestas()}
+function seedNiv(){NIVCARGA.length=0;const cm=ymOf(TODAY);NIVCARGA.push({ym:ymPrev(cm),cuando:`${fmtD(sumDias(ymPrev(cm)+"-01",1))} 10:14`,n:P.length-1,cambios:2,por:"Rodrigo Salinas Vera",fuente:"Archivo de Remuneraciones"});NIVCARGA.push({ym:cm,cuando:`${fmtD(TODAY)} 09:40`,n:P.length-1,cambios:1,por:"Rodrigo Salinas Vera",fuente:"Archivo de Remuneraciones"})}
+function seedAll(){seed=7;AUS_ANUL.length=0;MENU_EXC.length=0;seedPersonas();seedCierres();seedSolicitudes();seedYear();seedMenuSem();seedPropuestas();seedNiv()}
 seedAll();
 const todays=()=>R.filter(r=>r.fecha===TODAY);
 const nextN=()=>todays().length+1;
@@ -973,7 +988,7 @@ function checkRut(){
   result("ok",r.cant>1?`${r.cant} almuerzos registrados`:"Almuerzo registrado",`${r.cant>1?`Retire su ticket por ${r.cant} almuerzos (usted y sus invitados)`:"Retire su ticket"}. Menú ${r.menu.toLowerCase()}.${r.conAviso?" Tenías aviso de ausencia para hoy: quedó anulado.":""} ¡Buen provecho!`,p.nombre);
 }
 function emit(p,origen,motivo){const iv=invDe(p,TODAY);const av=ausDe(p,TODAY);if(av)AUS.splice(AUS.indexOf(av),1);
-  const r={n:nextN(),id:nextId(TODAY),fecha:TODAY,hora:hhmm(now()),key:p.key,valor:valorDe(p),cant:iv?iv.cant:1,menu:menuDe(p,TODAY),origen,estado:"Válido",motivo,conAviso:!!av};R.push(r);printTicket(r);return r}
+  const r={n:nextN(),id:nextId(TODAY),fecha:TODAY,hora:hhmm(now()),key:p.key,valor:valorDe(p),vale:cfg.valeExtra,cant:iv?iv.cant:1,menu:menuDe(p,TODAY),origen,estado:"Válido",motivo,conAviso:!!av};R.push(r);printTicket(r);return r}
 function ticketHTML(r,o={}){const p=o.persona||byKey(r.key);const f=D(r.fecha);
   const fecha=cap(f.toLocaleDateString("es-CL",{weekday:"long"}))+" "+String(f.getDate()).padStart(2,"0")+"-"+String(f.getMonth()+1).padStart(2,"0")+"-"+f.getFullYear();
   const F=(k,html)=>o.anot?`<div class="tk-f" data-n="${k}">${html}</div>`:html;
@@ -1018,7 +1033,7 @@ $("#demoList").addEventListener("click",e=>{const b=e.target.closest("button[dat
 /* ---- Habilitados ---- */
 $("#comBody").addEventListener("change",e=>{const t=e.target;
   if(t.dataset.pago!==undefined){const p=P[t.dataset.pago];p.pago=t.value;renderCom();toast(`${p.nombre}: ${p.pago==="Planilla"?"descuento por planilla":"paga en efectivo cada mes"}`);return}
-  if(t.dataset.trm!==undefined){const p=P[t.dataset.trm];p.tramoManual=Number(t.value)||null;renderCom();toast(p.tramoManual?`${p.nombre}: tramo ${p.tramoManual} asignado`:"Tramo quitado");return}
+  if(t.dataset.trm!==undefined){const p=P[t.dataset.trm];p.nivel=Number(t.value)||null;renderCom();toast(p.nivel?`${p.nombre}: nivel ${p.nivel} (corrección manual; la próxima carga de Remuneraciones lo reemplaza)`:"Nivel quitado");return}
   if(t.dataset.hab!==undefined){const p=P[t.dataset.hab];p.hab=t.checked;renderCom();renderDemo();toast(p.hab?"Persona habilitada":"Habilitación suspendida")}});
 function renderMenuExc(){const cm=ymOf(TODAY),nm=ymNext(cm);const lab=ym=>`${cap(MES[+ym.slice(5)-1])} ${ym.slice(0,4)}`;const v=$("#meMes").value;
   $("#meMes").innerHTML=[cm,nm].map(ym=>`<option value="${ym}">${lab(ym)}${ym===cm?" (mes actual)":""}</option>`).join("");if(v)$("#meMes").value=v;
@@ -1032,19 +1047,18 @@ $("#menuExcForm").addEventListener("submit",e=>{e.preventDefault();const m=$("#m
   if(ant===nuevo){m.innerHTML=`<span style="color:var(--warn)">${esc(p.nombre)} ya tiene menú ${nuevo.toLowerCase()} en ${MES[+ym.slice(5)-1]}.</span>`;return}
   MENU[k]=nuevo;MENU_EXC.push({key:p.key,ym,de:ant,a:nuevo,motivo:$("#meMotivo").value,cuando:`${fmtD(TODAY)} ${hhmm(now())}`,por:USR.casino.n});
   m.innerHTML=`<span style="color:var(--ok)">Menú de ${esc(p.nombre)} cambiado a ${nuevo.toLowerCase()} para ${MES[+ym.slice(5)-1]}. Rige desde hoy en la terminal y la planificación.</span>`;$("#meRut").value="";renderMenuExc()});
-$("#nTipo").addEventListener("change",e=>{const sinG=["Honorarios","Plazo fijo"].includes(e.target.value);$("#nGrado").closest("label").hidden=sinG;$("#nTramoL").hidden=!sinG});
 $("#nRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)});
 const CALIDADES=["Dotación","Plazo fijo","Honorarios"];
 const normTipo=t=>{const k=String(t||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();return k?CALIDADES.find(c=>c.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()===k)||"":"Dotación"};
-function addPerson(rut,nombre,unidad,tipo,grado,tramo){const key=cleanRut(rut);if(!rutOk(rut))return"RUT no válido";if(byKey(key))return"ya existe";if(!nombre)return"falta nombre";
-  tipo=normTipo(tipo);if(!tipo)return"calidad jurídica no válida (Dotación, Plazo fijo u Honorarios)";if(tipo!=="Dotación")grado=null;
-  P.push({key,pago:"Planilla",nombre,unidad:unidad||"Sin unidad",tipo:tipo||"Dotación",pin:String(1000+Math.floor(Math.random()*9000)),hab:true,fallos:0,bloq:false,prov:true,bio:"pendiente",enrFecha:null,grado:grado?Number(grado):null,tramoManual:grado?null:(Number(tramo)||null)});return null}
-$("#nuevoForm").addEventListener("submit",e=>{e.preventDefault();const sinG=["Honorarios","Plazo fijo"].includes($("#nTipo").value);if(!sinG&&!$("#nGrado").value){$("#nMsg").innerHTML='<span style="color:var(--bad)">Indique el grado: define el tramo del almuerzo.</span>';return}
-  const err=addPerson($("#nRut").value,$("#nNombre").value.trim(),$("#nUnidad").value.trim(),$("#nTipo").value,sinG?null:$("#nGrado").value,$("#nTramo").value);
+function addPerson(rut,nombre,unidad,tipo,nivel){const key=cleanRut(rut);if(!rutOk(rut))return"RUT no válido";if(byKey(key))return"ya existe";if(!nombre)return"falta nombre";
+  tipo=normTipo(tipo);if(!tipo)return"calidad jurídica no válida (Dotación, Plazo fijo u Honorarios)";nivel=Number(nivel)||null;if(nivel&&![1,2,3].includes(nivel))return"nivel no válido (1, 2 o 3)";
+  P.push({key,pago:"Planilla",nombre,unidad:unidad||"Sin unidad",tipo:tipo||"Dotación",pin:String(1000+Math.floor(Math.random()*9000)),hab:true,fallos:0,bloq:false,prov:true,bio:"pendiente",enrFecha:null,grado:null,tramoManual:null,nivel});return null}
+$("#nuevoForm").addEventListener("submit",e=>{e.preventDefault();
+  const err=addPerson($("#nRut").value,$("#nNombre").value.trim(),$("#nUnidad").value.trim(),$("#nTipo").value,$("#nTramo").value);
   const m=$("#nMsg");if(err){m.innerHTML=`<span style="color:var(--bad)">No se pudo guardar: ${err}.</span>`;return}
   m.innerHTML=`<span style="color:var(--ok)">Persona agregada y habilitada.</span>`;["#nRut","#nNombre","#nUnidad"].forEach(s=>$(s).value="");renderCom();renderDemo()});
 $("#masivaForm").addEventListener("submit",e=>{e.preventDefault();let ok=0;const errs=[];
-  $("#masivaTxt").value.split(/\n/).map(l=>l.trim()).filter(Boolean).forEach((l,i)=>{const c=l.split(/\t|;/).map(x=>x.trim());const er=addPerson(c[0]||"",c[1],c[2],c[3],c[4]||null,null);if(er)errs.push(`fila ${i+1}: ${er}`);else ok++});
+  $("#masivaTxt").value.split(/\n/).map(l=>l.trim()).filter(Boolean).forEach((l,i)=>{const c=l.split(/\t|;/).map(x=>x.trim());const er=addPerson(c[0]||"",c[1],c[2],c[3],c[4]||null);if(er)errs.push(`fila ${i+1}: ${er}`);else ok++});
   $("#masivaMsg").innerHTML=`<span style="color:var(--ok)">${ok} importada${ok===1?"":"s"}.</span> ${errs.length?`<span style="color:var(--bad)">${esc(errs.join(" · "))}</span>`:""}`;renderCom();renderDemo()});
 
 /* ---- Estadísticas (ambos perfiles, solo cifras agregadas) ---- */
@@ -1347,11 +1361,11 @@ function renderCom(){renderExtras();
   $("#comBody").innerHTML=shown.map(({p,rr,val,ult})=>{const i=P.indexOf(p);const ab=det.abiertas.has(p.key);const t=tramoDe(p);
     const est=[p.hab?'<span class="pill ok">Habilitado</span>':'<span class="pill bad">Suspendido</span>'];
     if(rr.some(r=>r.origen==="Manual"))est.push('<span class="pill warn">Manual</span>');if(rr.some(r=>r.conAviso))est.push('<span class="pill warn" title="Había avisado que no almorzaría; el aviso se anuló al registrar el ingreso">Asistió pese a aviso</span>');if(rr.some(r=>r.estado==="Anulado"))est.push('<span class="pill bad">Anulado</span>');
-    let h=`<tr class="com-row${ab?" abierta":""}" data-abrir="${p.key}"><td><b>${esc(p.nombre)}</b></td><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.unidad)}</td><td>${t?`<span class="pill neu">T${t}</span>`:'<span class="pill warn">Sin tramo</span>'}</td><td>${p.pago==="Planilla"?"Planilla":"Efectivo"}</td>
+    let h=`<tr class="com-row${ab?" abierta":""}" data-abrir="${p.key}"><td><b>${esc(p.nombre)}</b></td><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.unidad)}</td><td>${t?`<span class="pill neu">N${t}</span>`:'<span class="pill warn">Sin nivel</span>'}</td><td>${p.pago==="Planilla"?"Planilla":"Efectivo"}</td>
       <td class="num">${sumCant(val)}</td><td class="mono small">${ult?(ult.fecha===TODAY?"hoy ":fmtD(ult.fecha).slice(0,5)+" ")+ult.hora:"—"}</td><td><div class="row" style="gap:4px">${est.join("")}</div></td><td><button class="com-abrir" aria-expanded="${ab}" aria-label="${ab?"Cerrar":"Abrir"} ${esc(p.nombre)}">${ab?"▾":"▸"}</button></td></tr>`;
     if(ab)h+=`<tr class="com-sub"><td colspan="9"><div class="com-ficha">
-      <span>Calidad: <b>${esc(p.tipo)}</b></span><span>Grado: <b>${p.grado??"—"}</b></span>
-      <span>Tramo: ${p.grado!=null?`<b>Tramo ${t??"?"}</b>`:`<select data-trm="${i}" class="${p.tramoManual?"":"sel-warn"}" aria-label="Tramo de ${esc(p.nombre)}"><option value="">Asignar…</option>${cfg.tramos.map(x=>`<option value="${x.n}" ${p.tramoManual===x.n?"selected":""}>Tramo ${x.n}</option>`).join("")}</select>`}</span>
+      <span>Calidad: <b>${esc(p.tipo)}</b></span>
+      <span>Nivel: <select data-trm="${i}" class="${t?"":"sel-warn"}" aria-label="Nivel de ${esc(p.nombre)}"><option value="">Sin nivel</option>${cfg.tramos.map(x=>`<option value="${x.n}" ${t===x.n?"selected":""}>Nivel ${x.n}</option>`).join("")}</select></span>
       <span>Valor: <b>${t?clp(valorDe(p)):"—"}</b></span>
       <span>Pago: <select data-pago="${i}" aria-label="Forma de pago de ${esc(p.nombre)}">${["Planilla","Efectivo mensual"].map(o=>`<option ${p.pago===o?"selected":""}>${o}</option>`).join("")}</select></span>
       <label class="row" style="gap:6px"><input type="checkbox" data-hab="${i}" ${p.hab?"checked":""}> Habilitado</label>
@@ -1382,15 +1396,15 @@ $("#v-comensales").addEventListener("click",e=>{const dd=e.target.closest("[data
 $("#v-comensales").addEventListener("keydown",e=>{if(e.key==="Escape")cerrarMenus()});
 document.addEventListener("click",e=>{if(!e.target.closest("#v-comensales .menu-wrap"))cerrarMenus()});
 function comReporte(tipo,key){const per=`${fmtD(det.desde)} a ${fmtD(det.hasta)}`,sfx=det.desde===det.hasta?det.desde:`${det.desde}_${det.hasta}`;let filas,nombre;
-  const tkCols=["ID ticket","Fecha","Hora","Almuerzos","Menú","Validación","Estado","Motivo","Valor unitario","Monto"];
-  const tkFila=r=>{const p=byKey(r.key);const v=r.estado==="Válido";return[r.id,fmtD(r.fecha),r.hora,cantR(r),r.menu||menuDe(p,r.fecha),r.origen,r.estado,r.motivo||"",v?montoR(r)/cantR(r):0,v?montoR(r):0]};
+  const tkCols=["ID ticket","Fecha","Hora","Almuerzos","Menú","Validación","Estado","Motivo","Valor nivel","Monto (incluye vales extra)"];
+  const tkFila=r=>{const p=byKey(r.key);const v=r.estado==="Válido";return[r.id,fmtD(r.fecha),r.hora,cantR(r),r.menu||menuDe(p,r.fecha),r.origen,r.estado,r.motivo||"",v?r.valor:0,v?montoR(r):0]};
   if(tipo==="ing"){const rr=perRows().sort((a,b)=>a.id<b.id?-1:1);
-    filas=[["Ingresos del período",per],[],["ID ticket","Fecha","Hora","Almuerzos","Nombre completo","RUT","Unidad","Tramo","Forma de pago","Validación","Estado","Motivo","Monto"]].concat(rr.map(r=>{const p=byKey(r.key);return[r.id,fmtD(r.fecha),r.hora,cantR(r),p.nombre,fmtRut(r.key),p.unidad,tramoDe(p)??"",p.pago,r.origen,r.estado,r.motivo||"",r.estado==="Válido"?montoR(r):0]}));nombre=`ingresos_${sfx}.csv`}
-  else if(tipo==="nom"){filas=[["Nómina de habilitados",`Al ${fmtD(TODAY)}`],[],["Nombre completo","RUT","Unidad","Calidad jurídica","Grado","Tramo","Valor por almuerzo","Forma de pago","Habilitado"]].concat(P.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(p=>[p.nombre,fmtRut(p.key),p.unidad,p.tipo,p.grado??"",tramoDe(p)??"",tramoDe(p)?valorDe(p):"",p.pago,p.hab?"Sí":"No"]));nombre=`nomina_habilitados_${TODAY}.csv`}
+    filas=[["Ingresos del período",per],[],["ID ticket","Fecha","Hora","Almuerzos","Nombre completo","RUT","Unidad","Nivel","Forma de pago","Validación","Estado","Motivo","Monto"]].concat(rr.map(r=>{const p=byKey(r.key);return[r.id,fmtD(r.fecha),r.hora,cantR(r),p.nombre,fmtRut(r.key),p.unidad,tramoDe(p)??"",p.pago,r.origen,r.estado,r.motivo||"",r.estado==="Válido"?montoR(r):0]}));nombre=`ingresos_${sfx}.csv`}
+  else if(tipo==="nom"){filas=[["Nómina de habilitados",`Al ${fmtD(TODAY)}`],[],["Nombre completo","RUT","Unidad","Calidad jurídica","Nivel","Valor por almuerzo","Forma de pago","Habilitado"]].concat(P.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(p=>[p.nombre,fmtRut(p.key),p.unidad,p.tipo,tramoDe(p)??"",tramoDe(p)?valorDe(p):"",p.pago,p.hab?"Sí":"No"]));nombre=`nomina_habilitados_${TODAY}.csv`}
   else if(tipo==="ficha"){if(!key){const ab=[...det.abiertas];const L=comLista();key=ab.length===1?ab[0]:L.length===1?L[0].p.key:null}
     if(!key){$("#comMsg").innerHTML='<span style="color:var(--warn)">Abra una sola persona en la tabla (o búsquela) y vuelva a elegir «Ficha por persona».</span>';return}
     const p=byKey(key);const rr=perRows().filter(r=>r.key===key).sort((a,b)=>a.id<b.id?-1:1);const v=rr.filter(r=>r.estado==="Válido");
-    filas=[["Ficha por persona",per],["Nombre completo",p.nombre],["RUT",fmtRut(p.key)],["Unidad",p.unidad],["Calidad jurídica",p.tipo],["Tramo",tramoDe(p)??"Sin tramo"],["Forma de pago",p.pago],["Habilitado",p.hab?"Sí":"No"],[],tkCols].concat(rr.map(tkFila),[["","","Total",sumCant(v),"","","","","",sumaM(v)]]);nombre=`ficha_${cleanRut(p.key)}_${sfx}.csv`}
+    filas=[["Ficha por persona",per],["Nombre completo",p.nombre],["RUT",fmtRut(p.key)],["Unidad",p.unidad],["Calidad jurídica",p.tipo],["Nivel",tramoDe(p)??"Sin nivel"],["Forma de pago",p.pago],["Habilitado",p.hab?"Sí":"No"],[],tkCols].concat(rr.map(tkFila),[["","","Total",sumCant(v),"","","","","",sumaM(v)]]);nombre=`ficha_${cleanRut(p.key)}_${sfx}.csv`}
   else{const ex=EXTRAS.filter(x=>enPer(x.fecha)).sort((a,b)=>a.id<b.id?-1:1);
     filas=[["Externos y visitas",per],[],["Tipo","ID ticket","Fecha","Hora","Comensal o visita","Folio o cuenta","Almuerzos","Valor unitario","Monto","Registró"]].concat(ex.map(x=>[x.tipo==="Efectivo"?"Venta en efectivo":"Visita institucional",x.id,fmtD(x.fecha),x.hora,x.nombre,x.ref,x.cant,x.valor,x.cant*x.valor,x.por]),[["","","","","Total","",ex.reduce((a,x)=>a+x.cant,0),"",ex.reduce((a,x)=>a+x.cant*x.valor,0),""]]);nombre=`externos_visitas_${sfx}.csv`}
   descargarCsv(nombre,csvTxt(filas),"#comMsg")}
@@ -1413,7 +1427,7 @@ $("#manRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)}
 
 /* ---- Propuestas: venta en efectivo, visitas institucionales y planilla de contingencia ---- */
 let exTipo="Efectivo";
-function exValor(){return exTipo==="Efectivo"?cfg.valorExterno:cfg.valorVisita}
+function exValor(){return cfg.valeExtra}
 function renderExtras(){$("#exTipo").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ex===exTipo));
   const ef=exTipo==="Efectivo";$("#exNomL").textContent=ef?"Nombre del comensal":"Visita (institución o motivo)";$("#exNom").placeholder=ef?"Ej.: Visitante del SAG":"Ej.: Delegación INFOR";
   $("#exRefT").textContent=ef?"Folio (automático)":"Cuenta";$("#exRef").value=ef?folioSig(TODAY):"Dirección Ejecutiva";
@@ -1440,7 +1454,7 @@ $("#contForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#cont
 /* ---- Reportes (Jefe Casino emite y envía; Jefa de Bienestar consulta y copia) ---- */
 let repMes=`${YEAR}-${pad(today.getMonth())}`;if(today.getMonth()===0)repMes=`${YEAR}-01`;
 $("#repMesSel").innerHTML=Array.from({length:today.getMonth()+1},(_,m)=>`<option value="${YEAR}-${pad(m+1)}">${cap(MES[m])} ${YEAR}</option>`).reverse().join("");
-function mesRows(ym){const val=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido"&&(byKey(r.key).pago||"Planilla")==="Planilla");const m=new Map();val.forEach(r=>{const o=m.get(r.key)||{n:0,monto:0,vals:new Set()};o.n+=cantR(r);o.monto+=montoR(r);o.vals.add(montoR(r)/cantR(r));m.set(r.key,o)});
+function mesRows(ym){const val=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido"&&(byKey(r.key).pago||"Planilla")==="Planilla");const m=new Map();val.forEach(r=>{const o=m.get(r.key)||{n:0,monto:0,vals:new Set()};o.n+=cantR(r);o.monto+=montoR(r);o.vals.add(r.valor);m.set(r.key,o)});
   return{val,rows:[...m].map(([k,o])=>({p:byKey(k),n:o.n,monto:o.monto,vals:[...o.vals]})).sort((a,b)=>a.p.nombre.localeCompare(b.p.nombre,"es"))}}
 function renderRepo(){
   const ym=repMes;const enCurso=ym===TODAY.slice(0,7);
@@ -1459,21 +1473,22 @@ function renderRepo(){
     </div></div>`;
   $("#repEstado").innerHTML=`<div>${estado}</div><div class="row" style="flex-direction:column;align-items:flex-end;gap:4px">${acc}<span class="small" id="repMsg"></span></div>`;
   const total=rows.reduce((a,x)=>a+x.monto,0);const sinT=rows.filter(x=>!tramoDe(x.p));
-  const porT=cfg.tramos.map(t=>{const rr=rows.filter(x=>tramoDe(x.p)===t.n);return`T${t.n}: ${rr.length}`}).join(" · ");
-  $("#repStats").innerHTML=[["Almuerzos del mes",sumCant(val).toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Comensales antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
+  const porT=cfg.tramos.map(t=>{const rr=rows.filter(x=>tramoDe(x.p)===t.n);return`N${t.n}: ${rr.length}`}).join(" · ");
+  $("#repStats").innerHTML=[["Almuerzos del mes",sumCant(val).toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin nivel asignado",sinT.length,sinT.length?"asígnelo en Comensales antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
     .map(([a,b,c],i)=>`<div class="stat ${i===2&&sinT.length?"stat-warn":""}"><span>${a}</span><b>${b}</b>${c?`<small>${c}</small>`:""}</div>`).join("");
   // revisión antes de emitir
   const anul=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Anulado").length,man=val.filter(r=>r.origen==="Manual").length;
   const puedeHab=PERF[perfil].views.includes("habilitados");
   const chk=[[enCurso?"warn":"ok",enCurso?`El mes está en curso (datos al ${fmtD(TODAY)}): conviene emitir después del último día hábil.`:"Mes cerrado: los datos están completos."],
-    [sinT.length?"warn":"ok",sinT.length?`${sinT.length} persona${sinT.length===1?"":"s"} con almuerzos y sin tramo asignado (${sinT.slice(0,3).map(x=>esc(x.p.nombre)).join(", ")}${sinT.length>3?"…":""}): su almuerzo no tiene valor.${puedeHab?' <button class="link" data-ir="comensales" data-filtro="sintramo">Asignar tramo</button>':""}`:"Todas las personas con almuerzos tienen tramo asignado."],
+    [sinT.length?"warn":"ok",sinT.length?`${sinT.length} persona${sinT.length===1?"":"s"} con almuerzos y sin nivel (${sinT.slice(0,3).map(x=>esc(x.p.nombre)).join(", ")}${sinT.length>3?"…":""}): su almuerzo no tiene valor.${puedeHab?' <button class="link" data-ir="comensales" data-filtro="sintramo">Asignar nivel</button>':""}`:"Todas las personas con almuerzos tienen nivel."],
+    (()=>{const c=NIVCARGA.find(x=>x.ym===ym);return c?["ok",`Niveles de ${MES[+ym.slice(5)-1]} actualizados con el archivo de Remuneraciones el ${esc(c.cuando)}.`]:["warn",`Faltan los niveles de ${MES[+ym.slice(5)-1]}: cárguelos en Configuración con el archivo de Remuneraciones antes de emitir.`]})(),
     [anul?"info":"ok",anul?`${anul} ticket${anul===1?"":"s"} anulado${anul===1?"":"s"} en el mes: no se descuentan.`:"Sin tickets anulados."],
     ...(()=>{const ef=new Set(R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido"&&byKey(r.key).pago==="Efectivo mensual").map(r=>r.key)).size;return ef?[["info",`${ef} persona${ef===1?"":"s"} con pago en efectivo mensual quedan fuera del descuento: ver «Cobro mensual en efectivo».`]]:[]})(),
     [man?"info":"ok",man?`${man} registro${man===1?"":"s"} manual${man===1?"":"es"} de contingencia: revise los motivos en Comensales (filtro «Con registro manual»).`:"Sin registros manuales."]];
   $("#repCheck").innerHTML=chk.map(([k,t])=>`<li class="chk-${k}"><span class="chk-ic" aria-hidden="true">${k==="ok"?"✓":k==="warn"?"!":"i"}</span><span>${t}</span></li>`).join("");
   // desglose por tramo
-  const grupos=cfg.tramos.map(t=>({lbl:`Tramo ${t.n}<br><span class="muted small" style="white-space:nowrap">Grados ${t.desde} a ${t.hasta}</span>`,valor:clp(t.valor),xs:rows.filter(x=>tramoDe(x.p)===t.n)}));
-  if(sinT.length)grupos.push({lbl:'<span class="pill warn">Sin tramo</span>',valor:"—",xs:sinT,warn:true});
+  const grupos=cfg.tramos.map(t=>({lbl:`Nivel ${t.n}<br><span class="muted small" style="white-space:nowrap">Imponible ${rangoNiv(t)}</span>`,valor:clp(t.valor),xs:rows.filter(x=>tramoDe(x.p)===t.n)}));
+  if(sinT.length)grupos.push({lbl:'<span class="pill warn">Sin nivel</span>',valor:"—",xs:sinT,warn:true});
   $("#repTramos").innerHTML=grupos.map(g=>`<tr class="${g.warn?"row-warn":""}"><td>${g.lbl}</td><td class="num">${g.valor}</td><td class="num">${g.xs.length}</td><td class="num">${g.xs.reduce((a,x)=>a+x.n,0).toLocaleString("es-CL")}</td><td class="num">${clp(g.xs.reduce((a,x)=>a+x.monto,0))}</td></tr>`).join("");
   $("#repTramosFoot").innerHTML=`<tr><td><b>Total</b></td><td></td><td class="num"><b>${rows.length}</b></td><td class="num"><b>${sumCant(val).toLocaleString("es-CL")}</b></td><td class="num"><b>${clp(total)}</b></td></tr>`;
 }
@@ -1483,9 +1498,9 @@ function repMenu(open){const m=$("#repMenu"),b=$("#repBtn");if(!m)return;m.hidde
 $("#repEstado").addEventListener("click",e=>{if(e.target.closest("#repBtn")){repMenu($("#repMenu").hidden);return}
   const it=e.target.closest("[data-rep]");if(!it)return;repMenu(false);const ym=repMes,mes=MES[+ym.slice(5)-1];let filas,nombre;
   if(it.dataset.rep==="desc"){const{rows,val}=mesRows(ym);
-    filas=[["Reporte descuento mensual",`${cap(mes)} ${ym.slice(0,4)}`],[],["RUT","Nombre completo","Unidad","Grado","Tramo","Almuerzos","Valor unitario","Monto a descontar"]]
-      .concat(rows.map(({p,n,monto,vals})=>[fmtRut(p.key),p.nombre,p.unidad,p.grado??"",tramoDe(p)||"SIN TRAMO",n,vals.length>1?"varios":(monto?vals[0]:""),monto||""]),
-        [["","Total","","","",sumCant(val),"",rows.reduce((a,x)=>a+x.monto,0)],[],["Detalle por ticket"],["ID ticket","Fecha","Hora","RUT","Nombre completo","Almuerzos","Monto"]],
+    filas=[["Reporte descuento mensual",`${cap(mes)} ${ym.slice(0,4)}`],[],["RUT","Nombre completo","Unidad","Nivel","Almuerzos (incluye invitados)","Valor nivel","Monto a descontar"]]
+      .concat(rows.map(({p,n,monto,vals})=>[fmtRut(p.key),p.nombre,p.unidad,tramoDe(p)||"SIN NIVEL",n,vals.length>1?"varios":(monto?vals[0]:""),monto||""]),
+        [["","Total","","",sumCant(val),"",rows.reduce((a,x)=>a+x.monto,0)],[],["Detalle por ticket"],["ID ticket","Fecha","Hora","RUT","Nombre completo","Almuerzos","Monto"]],
         val.slice().sort((a,b)=>a.id<b.id?-1:1).map(r=>[r.id,fmtD(r.fecha),r.hora,fmtRut(r.key),byKey(r.key).nombre,cantR(r),montoR(r)]));
     nombre=`reporte_descuento_${ym}.csv`}
   else if(it.dataset.rep==="uni"){const val=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido");const u=new Map();
@@ -1548,7 +1563,7 @@ $("#ciBody").addEventListener("submit",e=>{e.preventDefault();const c=CIERRES.fi
 const YO=()=>P[4];
 function renderMi(){
   const p=YO();const cm=ymOf(TODAY),nm=ymNext(cm);const t=tramoDe(p);
-  $("#miLead").textContent=`${p.nombre} · ${p.unidad} · ${t?`tramo ${t}, ${clp(valorDe(p))} por almuerzo`:"sin tramo asignado"}`;
+  $("#miLead").textContent=`${p.nombre} · ${p.unidad} · ${t?`nivel ${t}, ${clp(valorDe(p))} por almuerzo`:"sin nivel asignado"}`;
   const mes=R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(cm));
   // menú
   const opt=ym=>{const ed=menuEditable(ym);const v=MENU[p.key+"|"+ym]||"Normal";const ex=MENU_EXC.filter(x=>x.key===p.key&&x.ym===ym).pop();const def=!MENU[p.key+"|"+ym];
@@ -1563,14 +1578,14 @@ function renderMi(){
   const fut=x=>x.key===p.key&&x.fecha>=TODAY;
   const quitar=(tipo,x)=>x.fecha>=min?`<button class="btn small" data-quitar="${tipo}|${x.fecha}">Quitar</button>`:'<span class="small muted">ya no se puede quitar</span>';
   $("#miAusList").innerHTML=AUS.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))}</span>${quitar("aus",x)}</li>`).join("")||'<li class="muted">No tienes avisos.</li>';
-  $("#miInvList").innerHTML=INV.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))} · <b>${x.cant} almuerzos</b> (tú + ${x.cant-1} invitado${x.cant>2?"s":""}) · ${clp(x.cant*valorDe(p))}</span>${quitar("inv",x)}</li>`).join("")||'<li class="muted">No hay invitaciones registradas.</li>';
+  $("#miInvList").innerHTML=INV.filter(fut).sort((a,b)=>a.fecha<b.fecha?-1:1).map(x=>`<li><span>${cap(D(x.fecha).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"}))} · <b>${x.cant} almuerzos</b> (tú + ${x.cant-1} invitado${x.cant>2?"s":""}) · ${clp(valorDe(p)+(x.cant-1)*cfg.valeExtra)}</span>${quitar("inv",x)}</li>`).join("")||'<li class="muted">No hay invitaciones registradas.</li>';
   miInvCosto();
   const sel=$("#miCsvMes");const prev=sel.value;sel.innerHTML=Array.from({length:today.getMonth()+1},(_,m)=>`<option value="${YEAR}-${pad(m+1)}">${cap(MES[m])} ${YEAR}</option>`).reverse().join("");sel.value=prev||(miCsvRows(cm).length?cm:ymPrev(cm));miCsvInfo();
 }
 function miCsvRows(ym){const p=YO();return R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(ym)).sort((a,b)=>a.id<b.id?-1:1)}
 function miCsvInfo(){const ym=$("#miCsvMes").value;const rr=miCsvRows(ym);$("#miCsvInfo").textContent=rr.length?`${cap(MES[+ym.slice(5)-1])}: ${sumCant(rr)} almuerzo${sumCant(rr)===1?"":"s"} en ${rr.length} ticket${rr.length===1?"":"s"} · ${clp(sumaM(rr))}`:`${cap(MES[+ym.slice(5)-1])}: sin almuerzos registrados.`;$("#miCsv").disabled=!rr.length;$("#miCsvMsg").textContent=""}
 $("#miCsvMes").addEventListener("change",miCsvInfo);
-function miInvCosto(){const p=YO(),c=+$("#miInvC").value,v=valorDe(p)||0;$("#miInvCosto").textContent=clp(c*v);$("#miInvNota").textContent=`${c} × ${clp(v)} (tu tramo)`}
+function miInvCosto(){const p=YO(),c=+$("#miInvC").value,v=valorDe(p)||0;$("#miInvCosto").textContent=clp(v+(c-1)*cfg.valeExtra);$("#miInvNota").textContent=`tu almuerzo ${clp(v)} (nivel ${tramoDe(p)??"—"}) + ${c-1} vale${c-1===1?"":"s"} extra de ${clp(cfg.valeExtra)}`}
 $("#miInvC").addEventListener("change",miInvCosto);
 /* CSV con separador «;» y BOM UTF-8, como lo abre Excel con configuración regional de Chile */
 function csvTxt(rows){return "\uFEFF"+rows.map(r=>r.map(v=>{const t=String(v??"");return /[";\n]/.test(t)?`"${t.replace(/"/g,'""')}"`:t}).join(";")).join("\r\n")}
@@ -1579,7 +1594,7 @@ async function descargarCsv(nombre,txt,msgSel){const m=$(msgSel);
     if(dl){try{await dl.save({filename:nombre,data:txt});m.innerHTML='<span style="color:var(--ok)">Archivo descargado.</span>'}catch(e){m.innerHTML=e&&e.code==="declined"?'<span class="muted">Descarga cancelada.</span>':'<span style="color:var(--bad)">No fue posible descargar el archivo aquí.</span>'}return}}catch(e){}
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/csv;charset=utf-8"}));a.download=nombre;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);m.innerHTML='<span style="color:var(--ok)">Archivo descargado.</span>'}
 $("#miCsv").addEventListener("click",()=>{const p=YO(),ym=$("#miCsvMes").value;const rr=miCsvRows(ym);if(!rr.length)return;
-  const filas=[["ID ticket","Fecha","Hora","Almuerzos","Menú","Valor unitario","Monto"]].concat(rr.map(r=>[r.id,fmtD(r.fecha),r.hora,cantR(r),r.menu||menuDe(p,r.fecha),montoR(r)/cantR(r),montoR(r)]),[["","","Total",sumCant(rr),"","",sumaM(rr)]]);
+  const filas=[["ID ticket","Fecha","Hora","Almuerzos","Menú","Valor de tu almuerzo","Vales extra (invitados)","Monto"]].concat(rr.map(r=>[r.id,fmtD(r.fecha),r.hora,cantR(r),r.menu||menuDe(p,r.fecha),r.valor,montoR(r)-r.valor,montoR(r)]),[["","","Total",sumCant(rr),"","","",sumaM(rr)]]);
   descargarCsv(`casino_${cleanRut(p.key)}_${ym}.csv`,csvTxt(filas),"#miCsvMsg")});
 $("#miMenu").addEventListener("change",e=>{const b=e.target.closest("select[data-menu]");if(!b||b.disabled)return;const ym=b.dataset.menu,m=b.value;MENU[YO().key+"|"+ym]=m;renderMi();toast(`Menú ${m.toLowerCase()} registrado para ${MES[+ym.slice(5)-1]}`)});
 function validarDia(f,msgSel){const m=$(msgSel);
@@ -1654,22 +1669,37 @@ $("#planBody").addEventListener("click",e=>{const tr=e.target.closest("[data-pla
 $("#planBody").addEventListener("keydown",e=>{const tr=e.target.closest("[data-plan]");if(tr&&(e.key==="Enter"||e.key===" ")){e.preventDefault();planSel=tr.dataset.plan;renderPlan()}});
 
 /* ---- Configuración: tramos ---- */
-function renderTramos(){
-  $("#tramosBody").innerHTML=cfg.tramos.map((t,i)=>`<tr><td><b>Tramo ${t.n}</b></td>
-    <td><input type="number" min="1" max="30" id="trD${i}" data-tr="${i}" data-k="desde" value="${t.desde}" style="width:80px"></td>
-    <td><input type="number" min="1" max="30" id="trH${i}" data-tr="${i}" data-k="hasta" value="${t.hasta}" style="width:80px"></td>
-    <td><input type="number" min="0" step="50" id="trV${i}" data-tr="${i}" data-k="valor" value="${t.valor}" style="width:130px"></td>
+function renderTramos(){const T=cfg.tramos;
+  $("#cVig").value=cfg.vigencia;$("#cVale").value=cfg.valeExtra;
+  $("#tramosBody").innerHTML=T.map((t,i)=>`<tr><td><b>Nivel ${t.n}</b></td>
+    <td>${i===0?'<span class="muted">—</span>':`<input type="number" min="0" step="1" id="trD${i}" data-tr="${i}" data-k="desde" value="${t.desde}" style="width:140px">`}</td>
+    <td>${t.hasta==null?'<span class="muted">sin tope</span>':`<input type="number" min="0" step="1" id="trH${i}" data-tr="${i}" data-k="hasta" value="${t.hasta}" style="width:140px">`}</td>
+    <td><input type="number" min="0" step="10" id="trV${i}" data-tr="${i}" data-k="valor" value="${t.valor}" style="width:120px"></td>
     <td class="num">${P.filter(p=>p.hab&&tramoDe(p)===t.n).length}</td></tr>`).join("");
-  const T=cfg.tramos;const err=[];
-  T.forEach(t=>{if(t.desde>t.hasta)err.push(`en el tramo ${t.n} el grado inicial es mayor que el final`)});
-  for(let i=1;i<T.length;i++){if(T[i].desde<=T[i-1].hasta)err.push(`los tramos ${T[i-1].n} y ${T[i].n} se superponen`);else if(T[i].desde>T[i-1].hasta+1)err.push(T[i].desde-1===T[i-1].hasta+1?`el grado ${T[i].desde-1} no tiene tramo`:`los grados ${T[i-1].hasta+1} a ${T[i].desde-1} no tienen tramo`)}
+  const err=[];for(let i=1;i<T.length;i++){if(T[i-1].hasta==null||T[i].desde!==T[i-1].hasta+1)err.push(`el nivel ${T[i].n} debe comenzar en ${T[i-1].hasta==null?"—":clp(T[i-1].hasta+1)}`)}
   const sinT=P.filter(p=>p.hab&&!tramoDe(p)).length;
-  $("#tramosMsg").innerHTML=err.length?`<span style="color:var(--bad)">Revise: ${esc(err.join("; "))}.</span>`:
-    `<span style="color:var(--ok)">Grados ${T[0].desde} a ${T[T.length-1].hasta} cubiertos sin superposición.</span>`+(sinT?` <span style="color:var(--warn)">${sinT} persona${sinT===1?"":"s"} habilitada${sinT===1?"":"s"} sin tramo asignado.</span>`:"")}
-$("#tramosBody").addEventListener("change",e=>{const i=e.target.dataset.tr;if(i===undefined)return;const v=Number(e.target.value);if(!Number.isFinite(v))return;cfg.tramos[i][e.target.dataset.k]=v;renderTramos()});
+  $("#tramosMsg").innerHTML=(err.length?`<span style="color:var(--bad)">Revise: ${esc(err.join("; "))}.</span>`:`<span style="color:var(--ok)">Rangos continuos, sin superposición. Valores vigentes desde ${esc(cfg.vigencia)}.</span>`)+(sinT?` <span style="color:var(--warn)">${sinT} persona${sinT===1?"":"s"} habilitada${sinT===1?"":"s"} sin nivel.</span>`:"");
+  renderNiv()}
+function renderNiv(){const cm=ymOf(TODAY);const c=NIVCARGA.find(x=>x.ym===cm);
+  $("#nivEstado").innerHTML=c?`<p class="small" style="margin:0;color:var(--ok)">✓ Niveles de ${MES[+cm.slice(5)-1]} cargados el ${esc(c.cuando)} (${c.n} personas).</p>`:`<p class="small" style="margin:0;color:var(--warn)">! Faltan los niveles de ${MES[+cm.slice(5)-1]}.</p>`;
+  const sel=$("#nivMes");const v=sel.value;sel.innerHTML=[ymNext(cm),cm,ymPrev(cm)].map(ym=>`<option value="${ym}">${cap(MES[+ym.slice(5)-1])} ${ym.slice(0,4)}</option>`).join("");sel.value=v||cm;
+  if(!$("#nivTxt").value)$("#nivTxt").value=P.slice(0,3).map(p=>`${fmtRut(p.key)};${tramoDe(p)??1}`).join("\n")+`\n${fmtRut(P[8].key)};2`;
+  $("#nivHist").innerHTML=NIVCARGA.slice().reverse().map(x=>`<tr><td>${cap(MES[+x.ym.slice(5)-1])} ${x.ym.slice(0,4)}</td><td class="mono">${esc(x.cuando)}</td><td>${esc(x.fuente)}</td><td class="num">${x.n}</td><td class="num">${x.cambios}</td><td>${esc(x.por)}</td></tr>`).join("")||'<tr><td colspan="6" class="muted">Sin cargas.</td></tr>'}
+$("#nivForm").addEventListener("submit",e=>{e.preventDefault();const m=$("#nivMsg"),ym=$("#nivMes").value;const errs=[];const ok=[];
+  $("#nivTxt").value.split(/\n/).map(l=>l.trim()).filter(Boolean).forEach((l,i)=>{const[rut,nv]=l.split(/;|\t/).map(x=>(x||"").trim());
+    if(!rutOk(rut)){errs.push(`fila ${i+1}: RUT no válido`);return}const p=byKey(cleanRut(rut));if(!p){errs.push(`fila ${i+1}: no está en la nómina`);return}
+    const n=Number(nv);if(![1,2,3].includes(n)){errs.push(`fila ${i+1}: nivel debe ser 1, 2 o 3`);return}ok.push([p,n])});
+  if(!ok.length){m.innerHTML=`<span style="color:var(--bad)">Nada que cargar. ${esc(errs.join(" · "))}</span>`;return}
+  let cambios=0;ok.forEach(([p,n])=>{if(p.nivel!==n)cambios++;p.nivel=n});
+  const prev=NIVCARGA.findIndex(x=>x.ym===ym);const reg={ym,cuando:`${fmtD(TODAY)} ${hhmm(now())}`,n:ok.length,cambios,por:USR.casino.n,fuente:"Archivo de Remuneraciones"};if(prev>=0)NIVCARGA[prev]=reg;else NIVCARGA.push(reg);
+  m.innerHTML=`<span style="color:var(--ok)">${ok.length} nivel${ok.length===1?"":"es"} cargado${ok.length===1?"":"s"} para ${MES[+ym.slice(5)-1]} (${cambios} cambio${cambios===1?"":"s"}). Rigen para los almuerzos que se registren desde ahora.</span>${errs.length?` <span style="color:var(--bad)">${esc(errs.join(" · "))}</span>`:""}`;renderTramos()});
+$("#tramosBody").addEventListener("change",e=>{const i=e.target.dataset.tr;if(i===undefined)return;const v=Number(e.target.value);if(!Number.isFinite(v))return;cfg.tramos[i][e.target.dataset.k]=v;
+  if(e.target.dataset.k==="hasta"&&cfg.tramos[+i+1])cfg.tramos[+i+1].desde=v+1;if(e.target.dataset.k==="desde"&&cfg.tramos[i-1])cfg.tramos[i-1].hasta=v-1;renderTramos()});
+$("#cVig").addEventListener("change",e=>{cfg.vigencia=e.target.value.trim()||cfg.vigencia;renderTramos()});
+$("#cVale").addEventListener("change",e=>{const v=Number(e.target.value);if(Number.isFinite(v)&&v>=0)cfg.valeExtra=v;renderTramos();toast(`Vale extra: ${clp(cfg.valeExtra)}`)});
 
 /* ---- Configuración ---- */
-const bind=[["#cServicio","servicio"],["#cUbicacion","ubic"],["#cIni","ini"],["#cFin","fin"],["#cMenuDia","menuDia",Number],["#cValExt","valorExterno",Number],["#cValVis","valorVisita",Number],["#cSim","sim"]];
+const bind=[["#cServicio","servicio"],["#cUbicacion","ubic"],["#cIni","ini"],["#cFin","fin"],["#cMenuDia","menuDia",Number],["#cSim","sim"]];
 bind.forEach(([s,k,f])=>$(s).addEventListener("input",e=>{cfg[k]=f?f(e.target.value):e.target.value}));
 
 /* ---- Reiniciar maqueta ---- */
@@ -1678,7 +1708,7 @@ function reiniciar(){
   clearTimeout(resetTimer);resetT();
   Object.assign(est,{tipo:"mes",anc:TODAY});Object.assign(det,{desde:TODAY,hasta:TODAY,q:"",estado:""});$("#detQ").value="";anulando=null;
   repMes=today.getMonth()===0?`${YEAR}-01`:`${YEAR}-${pad(today.getMonth())}`;
-  ["#manMsg","#nMsg","#masivaMsg"].forEach(x=>{const e=$(x);if(e)e.textContent=""});$("#nMsg").textContent="Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT.";
+  ["#manMsg","#nMsg","#masivaMsg"].forEach(x=>{const e=$(x);if(e)e.textContent=""});$("#nMsg").textContent="Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT. Si aún no tiene nivel, se asigna en la próxima actualización mensual de Remuneraciones.";
   ["#manRut","#nRut","#nNombre","#nUnidad"].forEach(x=>{const e=$(x);if(e)e.value=""});
   ["#nuevoForm","#masivaForm","#copyBox","#menuExcForm"].forEach(x=>$(x).hidden=true);["#meRut"].forEach(x=>$(x).value="");$("#meMsg").textContent="";$("#tkCopia").checked=false;
   anulandoC=null;$("#ciMsg").textContent="";$("#ciDetalle").value="";$("#ciDesde").value=TODAY;$("#ciHasta").value=TODAY;$("#ciTipo").value="completo";

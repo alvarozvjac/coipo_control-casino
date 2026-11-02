@@ -6,7 +6,7 @@ Iniciativa CON005.
 
 **Ver la maqueta:** https://alvarozvjac.github.io/coipo_control-casino/
 
-> Demostración no operacional. Personas, RUT, grados, valores y registros son ficticios. Lo que se haga en la maqueta no se guarda: al recargar la página vuelve al
+> Demostración no operacional. Personas, RUT, niveles y registros son ficticios; los valores del almuerzo por nivel y el vale extra son los informados por Bienestar (marzo 2026). Lo que se haga en la maqueta no se guarda: al recargar la página vuelve al
 > estado inicial.
 
 ## Cómo probarla
@@ -42,7 +42,7 @@ que se descontará; y el reporte del mes en CSV para Excel (ID de ticket, fecha,
 menú y monto). El aviso de ausencia sirve para planificar las raciones y no bloquea: si la
 persona cambia de planes y digita su RUT, almuerza igual y su aviso se anula solo. Solo se
 descuentan los almuerzos consumidos. Los almuerzos con
-invitados se descuentan al funcionario según su tramo.
+invitados se descuentan al funcionario con un vale extra por invitado.
 
 **Información (Jefe Casino y Jefa de Bienestar):** selector Día, Semana, Mes o Año (calendario),
 con flechas para recorrer períodos y botón «Período actual»; se abre en el último período
@@ -53,10 +53,10 @@ invitados, externos y visitas, y un gráfico del período; 3) las 3 franjas de 1
 concurridas, con su cantidad, porcentaje y promedio por día, y el gráfico de todas las franjas.
 
 **Comensales (Jefe Casino):** une las antiguas pestañas «Detalle de ingresos» y «Personas
-habilitadas». Una fila por persona con tramo, forma de pago, almuerzos y último ingreso del
+habilitadas». Una fila por persona con nivel, forma de pago, almuerzos y último ingreso del
 período (hoy, semana, mes o fechas), búsqueda por nombre, RUT, unidad o ID de ticket, y filtros
-(con o sin almuerzos, anulados, registro manual, sin tramo, efectivo mensual, suspendidas). Al
-abrir una persona se ven sus tickets (reimprimir y anular los del día) y se cambian su tramo,
+(con o sin almuerzos, anulados, registro manual, sin nivel, efectivo mensual, suspendidas). Al
+abrir una persona se ven sus tickets (reimprimir y anular los del día) y se cambian su nivel,
 forma de pago y habilitación. Menús: «Registrar» (ingreso manual, venta en efectivo, visita
 institucional, planilla de contingencia), «Personas» (agregar, carga masiva, cambio de menú por
 excepción) y «Reportes» en CSV (ingresos del período, nómina de habilitados, ficha por persona,
@@ -77,7 +77,7 @@ habilitadas, para el mes actual o el siguiente, con motivo y registro de quién 
   Dirección Ejecutiva, desde «Registrar» en Comensales: ticket con su marca, sin descuento por planilla.
   En la venta en efectivo el sistema asigna un folio correlativo anual (`EF-AAAA-NNNN`), que se
   imprime en el ticket como comprobante de pago y aparece en el reporte de caja.
-  Valores de ejemplo en Configuración.
+  Se cobran con el vale extra ($6.000).
 - *Forma de pago* por persona en Comensales (Planilla o Efectivo mensual), para
   personal en convenio como FAO; queda fuera del descuento y tiene su propio reporte.
 - *Planilla de contingencia*: si el sistema completo no está disponible, se descarga una
@@ -91,14 +91,19 @@ minuta por correo electrónico. Los cambios quedan como borrador hasta publicarl
 usa como ejemplo las minutas reales de octubre de 2026, ajustadas a la semana actual y las dos
 anteriores.
 
-**Reportes:** la pantalla muestra el resumen del descuento por planilla del mes, una revisión antes de emitir (mes en curso, personas sin tramo, anulados y registros manuales) y el desglose por tramo; el detalle por trabajador y por ticket va en el CSV. El botón «Emisión reporte
+**Reportes:** la pantalla muestra el resumen del descuento por planilla del mes, una revisión antes de emitir (mes en curso, personas sin nivel, niveles del mes cargados, anulados y registros manuales) y el desglose por nivel; el detalle por trabajador y por ticket va en el CSV. El botón «Emisión reporte
 mensual» despliega tres reportes que se descargan en CSV para Excel: 1) reporte descuento
 mensual (por trabajador y detalle por ticket), 2) reporte consumo por unidad y 3) reporte
 anual por mes.
 
-**Valor del almuerzo:** se define por tramo según el grado (tramo 1: grados 3 a 11;
-tramo 2: 12 a 14; tramo 3: 15 a 21). Las calidades jurídicas son Dotación, Plazo fijo y Honorarios; solo Dotación tiene grado, y
-quienes no lo tienen (plazo fijo y honorarios) reciben el tramo que asigna el Jefe Casino. Los valores son de ejemplo.
+**Valor del almuerzo:** se define por nivel según el sueldo imponible del trabajador (Casino
+Oficina Central, valores de marzo 2026): nivel 1, imponible hasta $1.200.000, $2.880; nivel 2,
+de $1.200.001 a $2.050.000, $3.380; nivel 3, desde $2.050.001, $3.980. El vale extra ($6.000) se
+cobra por cada invitado del funcionario, por cada venta en efectivo a externos y por cada
+almuerzo de visita institucional. Remuneraciones informa cada mes el nivel de cada trabajador y
+el Jefe Casino lo carga en Configuración («Actualización mensual de niveles», filas RUT;nivel);
+el sistema guarda solo el nivel, no el sueldo. Reportes advierte si faltan los niveles del mes.
+Las calidades jurídicas son Dotación, Plazo fijo y Honorarios.
 
 **Cierres del casino:** al registrar o anular un cierre (clima, mantención, catástrofe,
 corte de suministro u otro), el otro perfil recibe una alerta. Durante un cierre vigente
