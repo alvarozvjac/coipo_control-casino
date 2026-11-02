@@ -53,11 +53,11 @@ invitados, externos y visitas, y un gráfico del período; 3) las 3 franjas de 1
 concurridas, con su cantidad, porcentaje y promedio por día, y el gráfico de todas las franjas.
 
 **Comensales (Jefe Casino):** une las antiguas pestañas «Detalle de ingresos» y «Personas
-habilitadas». Una fila por persona con nivel, forma de pago, almuerzos y último ingreso del
+habilitadas». Debajo, la lista de comensales con su barra de período y filtros: una fila por persona con nivel, forma de pago, almuerzos y último ingreso del
 período (hoy, semana, mes o fechas), búsqueda por nombre, RUT, unidad o ID de ticket, y filtros
 (con o sin almuerzos, anulados, registro manual, sin nivel, efectivo mensual, suspendidas). Al
 abrir una persona se ven sus tickets (reimprimir y anular los del día) y se cambian su nivel,
-forma de pago y habilitación. Menús: «Registrar» (ingreso manual, venta en efectivo, visita
+forma de pago y habilitación. Arriba, tres tarjetas de selección: «Registrar» (ingreso manual, venta en efectivo, visita
 institucional, planilla de contingencia), «Personas» (agregar, carga masiva, cambio de menú por
 excepción) y «Reportes» en CSV (ingresos del período, nómina de habilitados, ficha por persona,
 externos y visitas). Al pie, los externos y visitas del período.

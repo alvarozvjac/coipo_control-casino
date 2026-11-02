@@ -188,7 +188,12 @@ ol.campos span{color:var(--muted);font-size:14px}
 .ticket .kv{display:flex;justify-content:space-between;gap:8px}
 .demo td,.demo th{padding:6px 10px;font-size:13px}
 
-#v-comensales>*{min-width:0}.com-row{cursor:pointer}.com-row:hover td{background:var(--sunken)}.com-row.abierta td{background:var(--sunken);border-bottom:0}
+#v-comensales>*{min-width:0}.com-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.com-card{display:grid;gap:10px;align-content:start}.com-card h3{margin:0}.com-card p{margin:2px 0 0}
+.com-opts{display:grid;gap:6px}.com-opts button{display:grid;gap:1px;text-align:left;font:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;color:var(--ink)}
+.com-opts button:hover,.com-opts button:focus-visible{border-color:var(--accent);background:var(--accent-soft);outline:none}.com-opts button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.com-opts b{font-size:14px}.com-opts small{color:var(--muted);font-size:12px}
+.com-lista{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}.com-lista .com-bar{align-items:end}
+@media (max-width:900px){.com-cards{grid-template-columns:minmax(0,1fr)}}.com-row{cursor:pointer}.com-row:hover td{background:var(--sunken)}.com-row.abierta td{background:var(--sunken);border-bottom:0}
 .com-sub>td{background:var(--sunken);padding:4px 14px 14px}.com-ficha{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:13px;margin:4px 0 10px}.com-ficha span b{font-weight:600}
 .com-tk{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);border-radius:8px}.com-tk th,.com-tk td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}.com-tk th{font-size:11px;color:var(--muted);font-weight:600}
 .com-abrir{background:none;border:0;font:inherit;font-size:16px;cursor:pointer;color:var(--muted);padding:2px 6px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -378,36 +383,32 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 <!-- DETALLE -->
 <section class="view" id="v-comensales" data-label="Comensales" hidden>
   <div><h2>Comensales</h2><p class="lead">Quién puede almorzar y quién almorzó. Cada persona aparece con su nivel, su forma de pago y sus almuerzos del período; ábrala para ver sus tickets, reimprimir o anular, y cambiar su nivel, forma de pago o habilitación.</p></div>
-  <div class="panel row com-bar" style="align-items:end">
-    <div class="row" style="gap:6px"><button class="btn small" data-rango="hoy">Hoy</button><button class="btn small" data-rango="semana">Esta semana</button><button class="btn small" data-rango="mes">Este mes</button></div>
-    <label class="f">Desde<input type="date" id="detDesde"></label>
-    <label class="f">Hasta<input type="date" id="detHasta"></label>
-    <label class="f" style="flex:1;min-width:200px">Buscar<input id="detQ" placeholder="Nombre, RUT, unidad o ID de ticket" autocomplete="off"></label>
-    <label class="f">Mostrar<select id="comFiltro"><option value="">Todas las personas</option><option value="con">Con almuerzos en el período</option><option value="sin">Sin almuerzos en el período</option><option value="anul">Con tickets anulados</option><option value="manual">Con registro manual</option><option value="sintramo">Sin nivel asignado</option><option value="efm">Pagan en efectivo mensual</option><option value="susp">Suspendidas</option></select></label>
-  </div>
-  <div class="row spread com-acc">
-    <span id="detCount" class="small muted"></span>
-    <div class="row" style="gap:8px">
-      <div class="menu-wrap"><button class="btn primary" data-dd="reg" aria-haspopup="menu" aria-expanded="false">Registrar ▾</button>
-        <div class="menu-pop" data-pop="reg" role="menu" hidden>
-          <button role="menuitem" data-abre="regManual"><b>Ingreso manual</b><small>Si falla la terminal o la impresora</small></button>
-          <button role="menuitem" data-abre="regExtras" data-ex="Efectivo"><b>Venta en efectivo</b><small>Externos o acompañantes · folio automático · propuesta</small></button>
-          <button role="menuitem" data-abre="regExtras" data-ex="Visita"><b>Visita institucional</b><small>Con cargo a la Dirección Ejecutiva · propuesta</small></button>
-          <button role="menuitem" data-abre="regCont"><b>Planilla de contingencia</b><small>Si el sistema completo no está disponible · propuesta</small></button>
-        </div></div>
-      <div class="menu-wrap"><button class="btn" data-dd="per" aria-haspopup="menu" aria-expanded="false">Personas ▾</button>
-        <div class="menu-pop" data-pop="per" role="menu" hidden>
-          <button role="menuitem" data-abre="nuevoForm"><b>Agregar persona</b><small>Queda habilitada de inmediato</small></button>
-          <button role="menuitem" data-abre="masivaForm"><b>Carga masiva</b><small>Filas copiadas desde Excel</small></button>
-          <button role="menuitem" data-abre="menuExcForm"><b>Cambio de menú por excepción</b><small>Ingreso nuevo o indicación médica</small></button>
-        </div></div>
-      <div class="menu-wrap"><button class="btn" data-dd="crep" aria-haspopup="menu" aria-expanded="false">Reportes ▾</button>
-        <div class="menu-pop" data-pop="crep" role="menu" hidden>
-          <button role="menuitem" data-crep="ing"><b>Ingresos del período (CSV)</b><small>Todos los tickets del período elegido</small></button>
-          <button role="menuitem" data-crep="nom"><b>Nómina de habilitados (CSV)</b><small>Calidad, nivel, valor, forma de pago y estado</small></button>
-          <button role="menuitem" data-crep="ficha"><b>Ficha por persona (CSV)</b><small>Tickets de la persona abierta en la tabla</small></button>
-          <button role="menuitem" data-crep="ext"><b>Externos y visitas (CSV)</b><small>Ventas con folio y visitas del período</small></button>
-        </div></div>
+  <div class="com-cards">
+    <div class="panel com-card">
+      <div><h3>Registrar</h3><p class="small muted">Ingresos fuera de la terminal y almuerzos sin descuento por planilla.</p></div>
+      <div class="com-opts">
+        <button type="button" data-abre="regManual"><b>Ingreso manual</b><small>Si falla la terminal o la impresora</small></button>
+        <button type="button" data-abre="regExtras" data-ex="Efectivo"><b>Venta en efectivo</b><small>Externos o acompañantes · folio automático</small></button>
+        <button type="button" data-abre="regExtras" data-ex="Visita"><b>Visita institucional</b><small>Con cargo a la Dirección Ejecutiva</small></button>
+        <button type="button" data-abre="regCont"><b>Planilla de contingencia</b><small>Si el sistema completo no está disponible</small></button>
+      </div>
+    </div>
+    <div class="panel com-card">
+      <div><h3>Personas</h3><p class="small muted">Nómina de habilitados y excepciones de menú.</p></div>
+      <div class="com-opts">
+        <button type="button" data-abre="nuevoForm"><b>Agregar persona</b><small>Queda habilitada de inmediato</small></button>
+        <button type="button" data-abre="masivaForm"><b>Carga masiva</b><small>Filas copiadas desde Excel</small></button>
+        <button type="button" data-abre="menuExcForm"><b>Cambio de menú por excepción</b><small>Ingreso nuevo o indicación médica</small></button>
+      </div>
+    </div>
+    <div class="panel com-card">
+      <div><h3>Reportes</h3><p class="small muted">Archivos CSV para Excel, según el período elegido en la lista.</p></div>
+      <div class="com-opts">
+        <button type="button" data-crep="ing"><b>Ingresos del período</b><small>Todos los tickets del período</small></button>
+        <button type="button" data-crep="nom"><b>Nómina de habilitados</b><small>Calidad, nivel, valor, forma de pago y estado</small></button>
+        <button type="button" data-crep="ficha"><b>Ficha por persona</b><small>Tickets de la persona abierta en la lista</small></button>
+        <button type="button" data-crep="ext"><b>Externos y visitas</b><small>Ventas con folio y visitas del período</small></button>
+      </div>
     </div>
   </div>
   <span id="comMsg" class="small"></span>
@@ -477,6 +478,16 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <span id="meMsg" class="small"></span>
     <div class="tablebox"><table><thead><tr><th>Registrado</th><th>Persona</th><th>Mes</th><th>Cambio</th><th>Motivo</th></tr></thead><tbody id="meBody"></tbody></table></div>
   </form>
+  <div class="com-lista">
+    <div class="row spread" style="align-items:baseline"><h3 style="margin:0">Lista de comensales</h3><span id="detCount" class="small muted"></span></div>
+    <div class="row com-bar" style="align-items:end">
+    <div class="row" style="gap:6px"><button class="btn small" data-rango="hoy">Hoy</button><button class="btn small" data-rango="semana">Esta semana</button><button class="btn small" data-rango="mes">Este mes</button></div>
+    <label class="f">Desde<input type="date" id="detDesde"></label>
+    <label class="f">Hasta<input type="date" id="detHasta"></label>
+    <label class="f" style="flex:1;min-width:200px">Buscar<input id="detQ" placeholder="Nombre, RUT, unidad o ID de ticket" autocomplete="off"></label>
+    <label class="f">Mostrar<select id="comFiltro"><option value="">Todas las personas</option><option value="con">Con almuerzos en el período</option><option value="sin">Sin almuerzos en el período</option><option value="anul">Con tickets anulados</option><option value="manual">Con registro manual</option><option value="sintramo">Sin nivel asignado</option><option value="efm">Pagan en efectivo mensual</option><option value="susp">Suspendidas</option></select></label>
+  </div>
+  </div>
   <div class="tablebox"><table class="com"><thead><tr><th>Nombre completo</th><th>RUT</th><th>Unidad</th><th>Nivel</th><th>Pago</th><th class="num">Almuerzos</th><th>Último ingreso</th><th>Estado</th><th aria-label="Abrir"></th></tr></thead><tbody id="comBody"></tbody></table></div>
   <div class="panel" style="display:grid;gap:8px"><div class="row spread"><h3>Externos y visitas del período</h3><span class="small muted" id="comExtN"></span></div><ul class="avisos" id="comExt"></ul></div>
 </section>
@@ -1385,12 +1396,12 @@ document.querySelectorAll("[data-rango]").forEach(b=>b.onclick=()=>{const r=b.da
 /* menús desplegables y paneles de registro */
 function cerrarMenus(){document.querySelectorAll("#v-comensales .menu-pop").forEach(m=>m.hidden=true);document.querySelectorAll("#v-comensales [data-dd]").forEach(b=>b.setAttribute("aria-expanded","false"))}
 const PANELES=["regManual","regExtras","regCont","nuevoForm","masivaForm","menuExcForm"];
-function abrirPanel(id){PANELES.forEach(x=>$("#"+x).hidden=x!==id);if(id==="menuExcForm")renderMenuExc();if(id==="regCont"){$("#contFecha").max=TODAY;if(!$("#contFecha").value)$("#contFecha").value=TODAY}
+function abrirPanel(id,btn){PANELES.forEach(x=>$("#"+x).hidden=x!==id);document.querySelectorAll("#v-comensales .com-opts [data-abre]").forEach(b=>b.setAttribute("aria-pressed",b===btn));if(id==="menuExcForm")renderMenuExc();if(id==="regCont"){$("#contFecha").max=TODAY;if(!$("#contFecha").value)$("#contFecha").value=TODAY}
   const el=$("#"+id);el.scrollIntoView({block:"nearest",behavior:"smooth"});el.querySelector("input:not([readonly]),select,textarea")?.focus({preventScroll:true})}
 $("#v-comensales").addEventListener("click",e=>{const dd=e.target.closest("[data-dd]");
   if(dd){const pop=$(`[data-pop="${dd.dataset.dd}"]`);const ab=pop.hidden;cerrarMenus();pop.hidden=!ab;dd.setAttribute("aria-expanded",ab);if(ab)pop.querySelector("button").focus();return}
-  const a=e.target.closest("[data-abre]");if(a){cerrarMenus();if(a.dataset.ex){exTipo=a.dataset.ex;$("#exMsg").textContent="";renderExtras()}abrirPanel(a.dataset.abre);return}
-  if(e.target.closest("[data-cerrar]")){e.target.closest(".panel").hidden=true;return}
+  const a=e.target.closest("[data-abre]");if(a){cerrarMenus();if(a.dataset.ex){exTipo=a.dataset.ex;$("#exMsg").textContent="";renderExtras()}abrirPanel(a.dataset.abre,a);return}
+  if(e.target.closest("[data-cerrar]")){e.target.closest(".panel").hidden=true;document.querySelectorAll("#v-comensales .com-opts [data-abre]").forEach(b=>b.setAttribute("aria-pressed","false"));return}
   const c=e.target.closest("[data-crep]");if(c){cerrarMenus();comReporte(c.dataset.crep);return}
   const f=e.target.closest("[data-ficha]");if(f){comReporte("ficha",f.dataset.ficha);return}});
 $("#v-comensales").addEventListener("keydown",e=>{if(e.key==="Escape")cerrarMenus()});
