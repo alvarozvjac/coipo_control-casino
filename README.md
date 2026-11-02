@@ -44,6 +44,10 @@ persona cambia de planes y digita su RUT, almuerza igual y su aviso se anula sol
 descuentan los almuerzos consumidos. Los almuerzos con
 invitados se descuentan al funcionario con un vale extra por invitado.
 
+**Manual de usuario (todos los perfiles):** pestaña con introducción, diagrama de flujo del proceso
+(por perfil y etapa), la sección del perfil activo, reglas y valores, y contingencia y preguntas
+frecuentes. La casilla «Ver el manual completo» muestra las secciones de los cuatro perfiles.
+
 **Información (Jefe Casino y Jefa de Bienestar):** selector Día, Semana, Mes o Año (calendario),
 con flechas para recorrer períodos y botón «Período actual»; se abre en el último período
 completo para no mostrar cifras de un período recién iniciado. Muestra: 1) las unidades de CONAF
