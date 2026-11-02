@@ -258,6 +258,18 @@ ol.tk-ley li::before{content:counter(t);width:18px;height:18px;border-radius:50%
 .tk-lbl{font-weight:700}
 .tk-lbl.ok{color:var(--ok)} .tk-lbl.no{color:var(--bad)} .tk-lbl.pend{color:var(--warn)}
 .ticket.tk-vacio{display:grid;gap:6px;min-height:120px;align-content:center;color:var(--muted);border:1px dashed var(--line);box-shadow:none}
+.inf-blk{display:grid;gap:14px}.inf-h{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start}.inf-h h3{margin:0}.inf-h p{margin:2px 0 0}
+.inf-n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:14px}
+.inf-big{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}.inf-big b{font-size:40px;line-height:1;font-variant-numeric:tabular-nums}.inf-big span{color:var(--muted)}
+.inf-bar{position:relative;height:14px;border-radius:99px;background:var(--sunken);margin-top:10px;overflow:visible}.inf-bar>i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--accent)}
+.inf-bar>em{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink)}.inf-bar-ley{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);margin-top:6px;flex-wrap:wrap}
+.inf-2col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}.inf-h4{margin:0 0 8px;font-size:13px;font-weight:600}
+@media (max-width:760px){.inf-2col{grid-template-columns:minmax(0,1fr)}}
+.pvr{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;align-items:end;height:130px;border-bottom:1px solid var(--line);padding-top:6px}
+.pvr>div{position:relative;height:100%;display:flex;align-items:flex-end}.pvr i{display:block;width:100%;background:var(--accent);border-radius:3px 3px 0 0;opacity:.85}
+.pvr em{position:absolute;left:-1px;right:-1px;height:2px;background:var(--warn)}.pvr u{position:absolute;left:15%;right:15%;height:0;border-top:2px dashed var(--ink);text-decoration:none}
+.pvr-x{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;font-size:10px;color:var(--muted);text-align:center;margin-top:3px}
+.pvr-ley{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:6px}.pvr-ley span::before{content:"";display:inline-block;width:12px;height:3px;margin-right:5px;vertical-align:middle;background:var(--k)}
 .stat-warn{border-color:var(--warn);background:var(--warn-soft)}
 tr.row-warn td{background:var(--warn-soft)}
 select.sel-warn{border-color:var(--warn);color:var(--warn);font-weight:700}
@@ -334,34 +346,23 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 
 <!-- ESTADISTICAS -->
 <section class="view" id="v-estadisticas" data-label="Información" hidden>
-  <div class="row spread" style="align-items:end">
-    <div><h2>Información del casino</h2><p class="lead" id="estLabel"></p></div>
-    <div class="row">
-      <div class="seg" role="group" aria-label="Período" id="estTipo">
-        <button type="button" data-t="dia">Día</button><button type="button" data-t="semana">7 días</button><button type="button" data-t="mes">30 días</button><button type="button" data-t="anio">12 meses</button>
-      </div>
-      <div class="row" style="gap:6px">
-        <button class="btn small" id="estPrev" aria-label="Período anterior">‹</button>
-        <input type="date" id="estFecha" aria-label="Fecha de referencia">
-        <button class="btn small" id="estNext" aria-label="Período siguiente">›</button>
-        <button class="btn small" id="estHoy">Hoy</button>
-      </div>
+  <div><h2>Información del casino</h2><p class="lead" id="infLead"></p></div>
+  <div class="panel inf-blk">
+    <div class="inf-h"><span class="inf-n">1</span><div><h3>Hoy en el casino</h3><p class="small muted" id="infHoySub"></p></div></div>
+    <div id="infHoyProg"></div>
+    <div class="stats" id="infHoyKpi"></div>
+  </div>
+  <div class="panel inf-blk">
+    <div class="inf-h"><span class="inf-n">2</span><div><h3>Control de registros</h3><p class="small muted">Hoy y mes en curso. Lo marcado en amarillo requiere revisión antes del cierre mensual.</p></div></div>
+    <ul class="checks" id="infCtrl"></ul>
+  </div>
+  <div class="panel inf-blk">
+    <div class="inf-h"><span class="inf-n">3</span><div><h3 id="infMesT">Mes en curso</h3><p class="small muted" id="infMesSub"></p></div></div>
+    <div class="stats" id="infMesKpi"></div>
+    <div class="inf-2col">
+      <div><h4 class="inf-h4">Almuerzos por semana · últimas 8 semanas</h4><div id="infSem"></div></div>
+      <div><h4 class="inf-h4">Raciones planificadas vs. almuerzos servidos · últimos 20 días hábiles</h4><div id="infPvr"></div><p class="small" id="infPvrTxt" style="margin:8px 0 0"></p></div>
     </div>
-  </div>
-  <div class="stats" id="estKpi"></div>
-  <div class="panel">
-    <div class="row spread"><h3 id="estChartT"></h3><span class="small muted" id="estChartN"></span></div>
-    <div id="estChart"></div>
-  </div>
-  <div class="panel" style="display:grid;gap:16px;grid-template-columns:minmax(0,1fr)">
-    <div class="row spread" style="align-items:baseline"><div><h3>Afluencia por franja horaria</h3><p class="small muted" style="margin:2px 0 0" id="afSub"></p></div><span class="small muted">Franjas de 15 minutos dentro del horario del servicio</span></div>
-    <div class="afkpi" id="afKpi"></div>
-    <div id="afMapa"></div>
-    <p class="small muted" style="margin:0" id="afLectura"></p>
-  </div>
-  <div class="panel">
-    <div class="row spread"><h3>Consumo por unidad</h3><span class="small muted">almuerzos válidos del período</span></div>
-    <div id="estUni" style="margin-top:10px"></div>
   </div>
   <p class="small muted" id="estNota" style="margin:0"></p>
 </section>
@@ -872,7 +873,7 @@ function buildTabs(){tabs.innerHTML="";PERF[perfil].views.forEach(id=>{const v=$
 function show(id,push){if(!PERF[perfil].views.includes(id))id=PERF[perfil].views[0];current=id;
   views.forEach(v=>v.hidden=v.id!=="v-"+id);tabs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.id===id));
   if(push)try{history.replaceState(null,"","#"+id)}catch(e){}
-  ({estadisticas:renderEst,comensales:renderCom,reportes:renderRepo,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan,menusem:renderMenuSem})[id]?.();renderAlertas()}
+  ({estadisticas:renderInfo,comensales:renderCom,reportes:renderRepo,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan,menusem:renderMenuSem})[id]?.();renderAlertas()}
 const USR={casino:{n:"Rodrigo Salinas Vera",r:"Jefe Casino"},bienestar:{n:"María Fernanda Ortiz Lagos",r:"Jefa de Bienestar"},get funcionario(){return{n:P[4].nombre,r:"Funcionario/a"}},terminal:{n:"Terminal del casino",r:"Equipo del casino · Oficina Central"}};
 function pintarPerfil(){$("#perfilChips").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.perfil===perfil));$("#whoName").textContent=USR[perfil].n;$("#whoRol").textContent=USR[perfil].r}
 pintarPerfil();
@@ -1155,6 +1156,86 @@ function racionesCard(rows,enCurso){
   const p90=arr[Math.max(0,Math.ceil(arr.length*0.9)-1)][1];
   return["Raciones por día",n1(avg),`promedio de ${arr.length} día${arr.length===1?"":"s"}${enCurso?" completos":""}<br>mín. ${mn[1]} (${fd(mn[0])}) · máx. ${mx[1]} (${fd(mx[0])})`+
     (arr.length>=5?`<br><strong>Preparar ${p90}</strong> cubre 9 de cada 10 días`:"")]}
+
+/* ---- Información: lo relevante para decidir (hoy, control de registros, mes en curso) ---- */
+function habAntes(f){const w=D(f).getDay();const cnt=new Map();R.forEach(r=>{if(r.estado==="Válido"&&r.fecha<f&&D(r.fecha).getDay()===w)cnt.set(r.fecha,(cnt.get(r.fecha)||0)+cantR(r))});const fs=[...cnt.keys()].sort().slice(-8);return fs.length?fs.reduce((a,x)=>a+cnt.get(x),0)/fs.length:0}
+function planDe(f){const hab=P.filter(p=>p.hab);const ausK=new Set(AUS.filter(x=>x.fecha===f).map(x=>x.key));const extra=INV.filter(x=>x.fecha===f).reduce((a,x)=>a+x.cant-1,0);const aus=hab.filter(p=>ausK.has(p.key)).length;return{tot:hab.length-aus+extra,aus,extra}}
+const n0=v=>Math.round(v).toLocaleString("es-CL");
+function renderInfo(){
+  const ahora=hhmm(now()),cm=TODAY.slice(0,7),jefe=perfil==="casino";const habN=P.filter(p=>p.hab).length;
+  const vHoy=R.filter(r=>r.fecha===TODAY&&r.estado==="Válido");const hoyN=sumCant(vHoy);const pl=planDe(TODAY);const cerrHoy=diaCerrado(TODAY);const esHabil=habil(D(TODAY));
+  $("#infLead").textContent=`${cap(D(TODAY).toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long",year:"numeric"}))} · datos a las ${ahora}${cfg.sim?" (hora simulada)":""}`;
+  // 1. Hoy
+  const w=D(TODAY).getDay();const prev=[...new Set(R.filter(r=>r.estado==="Válido"&&r.fecha<TODAY&&D(r.fecha).getDay()===w).map(r=>r.fecha))].sort().slice(-8);
+  const pv=R.filter(r=>r.estado==="Válido"&&prev.includes(r.fecha));const tot=sumCant(pv),antes=sumCant(pv.filter(r=>r.hora<=ahora));const habit=prev.length?tot/prev.length:0;const frac=tot?antes/tot:0;
+  const fin=ahora>=cfg.fin,ini=ahora<cfg.ini;const est=fin?hoyN:Math.round(hoyN+habit*(1-frac));
+  const bins=binsDia(pv);const pk=bins.reduce((a,b)=>b.v>a.v?b:a,bins[0]);const pkTxt=pk&&pk.v?`${pk.label}–${hm(pk.t+15)}`:"—";
+  const exH=EXTRAS.filter(x=>x.fecha===TODAY);
+  const dl=DLARGO[w];
+  if(!esHabil||cerrHoy){$("#infHoySub").textContent=cerrHoy?"El casino está cerrado hoy.":"Hoy no hay servicio (fin de semana o feriado).";$("#infHoyProg").innerHTML="";$("#infHoyKpi").innerHTML=""}
+  else{
+    $("#infHoySub").textContent=ini?`El servicio comienza a las ${cfg.ini}.`:fin?`Servicio terminado a las ${cfg.fin}.`:`Servicio en curso (${cfg.ini} a ${cfg.fin}).`;
+    const mx=Math.max(pl.tot,est,hoyN,1);
+    $("#infHoyProg").innerHTML=`<div class="inf-big"><b>${n0(hoyN)}</b><span>almuerzos registrados de <strong>${n0(pl.tot)}</strong> raciones planificadas (${pl.tot?Math.round(hoyN/pl.tot*100):0}%)</span></div>
+      <div class="inf-bar" role="img" aria-label="${hoyN} de ${pl.tot} raciones; estimado al cierre ${est}"><i style="width:${hoyN/mx*100}%"></i><em style="left:${est/mx*100}%" title="Estimado al cierre"></em></div>
+      <div class="inf-bar-ley"><span>Barra: registrados · línea: estimado al cierre (${n0(est)})</span><span>Un ${dl} habitual: ${n0(habit)} almuerzos</span></div>`;
+    const sob=pl.tot-est;
+    $("#infHoyKpi").innerHTML=[
+      [fin?"Total del día":"Estimado al cierre",n0(est),fin?`un ${dl} habitual: ${n0(habit)}`:`faltan unos ${n0(Math.max(0,est-hoyN))} por llegar`],
+      ["Raciones que sobrarían",sob>0?n0(sob):"0",pl.tot?`${Math.max(0,Math.round(sob/pl.tot*100))}% de lo planificado`:"",sob/Math.max(pl.tot,1)>.15],
+      ["Hora punta habitual",pkTxt,pk&&pk.v?`${(pk.v/Math.max(prev.length,1)).toLocaleString("es-CL",{maximumFractionDigits:1})} ingresos en 15 min`:"sin historial"],
+      ["Avisos e invitados",`${pl.aus} · ${pl.extra}`,`${pl.aus} aviso${pl.aus===1?"":"s"} de ausencia · ${pl.extra} invitado${pl.extra===1?"":"s"}`],
+      ["Externos y visitas",n0(exH.reduce((a,x)=>a+x.cant,0)),`${clp(exH.filter(x=>x.tipo==="Efectivo").reduce((a,x)=>a+x.cant*x.valor,0))} en efectivo`]
+    ].map(([a,b,c,wr])=>`<div class="stat ${wr?"stat-warn":""}"><span>${a}</span><b>${b}</b><small>${c}</small></div>`).join("")}
+  // 2. Control de registros
+  const rm=R.filter(r=>r.fecha.startsWith(cm)),vm=rm.filter(r=>r.estado==="Válido"),rh=R.filter(r=>r.fecha===TODAY);
+  const pct=a=>a.length?Math.round(a.filter(r=>r.origen==="Terminal").length/a.length*100):100;
+  const man=vm.filter(r=>r.origen==="Manual"),manH=vHoy.filter(r=>r.origen==="Manual");const mot=new Map();man.forEach(r=>mot.set(r.motivo||"Sin motivo",(mot.get(r.motivo||"Sin motivo")||0)+1));
+  const an=rm.filter(r=>r.estado==="Anulado"),anH=rh.filter(r=>r.estado==="Anulado");const pa=vm.filter(r=>r.conAviso),paH=vHoy.filter(r=>r.conAviso);
+  const sinT=[...new Set(vm.map(r=>r.key))].map(byKey).filter(p=>!tramoDe(p));const ciM=CIERRES.filter(c=>c.estado==="Vigente"&&c.desde<=cm+"-31"&&c.hasta>=cm+"-01");
+  const ir=(f,t)=>jefe?` <button class="link" data-ir="comensales" data-filtro="${f}">${t}</button>`:"";
+  const chk=[
+    [pct(vm)>=95?"ok":"warn",`<b>${pct(vHoy)}%</b> de los ingresos de hoy y <b>${pct(vm)}%</b> del mes se registraron en la terminal.${pct(vm)<95?" Muchos registros manuales: revise el estado del equipo.":""}`],
+    [man.length?"info":"ok",man.length?`<b>${man.length}</b> registro${man.length===1?"":"s"} manual${man.length===1?"":"es"} en el mes (${manH.length} hoy): ${[...mot].map(([m,n])=>`${esc(m.toLowerCase())} ${n}`).join(", ")}.${ir("manual","Ver")}`:"Sin registros manuales en el mes."],
+    [an.length?"info":"ok",an.length?`<b>${an.length}</b> ticket${an.length===1?"":"s"} anulado${an.length===1?"":"s"} en el mes (${anH.length} hoy); no se descuentan.${ir("anul","Ver")}`:"Sin tickets anulados en el mes."],
+    [pa.length?"info":"ok",pa.length?`<b>${pa.length}</b> persona${pa.length===1?"":"s"} almorzaron pese a su aviso de ausencia (${paH.length} hoy): los avisos sobrestiman las ausencias.`:"Todas las personas que avisaron ausencia la cumplieron."],
+    [sinT.length?"warn":"ok",sinT.length?`<b>${sinT.length}</b> persona${sinT.length===1?"":"s"} con almuerzos y sin tramo (${sinT.slice(0,3).map(p=>esc(p.nombre)).join(", ")}): su almuerzo no tiene valor para el descuento.${jefe?ir("sintramo","Asignar tramo"):" Debe asignarlo el Jefe Casino."}`:"Todas las personas con almuerzos tienen tramo."],
+    [ciM.length?"info":"ok",ciM.length?`<b>${ciM.length}</b> cierre${ciM.length===1?"":"s"} del casino registrado${ciM.length===1?"":"s"} en el mes.`:"Sin cierres del casino en el mes."]];
+  $("#infCtrl").innerHTML=chk.map(([k,t])=>`<li class="chk-${k}"><span class="chk-ic" aria-hidden="true">${k==="ok"?"✓":k==="warn"?"!":"i"}</span><span>${t}</span></li>`).join("");
+  // 3. Mes en curso
+  const d0=D(cm+"-01"),dh=[];for(const d=new Date(d0);d.getMonth()===d0.getMonth();d.setDate(d.getDate()+1))if(habil(d)&&!diaCerrado(ymd(d)))dh.push(ymd(d));
+  const trans=dh.filter(f=>f<TODAY).length,hoyIdx=dh.indexOf(TODAY);
+  const acum=sumCant(vm),compl=sumCant(vm.filter(r=>r.fecha<TODAY));const proj=Math.round(compl+dh.filter(f=>f>=TODAY).reduce((a,f)=>a+(f===TODAY?(est||habAntes(f)):habAntes(f)),0));
+  const pm=ymPrev(cm),vpm=R.filter(r=>r.fecha.startsWith(pm)&&r.estado==="Válido");const prevN=sumCant(vpm);
+  const mr=mesRows(cm),monto=mr.rows.reduce((a,x)=>a+x.monto,0),montoPrev=mesRows(pm).rows.reduce((a,x)=>a+x.monto,0);
+  const projM=acum?Math.round(monto*proj/acum/1000)*1000:0;const pdia=trans?compl/trans:est;const pdiaPrev=(()=>{const n=new Set(vpm.map(r=>r.fecha)).size;return n?prevN/n:0})();
+  const pers=new Set(vm.map(r=>r.key)).size,persPrev=new Set(vpm.map(r=>r.key)).size;const exM=EXTRAS.filter(x=>x.fecha.startsWith(cm));
+  $("#infMesT").textContent=`Mes en curso · ${cap(MES[d0.getMonth()])} ${d0.getFullYear()}`;
+  $("#infMesSub").textContent=`Día hábil ${hoyIdx>=0?hoyIdx+1:trans} de ${dh.length}${ciM.length?` (descontado${ciM.length===1?"":"s"} ${ciM.length} cierre${ciM.length===1?"":"s"})`:""}. La proyección suma lo registrado y el consumo habitual de cada día que falta.`;
+  const dif=(a,b)=>b?`${a>=b?"+":"−"}${Math.abs(Math.round((a-b)/b*100))}% vs. ${MES[D(pm+"-01").getMonth()]} (${n0(b)})`:"";
+  $("#infMesKpi").innerHTML=[
+    ["Almuerzos a la fecha",n0(acum),`proyección al cierre: <strong>${n0(proj)}</strong><br>${dif(proj,prevN)}`],
+    ["Descuento por planilla",clp(monto),`proyección: <strong>${clp(projM)}</strong><br>${montoPrev?`${MES[D(pm+"-01").getMonth()]}: ${clp(montoPrev)}`:""}`],
+    ["Promedio por día",pdia.toLocaleString("es-CL",{maximumFractionDigits:1}),`${trans?`${trans} día${trans===1?"":"s"} completo${trans===1?"":"s"}`:"hoy, estimado"} · ${MES[D(pm+"-01").getMonth()]}: ${pdiaPrev.toLocaleString("es-CL",{maximumFractionDigits:1})}<br>${pers} de ${habN} habilitados ya almorzaron este mes`],
+    ["Externos y visitas",n0(exM.reduce((a,x)=>a+x.cant,0)),`${clp(exM.filter(x=>x.tipo==="Efectivo").reduce((a,x)=>a+x.cant*x.valor,0))} en efectivo · ${clp(exM.filter(x=>x.tipo==="Visita").reduce((a,x)=>a+x.cant*x.valor,0))} en visitas`]
+  ].map(([a,b,c])=>`<div class="stat"><span>${a}</span><b>${b}</b><small>${c}</small></div>`).join("");
+  // semanas
+  const l0=lunesDe(TODAY);const sem=[];for(let k=7;k>=0;k--){const a=sumD(l0,-7*k),b=sumD(a,4);const v=R.filter(r=>r.estado==="Válido"&&r.fecha>=a&&r.fecha<=b);sem.push({label:`${D(a).getDate()}/${D(a).getMonth()+1}`,v:sumCant(v),hl:k===0})}
+  chart($("#infSem"),sem,"almuerzos");
+  // planificado vs real
+  const dd=[];const d=D(TODAY);while(dd.length<20){d.setDate(d.getDate()-1);const f=ymd(d);if(ymd(d)<R.reduce((m,r)=>r.fecha<m?r.fecha:m,TODAY))break;if(habil(d)&&!diaCerrado(f))dd.unshift(f)}
+  const pvr=dd.map(f=>({f,plan:planDe(f).tot,real:sumCant(R.filter(r=>r.fecha===f&&r.estado==="Válido")),hab:habAntes(f)}));
+  if(pvr.length){const mxv=Math.max(...pvr.map(x=>Math.max(x.plan,x.real,x.hab)),1);
+    $("#infPvr").innerHTML=`<div class="pvr">${pvr.map(x=>`<div title="${fmtD(x.f)}: planificado ${x.plan} · servido ${x.real} · habitual ${Math.round(x.hab)}"><i style="height:${x.real/mxv*100}%"></i><em style="bottom:${x.plan/mxv*100}%"></em>${x.hab?`<u style="bottom:${x.hab/mxv*100}%"></u>`:""}</div>`).join("")}</div>
+      <div class="pvr-x">${pvr.map((x,k)=>`<span>${k%5===0?D(x.f).getDate()+"/"+(D(x.f).getMonth()+1):""}</span>`).join("")}</div>
+      <div class="pvr-ley"><span style="--k:var(--accent)">Servidos</span><span style="--k:var(--warn)">Planificados (nómina − avisos + invitados)</span><span style="--k:var(--ink)">Consumo habitual</span></div>`;
+    const avg=a=>a.reduce((s,v)=>s+v,0)/a.length;const aP=avg(pvr.map(x=>x.plan)),aR=avg(pvr.map(x=>x.real));const conH=pvr.filter(x=>x.hab);const eH=conH.length?avg(conH.map(x=>Math.abs(x.hab-x.real))):null;
+    const sobr=aP-aR;
+    $("#infPvrTxt").innerHTML=`En promedio se planificaron <b>${n0(aP)}</b> raciones y se sirvieron <b>${n0(aR)}</b>: ${sobr>=0?`sobran <b>${n0(sobr)}</b> por día (${Math.round(sobr/aP*100)}%)`:`faltan <b>${n0(-sobr)}</b> por día`}.`+(eH!==null?` Planificar con el consumo habitual del mismo día de la semana habría errado en ±${n0(eH)} raciones (${Math.round(eH/aR*100)}%).`:"")}
+  else{$("#infPvr").innerHTML='<p class="small muted" style="margin:0">Sin historial suficiente.</p>';$("#infPvrTxt").textContent=""}
+  $("#estNota").textContent=jefe?"El detalle por persona está en «Comensales» y los reportes en CSV, en «Reportes».":"El detalle por trabajador está en Reportes, dentro del descuento por planilla.";
+}
+$("#infCtrl").addEventListener("click",e=>{const b=e.target.closest("[data-ir]");if(!b)return;det.filtro=b.dataset.filtro;det.desde=TODAY.slice(0,8)+"01";det.hasta=TODAY;show("comensales",true)});
 function renderEst(){
   const p=periodoM(est.tipo,est.anc);const rows=valid(p.a,p.b);const k=kpis(rows);
   const pp=periodoM(est.tipo,moverM(est.tipo,est.anc,-1));
@@ -1186,11 +1267,6 @@ function renderEst(){
   renderAfluencia(rows,k);
   $("#estNota").textContent=perfil==="bienestar"?"Este perfil ve cifras agregadas. El detalle por trabajador está en Reportes, dentro del descuento por planilla.":"El detalle por persona de estos ingresos está en «Comensales».";
 }
-$("#estTipo").addEventListener("click",e=>{const b=e.target.closest("[data-t]");if(!b)return;est.tipo=b.dataset.t;if(est.tipo==="dia"&&!habil(D(est.anc)))est.anc=moverM("dia",est.anc,-1);renderEst()});
-$("#estPrev").onclick=()=>{est.anc=moverM(est.tipo,est.anc,-1);renderEst()};
-$("#estNext").onclick=()=>{est.anc=moverM(est.tipo,est.anc,1);if(est.anc>TODAY)est.anc=TODAY;renderEst()};
-$("#estHoy").onclick=()=>{est.anc=TODAY;renderEst()};
-$("#estFecha").addEventListener("change",e=>{if(e.target.value){est.anc=e.target.value>TODAY?TODAY:e.target.value;renderEst()}});
 
 /* ---- Comensales (solo Jefe Casino): personas habilitadas + ingresos del período ---- */
 let anulando=null;const det={desde:TODAY,hasta:TODAY,q:"",filtro:"",abiertas:new Set()};
