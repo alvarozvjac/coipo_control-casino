@@ -44,16 +44,13 @@ persona cambia de planes y digita su RUT, almuerza igual y su aviso se anula sol
 descuentan los almuerzos consumidos. Los almuerzos con
 invitados se descuentan al funcionario según su tramo.
 
-**Información (Jefe Casino y Jefa de Bienestar):** tres bloques para decidir, sin selector de
-período. 1) *Hoy en el casino*: almuerzos registrados frente a las raciones planificadas,
-estimado al cierre (lo registrado más el consumo habitual que falta según la hora), raciones que
-sobrarían, hora punta habitual, avisos, invitados, externos y visitas. 2) *Control de registros*:
-porcentaje registrado en la terminal, registros manuales con su motivo, anulados, personas que
-almorzaron pese a su aviso, personas sin tramo y cierres del mes, con acceso a «Comensales»
-filtrado (Jefe Casino). 3) *Mes en curso*: almuerzos y descuento por planilla a la fecha con
-proyección al cierre y comparación con el mes anterior, promedio por día, externos y visitas,
-almuerzos por semana (8 semanas) y raciones planificadas frente a servidas en los últimos 20
-días hábiles, con el error que tendría planificar con el consumo habitual.
+**Información (Jefe Casino y Jefa de Bienestar):** selector Día, Semana, Mes o Año (calendario),
+con flechas para recorrer períodos y botón «Período actual»; se abre en el último período
+completo para no mostrar cifras de un período recién iniciado. Muestra: 1) las unidades de CONAF
+que más usan el casino (10 primeras, con cantidad y %, y el resto agrupado); 2) los almuerzos
+registrados, con comparación con el período anterior, promedio por día, personas distintas,
+invitados, externos y visitas, y un gráfico del período; 3) las 3 franjas de 15 minutos más
+concurridas, con su cantidad, porcentaje y promedio por día, y el gráfico de todas las franjas.
 
 **Comensales (Jefe Casino):** une las antiguas pestañas «Detalle de ingresos» y «Personas
 habilitadas». Una fila por persona con tramo, forma de pago, almuerzos y último ingreso del

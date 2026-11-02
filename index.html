@@ -270,6 +270,12 @@ ol.tk-ley li::before{content:counter(t);width:18px;height:18px;border-radius:50%
 .pvr em{position:absolute;left:-1px;right:-1px;height:2px;background:var(--warn)}.pvr u{position:absolute;left:15%;right:15%;height:0;border-top:2px dashed var(--ink);text-decoration:none}
 .pvr-x{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;font-size:10px;color:var(--muted);text-align:center;margin-top:3px}
 .pvr-ley{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:6px}.pvr-ley span::before{content:"";display:inline-block;width:12px;height:3px;margin-right:5px;vertical-align:middle;background:var(--k)}
+.inf-lbl{min-width:220px;text-align:center;font-size:15px}.inf-top3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.inf-top3>div{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:var(--surface)}.inf-top3 .pos{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.inf-top3 b{display:block;font-size:22px;margin:2px 0}.inf-top3 small{display:block;color:var(--muted);font-size:12px;line-height:1.45}
+#i2Fr .col.top .bar{background:var(--accent)}#i2Fr .col:not(.top) .bar{background:var(--accent);opacity:.35}
+.hb.otras span{color:var(--muted)}
+@media (max-width:640px){.inf-top3{grid-template-columns:minmax(0,1fr)}.inf-lbl{min-width:0;flex:1}.inf-per>.row{width:100%}}
 .stat-warn{border-color:var(--warn);background:var(--warn-soft)}
 tr.row-warn td{background:var(--warn-soft)}
 select.sel-warn{border-color:var(--warn);color:var(--warn);font-weight:700}
@@ -346,23 +352,25 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 
 <!-- ESTADISTICAS -->
 <section class="view" id="v-estadisticas" data-label="Información" hidden>
-  <div><h2>Información del casino</h2><p class="lead" id="infLead"></p></div>
+  <div><h2>Información del casino</h2><p class="lead">Unidades que más usan el casino, almuerzos registrados y franjas horarias más concurridas, por día, semana, mes o año.</p></div>
+  <div class="panel row spread inf-per" style="align-items:center">
+    <div class="seg" role="group" aria-label="Período" id="i2Tipo"><button type="button" data-t="dia">Día</button><button type="button" data-t="semana">Semana</button><button type="button" data-t="mes">Mes</button><button type="button" data-t="anio">Año</button></div>
+    <div class="row" style="gap:6px;align-items:center"><button class="btn small" id="i2Prev" aria-label="Período anterior">‹</button><b id="i2Label" class="inf-lbl"></b><button class="btn small" id="i2Next" aria-label="Período siguiente">›</button><button class="btn small" id="i2Act">Período actual</button></div>
+  </div>
+  <p class="small muted" id="i2Nota" style="margin:-6px 0 0"></p>
   <div class="panel inf-blk">
-    <div class="inf-h"><span class="inf-n">1</span><div><h3>Hoy en el casino</h3><p class="small muted" id="infHoySub"></p></div></div>
-    <div id="infHoyProg"></div>
-    <div class="stats" id="infHoyKpi"></div>
+    <div class="inf-h"><span class="inf-n">1</span><div><h3>Unidades que más usan el casino</h3><p class="small muted" id="i2UniSub"></p></div></div>
+    <div id="i2Uni"></div>
   </div>
   <div class="panel inf-blk">
-    <div class="inf-h"><span class="inf-n">2</span><div><h3>Control de registros</h3><p class="small muted">Hoy y mes en curso. Lo marcado en amarillo requiere revisión antes del cierre mensual.</p></div></div>
-    <ul class="checks" id="infCtrl"></ul>
+    <div class="inf-h"><span class="inf-n">2</span><div><h3>Almuerzos registrados</h3><p class="small muted" id="i2AlmSub"></p></div></div>
+    <div class="stats" id="i2AlmKpi"></div>
+    <div><h4 class="inf-h4" id="i2ChartT"></h4><div id="i2Chart"></div></div>
   </div>
   <div class="panel inf-blk">
-    <div class="inf-h"><span class="inf-n">3</span><div><h3 id="infMesT">Mes en curso</h3><p class="small muted" id="infMesSub"></p></div></div>
-    <div class="stats" id="infMesKpi"></div>
-    <div class="inf-2col">
-      <div><h4 class="inf-h4">Almuerzos por semana · últimas 8 semanas</h4><div id="infSem"></div></div>
-      <div><h4 class="inf-h4">Raciones planificadas vs. almuerzos servidos · últimos 20 días hábiles</h4><div id="infPvr"></div><p class="small" id="infPvrTxt" style="margin:8px 0 0"></p></div>
-    </div>
+    <div class="inf-h"><span class="inf-n">3</span><div><h3>Franjas horarias más concurridas</h3><p class="small muted" id="i2FrSub"></p></div></div>
+    <div class="inf-top3" id="i2Top"></div>
+    <div><h4 class="inf-h4">Ingresos por franja de 15 minutos (en verde oscuro, las 3 más concurridas)</h4><div id="i2Fr"></div></div>
   </div>
   <p class="small muted" id="estNota" style="margin:0"></p>
 </section>
@@ -873,7 +881,7 @@ function buildTabs(){tabs.innerHTML="";PERF[perfil].views.forEach(id=>{const v=$
 function show(id,push){if(!PERF[perfil].views.includes(id))id=PERF[perfil].views[0];current=id;
   views.forEach(v=>v.hidden=v.id!=="v-"+id);tabs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.id===id));
   if(push)try{history.replaceState(null,"","#"+id)}catch(e){}
-  ({estadisticas:renderInfo,comensales:renderCom,reportes:renderRepo,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan,menusem:renderMenuSem})[id]?.();renderAlertas()}
+  ({estadisticas:renderInfo2,comensales:renderCom,reportes:renderRepo,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan,menusem:renderMenuSem})[id]?.();renderAlertas()}
 const USR={casino:{n:"Rodrigo Salinas Vera",r:"Jefe Casino"},bienestar:{n:"María Fernanda Ortiz Lagos",r:"Jefa de Bienestar"},get funcionario(){return{n:P[4].nombre,r:"Funcionario/a"}},terminal:{n:"Terminal del casino",r:"Equipo del casino · Oficina Central"}};
 function pintarPerfil(){$("#perfilChips").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.perfil===perfil));$("#whoName").textContent=USR[perfil].n;$("#whoRol").textContent=USR[perfil].r}
 pintarPerfil();
@@ -1235,7 +1243,56 @@ function renderInfo(){
   else{$("#infPvr").innerHTML='<p class="small muted" style="margin:0">Sin historial suficiente.</p>';$("#infPvrTxt").textContent=""}
   $("#estNota").textContent=jefe?"El detalle por persona está en «Comensales» y los reportes en CSV, en «Reportes».":"El detalle por trabajador está en Reportes, dentro del descuento por planilla.";
 }
-$("#infCtrl").addEventListener("click",e=>{const b=e.target.closest("[data-ir]");if(!b)return;det.filtro=b.dataset.filtro;det.desde=TODAY.slice(0,8)+"01";det.hasta=TODAY;show("comensales",true)});
+
+/* ---- Información: unidades, almuerzos y franjas por día, semana, mes o año (calendario) ---- */
+const i2={tipo:"mes",anc:null};
+const i2Ini=()=>R.reduce((m,r)=>r.fecha<m?r.fecha:m,TODAY);
+function i2Def(tipo){if(tipo==="dia"){const d=D(TODAY);do{d.setDate(d.getDate()-1)}while(!habil(d)||diaCerrado(ymd(d)));return ymd(d)}
+  const prev=mover(tipo,TODAY,-1);return periodo(tipo,prev).b>=i2Ini()&&periodo(tipo,prev).a>=i2Ini().slice(0,4)+"-01-01"?prev:TODAY}
+function renderInfo2(){if(!i2.anc)i2.anc=i2Def(i2.tipo);
+  const p=periodo(i2.tipo,i2.anc);const b=p.b>TODAY?TODAY:p.b;const enCurso=p.a<=TODAY&&p.b>=TODAY;
+  const rows=R.filter(r=>r.estado==="Válido"&&r.fecha>=p.a&&r.fecha<=b);const N=sumCant(rows);
+  $("#i2Tipo").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.t===i2.tipo));
+  $("#i2Label").textContent=p.label;$("#i2Next").disabled=periodo(i2.tipo,mover(i2.tipo,i2.anc,1)).a>TODAY;$("#i2Prev").disabled=p.a<=i2Ini();
+  const dh=[];for(const d=D(p.a);ymd(d)<=b;d.setDate(d.getDate()+1))if(habil(d)&&!diaCerrado(ymd(d)))dh.push(ymd(d));
+  const nC=CIERRES.filter(c=>c.estado==="Vigente"&&c.desde<=p.b&&c.hasta>=p.a).length;
+  $("#i2Nota").textContent=(enCurso?`Período en curso: datos hasta el ${fmtD(TODAY)} a las ${hhmm(now())}. `:"")+(i2.tipo!=="dia"?`${dh.length} día${dh.length===1?"":"s"} de servicio`:"")+(nC?`${i2.tipo!=="dia"?" · ":""}${nC} cierre${nC===1?"":"s"} del casino en el período`:"")+(i2.tipo==="dia"&&!dh.length?"Sin servicio ese día.":"");
+  // 1. unidades
+  const u=new Map();rows.forEach(r=>{const n=byKey(r.key).unidad;u.set(n,(u.get(n)||0)+cantR(r))});const arr=[...u].sort((a,b)=>b[1]-a[1]);
+  const top=arr.slice(0,10),resto=arr.slice(10);const mx=top[0]?.[1]||1;const pc=v=>N?Math.round(v/N*100):0;
+  $("#i2UniSub").textContent=arr.length?`${arr.length} unidad${arr.length===1?"":"es"} con almuerzos en el período · ordenadas por cantidad de almuerzos`:"";
+  $("#i2Uni").innerHTML=top.map(([n,v],k)=>`<div class="hb"><span><b style="color:var(--muted);font-weight:600">${k+1}.</b> ${esc(n)}</span><div class="hbbar"><i style="width:${v/mx*100}%"></i></div><b>${v.toLocaleString("es-CL")}</b><em>${pc(v)}%</em></div>`).join("")
+    +(resto.length?`<div class="hb otras"><span>Otras unidades (${resto.length})</span><div class="hbbar"><i style="width:${resto.reduce((a,x)=>a+x[1],0)/mx*100}%;opacity:.4"></i></div><b>${resto.reduce((a,x)=>a+x[1],0).toLocaleString("es-CL")}</b><em>${pc(resto.reduce((a,x)=>a+x[1],0))}%</em></div>`:"")
+    ||'<p class="muted" style="margin:0">Sin almuerzos en el período.</p>';
+  // 2. almuerzos
+  const pp=periodo(i2.tipo,mover(i2.tipo,i2.anc,-1));let prevRows=R.filter(r=>r.estado==="Válido"&&r.fecha>=pp.a&&r.fecha<=pp.b);
+  if(enCurso){const off=Math.round((D(TODAY)-D(p.a))/864e5);const c=D(pp.a);c.setDate(c.getDate()+off);const corte=ymd(c),h=hhmm(now());prevRows=prevRows.filter(r=>r.fecha<corte||(r.fecha===corte&&r.hora<=h))}
+  const NP=sumCant(prevRows);const dlt=NP?Math.round((N-NP)/NP*100):null;const inv=rows.reduce((a,r)=>a+cantR(r)-1,0);const pers=new Set(rows.map(r=>r.key)).size;
+  const ex=EXTRAS.filter(x=>x.fecha>=p.a&&x.fecha<=b).reduce((a,x)=>a+x.cant,0);const dConD=new Set(rows.map(r=>r.fecha)).size;
+  const nomAnt={dia:"el día hábil anterior",semana:"la semana anterior",mes:"el mes anterior",anio:"el año anterior"}[i2.tipo];
+  $("#i2AlmSub").textContent="Almuerzos válidos de funcionarios e invitados registrados en la terminal o en forma manual; no incluye anulados.";
+  $("#i2AlmKpi").innerHTML=[
+    ["Almuerzos",N.toLocaleString("es-CL"),dlt===null?"sin datos del período anterior":`${dlt>=0?"+":"−"}${Math.abs(dlt)}% vs. ${nomAnt}${enCurso?" (al mismo momento)":""} (${NP.toLocaleString("es-CL")})`],
+    ...(i2.tipo==="dia"?[]:[["Promedio por día",dConD?(N/dConD).toLocaleString("es-CL",{maximumFractionDigits:1}):"0",`${dConD} día${dConD===1?"":"s"} con registros`]]),
+    ["Personas distintas",pers.toLocaleString("es-CL"),`de ${P.filter(x=>x.hab).length} habilitadas`],
+    ["Invitados",inv.toLocaleString("es-CL"),`${N?Math.round(inv/N*100):0}% de los almuerzos`],
+    ["Externos y visitas",ex.toLocaleString("es-CL"),"sin descuento por planilla"]
+  ].map(([a,v,c])=>`<div class="stat"><span>${a}</span><b>${v}</b><small>${c}</small></div>`).join("");
+  $("#i2ChartT").textContent={dia:"Almuerzos por franja de 15 minutos",semana:"Almuerzos por día",mes:"Almuerzos por día hábil",anio:"Almuerzos por mes"}[i2.tipo];
+  const it=i2.tipo==="dia"?binsDia(rows).map(x=>({...x,v:0})):serie(i2.tipo,p,rows);
+  if(i2.tipo==="dia"){const bb=binsDia([]);rows.forEach(r=>{const[h,m]=r.hora.split(":").map(Number);const t=h*60+m;const x=bb.find(z=>t>=z.t&&t<z.t+15);if(x)x.v+=cantR(r)});chart($("#i2Chart"),bb,"almuerzos")}
+  else{const cnt=new Map();rows.forEach(r=>cnt.set(r.fecha,(cnt.get(r.fecha)||0)+cantR(r)));if(i2.tipo==="anio"){it.forEach(o=>o.v=0);rows.forEach(r=>it[+r.fecha.slice(5,7)-1].v+=cantR(r))}else{const ds=[];for(const d=D(p.a);ymd(d)<=p.b;d.setDate(d.getDate()+1))if(i2.tipo==="semana"||habil(d))ds.push(ymd(d));it.forEach((o,k)=>{o.v=cnt.get(ds[k])||0})}chart($("#i2Chart"),it,"almuerzos")}
+  // 3. franjas
+  const fr=binsDia(rows);const totI=rows.length;const rk=fr.slice().sort((a,b)=>b.v-a.v).filter(x=>x.v).slice(0,3);const topT=new Set(rk.map(x=>x.t));
+  $("#i2FrSub").textContent=totI?`Según la hora de ingreso de ${totI.toLocaleString("es-CL")} ticket${totI===1?"":"s"}${i2.tipo!=="dia"&&dConD?`; promedio por día de servicio sobre ${dConD} día${dConD===1?"":"s"}`:""}.`:"";
+  $("#i2Top").innerHTML=rk.map((x,k)=>`<div><span class="pos">${k+1}.ª franja</span><b>${x.label}–${hm(x.t+15)}</b><small>${x.v.toLocaleString("es-CL")} ingreso${x.v===1?"":"s"} · ${Math.round(x.v/totI*100)}% del total${i2.tipo!=="dia"&&dConD?`<br>${(x.v/dConD).toLocaleString("es-CL",{maximumFractionDigits:1})} por día en promedio`:""}</small></div>`).join("")||'<p class="muted" style="margin:0">Sin ingresos en el período.</p>';
+  chart($("#i2Fr"),fr.map(x=>({...x,label:x.label})),"ingresos");$("#i2Fr").querySelectorAll(".col").forEach((c,k)=>{if(topT.has(fr[k].t))c.classList.add("top")});
+  $("#estNota").textContent=perfil==="casino"?"El detalle por persona está en «Comensales» y los reportes en CSV, en «Reportes».":"El detalle por trabajador está en Reportes, dentro del descuento por planilla.";
+}
+$("#i2Tipo").addEventListener("click",e=>{const x=e.target.closest("[data-t]");if(!x)return;i2.tipo=x.dataset.t;i2.anc=i2Def(i2.tipo);renderInfo2()});
+$("#i2Prev").onclick=()=>{i2.anc=mover(i2.tipo,i2.anc,-1);renderInfo2()};
+$("#i2Next").onclick=()=>{i2.anc=mover(i2.tipo,i2.anc,1);if(i2.anc>TODAY)i2.anc=TODAY;renderInfo2()};
+$("#i2Act").onclick=()=>{i2.anc=TODAY;renderInfo2()};
 function renderEst(){
   const p=periodoM(est.tipo,est.anc);const rows=valid(p.a,p.b);const k=kpis(rows);
   const pp=periodoM(est.tipo,moverM(est.tipo,est.anc,-1));
