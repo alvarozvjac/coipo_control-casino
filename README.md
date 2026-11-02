@@ -44,6 +44,11 @@ persona cambia de planes y digita su RUT, almuerza igual y su aviso se anula sol
 descuentan los almuerzos consumidos. Los almuerzos con
 invitados se descuentan al funcionario según su tramo.
 
+**Información (Jefe Casino y Jefa de Bienestar):** períodos móviles que terminan en la fecha
+de referencia: día, últimos 7 días, últimos 30 días y últimos 12 meses, con flechas para
+retroceder o avanzar. Así las cifras cambian al elegir cada período aunque la semana o el mes
+recién comiencen. Se compara con el período móvil anterior de igual largo.
+
 **Comensales (Jefe Casino):** une las antiguas pestañas «Detalle de ingresos» y «Personas
 habilitadas». Una fila por persona con tramo, forma de pago, almuerzos y último ingreso del
 período (hoy, semana, mes o fechas), búsqueda por nombre, RUT, unidad o ID de ticket, y filtros

@@ -338,7 +338,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <div><h2>Información del casino</h2><p class="lead" id="estLabel"></p></div>
     <div class="row">
       <div class="seg" role="group" aria-label="Período" id="estTipo">
-        <button type="button" data-t="dia">Día</button><button type="button" data-t="semana">Semana</button><button type="button" data-t="mes">Mes</button><button type="button" data-t="anio">Año</button>
+        <button type="button" data-t="dia">Día</button><button type="button" data-t="semana">7 días</button><button type="button" data-t="mes">30 días</button><button type="button" data-t="anio">12 meses</button>
       </div>
       <div class="row" style="gap:6px">
         <button class="btn small" id="estPrev" aria-label="Período anterior">‹</button>
@@ -1046,6 +1046,24 @@ function periodo(tipo,anc){const d=D(anc);let a,b,label;
   else if(tipo==="mes"){a=ymd(new Date(d.getFullYear(),d.getMonth(),1));b=ymd(new Date(d.getFullYear(),d.getMonth()+1,0));label=cap(MES[d.getMonth()])+" de "+d.getFullYear()}
   else{a=d.getFullYear()+"-01-01";b=d.getFullYear()+"-12-31";label="Año "+d.getFullYear()}
   return{a,b,label}}
+/* Información: períodos móviles que terminan en la fecha de referencia (día, últimos 7 días, últimos 30 días, últimos 12 meses) */
+const sumD=(f,n)=>{const d=D(f);d.setDate(d.getDate()+n);return ymd(d)};
+function periodoM(tipo,anc){const d=D(anc);let a,label;const b=anc;
+  if(tipo==="dia"){a=anc;label=cap(d.toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long",year:"numeric"}))}
+  else if(tipo==="semana"){a=sumD(anc,-6);label=`Últimos 7 días · del ${fmtD(a)} al ${fmtD(b)}`}
+  else if(tipo==="mes"){a=sumD(anc,-29);label=`Últimos 30 días · del ${fmtD(a)} al ${fmtD(b)}`}
+  else{a=ymd(new Date(d.getFullYear(),d.getMonth()-11,1));label=`Últimos 12 meses · de ${MES[D(a).getMonth()]} de ${a.slice(0,4)} a ${MES[d.getMonth()]} de ${d.getFullYear()}`}
+  return{a,b,label}}
+function moverM(tipo,anc,dir){const d=D(anc);
+  if(tipo==="dia"){do{d.setDate(d.getDate()+dir)}while(!habil(d))}else if(tipo==="semana")d.setDate(d.getDate()+7*dir);
+  else if(tipo==="mes")d.setDate(d.getDate()+30*dir);else{const dia=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+12*dir);d.setDate(Math.min(dia,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()))}return ymd(d)}
+function serieM(tipo,p,rows){
+  if(tipo==="dia")return binsDia(rows);
+  const ini=R.reduce((m,r)=>r.fecha<m?r.fecha:m,TODAY);
+  if(tipo==="anio"){const out=[];const d=D(p.a);d.setDate(1);while(ymd(d)<=p.b){const ym=ymd(d).slice(0,7);out.push({label:MESC[d.getMonth()]+(d.getMonth()===0||!out.length?" "+String(d.getFullYear()).slice(2):""),v:0,ym,hl:ym===TODAY.slice(0,7),fut:ym<ini.slice(0,7)});d.setMonth(d.getMonth()+1)}
+    rows.forEach(r=>{const o=out.find(x=>x.ym===r.fecha.slice(0,7));if(o)o.v++});out.forEach(o=>{if(o.fut)o.sin=true});return out}
+  const cnt=new Map();rows.forEach(r=>cnt.set(r.fecha,(cnt.get(r.fecha)||0)+1));const out=[];const d=D(p.a),end=D(p.b);
+  while(d<=end){if(habil(d)){const f=ymd(d);out.push({label:tipo==="semana"?["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"][d.getDay()]+" "+d.getDate():String(d.getDate()),v:cnt.get(f)||0,hl:f===TODAY,cerr:!!diaCerrado(f),fut:f<ini})}d.setDate(d.getDate()+1)}return out}
 function mover(tipo,anc,dir){const d=D(anc);
   if(tipo==="dia"){do{d.setDate(d.getDate()+dir)}while(!habil(d))}else if(tipo==="semana")d.setDate(d.getDate()+7*dir);
   else if(tipo==="mes")d.setMonth(d.getMonth()+dir,1);else d.setFullYear(d.getFullYear()+dir,0,1);return ymd(d)}
@@ -1062,7 +1080,7 @@ function serie(tipo,p,rows){
 function niceMax(m){m=Math.max(2,m);const p=Math.pow(10,Math.floor(Math.log10(m)));for(const s of[1,2,4,5,6,8,10])if(s*p>=m)return s*p;return 10*p}
 function chart(el,items,unit){const nice=niceMax(Math.max(...items.map(i=>i.v)));const few=items.length<=16;
   el.innerHTML=`<div class="chart"><div class="yax"><span style="top:0">${nice.toLocaleString("es-CL")}</span><span style="top:50%">${(nice/2).toLocaleString("es-CL")}</span><span style="top:100%">0</span></div>
-  <div style="min-width:0"><div class="cols">${items.map(i=>`<div class="col ${i.hl?"hl":""} ${i.fut?"fut":""} ${i.cerr?"cerr":""}" title="${esc(i.label)}: ${i.cerr?"casino cerrado":i.fut?"sin datos aún":i.v+" "+unit}"><div class="bar" style="height:${i.v/nice*100}%" data-v="${few&&i.v?i.v:""}"></div></div>`).join("")}</div>
+  <div style="min-width:0"><div class="cols">${items.map(i=>`<div class="col ${i.hl?"hl":""} ${i.fut?"fut":""} ${i.cerr?"cerr":""}" title="${esc(i.label)}: ${i.cerr?"casino cerrado":i.sin||(i.fut&&i.v===0&&!i.hl&&items.some(x=>x.sin))?"sin datos de prueba":i.fut?"sin datos aún":i.v+" "+unit}"><div class="bar" style="height:${i.v/nice*100}%" data-v="${few&&i.v?i.v:""}"></div></div>`).join("")}</div>
   <div class="xax">${items.map((i,k)=>`<span>${(!few&&k%2)||(i.t!==undefined&&i.t%30)?"":esc(i.label)}</span>`).join("")}</div></div></div>`}
 function kpis(rows){const dias=new Set(rows.map(r=>r.fecha)).size;return{n:sumCant(rows),dias,pers:new Set(rows.map(r=>r.key)).size,prom:dias?rows.length/dias:0,monto:sumaM(rows),hue:rows.length?rows.filter(r=>r.origen==="Terminal").length/rows.length:0}}
 /* Afluencia: ingresos por franja de 15 min. En semana, mes y año se usa el promedio por día de servicio, para comparar períodos de distinto largo */
@@ -1138,9 +1156,9 @@ function racionesCard(rows,enCurso){
   return["Raciones por día",n1(avg),`promedio de ${arr.length} día${arr.length===1?"":"s"}${enCurso?" completos":""}<br>mín. ${mn[1]} (${fd(mn[0])}) · máx. ${mx[1]} (${fd(mx[0])})`+
     (arr.length>=5?`<br><strong>Preparar ${p90}</strong> cubre 9 de cada 10 días`:"")]}
 function renderEst(){
-  const p=periodo(est.tipo,est.anc);const rows=valid(p.a,p.b);const k=kpis(rows);
-  const pp=periodo(est.tipo,mover(est.tipo,est.anc,-1));
-  const enCurso=p.a<=TODAY&&p.b>=TODAY;
+  const p=periodoM(est.tipo,est.anc);const rows=valid(p.a,p.b);const k=kpis(rows);
+  const pp=periodoM(est.tipo,moverM(est.tipo,est.anc,-1));
+  const enCurso=p.b===TODAY;
   let prevRows=valid(pp.a,pp.b);
   if(enCurso){const off=Math.round((D(TODAY)-D(p.a))/864e5);const c=D(pp.a);c.setDate(c.getDate()+off);const corte=ymd(c);
     const h=hhmm(now());prevRows=prevRows.filter(r=>r.fecha<corte||(r.fecha===corte&&r.hora<=h))}
@@ -1148,9 +1166,9 @@ function renderEst(){
   const delta=kp.n?Math.round((k.n-kp.n)/kp.n*100):null;
   
   $("#estTipo").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===est.tipo));
-  $("#estFecha").value=est.anc;$("#estNext").disabled=periodo(est.tipo,mover(est.tipo,est.anc,1)).a>TODAY;
+  $("#estFecha").value=est.anc;$("#estNext").disabled=est.anc>=TODAY;
   const nC=CIERRES.filter(c=>c.estado==="Vigente"&&c.desde<=p.b&&c.hasta>=p.a).length;
-  $("#estLabel").textContent=p.label+(enCurso?" · período en curso, datos al "+fmtD(TODAY)+" "+cfg.sim:"")+(nC?` · ${nC} cierre${nC===1?"":"s"} del casino en el período`:"");
+  $("#estLabel").textContent=p.label+(enCurso?" · incluye hoy, datos al "+fmtD(TODAY)+" "+cfg.sim:"")+(nC?` · ${nC} cierre${nC===1?"":"s"} del casino en el período`:"");
   const habN=P.filter(x=>x.hab).length;
   $("#estKpi").innerHTML=[
     ["Almuerzos",k.n.toLocaleString("es-CL"),delta===null?"sin datos del período anterior":`${delta>=0?"+":"−"}${Math.abs(delta)}% vs. ${enCurso?"mismo tramo del período anterior":"período anterior"}`],
@@ -1159,18 +1177,18 @@ function renderEst(){
     ["Monto a descontar",clp(k.monto),cfg.tramos.map(t=>`T${t.n}: ${rows.filter(r=>tramoDe(byKey(r.key))===t.n).length.toLocaleString("es-CL")}`).join(" · ")+" almuerzos"],
     ["Registrados en la terminal",Math.round(k.hue*100)+"%","el resto, registro manual del Jefe Casino"]
   ].map(([a,b,c])=>`<div class="stat"><span>${a}</span><b>${b}</b><small>${c}</small></div>`).join("");
-  $("#estChartT").textContent={dia:"Ingresos cada 15 minutos",semana:"Almuerzos por día",mes:"Almuerzos por día hábil",anio:"Almuerzos por mes"}[est.tipo];
-  $("#estChartN").textContent=enCurso&&est.tipo!=="dia"?(est.tipo==="anio"?"En naranjo, el mes en curso":"En naranjo, el día en curso"):"";
-  chart($("#estChart"),serie(est.tipo,p,rows),"almuerzos");
+  $("#estChartT").textContent={dia:"Ingresos cada 15 minutos",semana:"Almuerzos por día hábil",mes:"Almuerzos por día hábil",anio:"Almuerzos por mes"}[est.tipo];
+  $("#estChartN").textContent=enCurso&&est.tipo!=="dia"?(est.tipo==="anio"?"En naranjo, el mes en curso":"En naranjo, hoy"):"";
+  chart($("#estChart"),serieM(est.tipo,p,rows),"almuerzos");
   const u=new Map();rows.forEach(r=>{const n=byKey(r.key).unidad;u.set(n,(u.get(n)||0)+1)});
   const arr=[...u].sort((a,b)=>b[1]-a[1]);const mx=arr[0]?.[1]||1;
   $("#estUni").innerHTML=arr.map(([n,v])=>`<div class="hb"><span>${esc(n)}</span><div class="hbbar"><i style="width:${v/mx*100}%"></i></div><b>${v.toLocaleString("es-CL")}</b><em>${Math.round(v/k.n*100)}%</em></div>`).join("")||'<p class="muted" style="margin:0">Sin consumo en el período.</p>';
   renderAfluencia(rows,k);
   $("#estNota").textContent=perfil==="bienestar"?"Este perfil ve cifras agregadas. El detalle por trabajador está en Reportes, dentro del descuento por planilla.":"El detalle por persona de estos ingresos está en «Comensales».";
 }
-$("#estTipo").addEventListener("click",e=>{const b=e.target.closest("[data-t]");if(!b)return;est.tipo=b.dataset.t;if(est.tipo==="dia"&&!habil(D(est.anc)))est.anc=mover("dia",est.anc,-1);renderEst()});
-$("#estPrev").onclick=()=>{est.anc=mover(est.tipo,est.anc,-1);renderEst()};
-$("#estNext").onclick=()=>{est.anc=mover(est.tipo,est.anc,1);if(est.anc>TODAY)est.anc=TODAY;renderEst()};
+$("#estTipo").addEventListener("click",e=>{const b=e.target.closest("[data-t]");if(!b)return;est.tipo=b.dataset.t;if(est.tipo==="dia"&&!habil(D(est.anc)))est.anc=moverM("dia",est.anc,-1);renderEst()});
+$("#estPrev").onclick=()=>{est.anc=moverM(est.tipo,est.anc,-1);renderEst()};
+$("#estNext").onclick=()=>{est.anc=moverM(est.tipo,est.anc,1);if(est.anc>TODAY)est.anc=TODAY;renderEst()};
 $("#estHoy").onclick=()=>{est.anc=TODAY;renderEst()};
 $("#estFecha").addEventListener("change",e=>{if(e.target.value){est.anc=e.target.value>TODAY?TODAY:e.target.value;renderEst()}});
 
