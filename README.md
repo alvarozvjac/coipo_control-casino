@@ -17,7 +17,7 @@ En el encabezado, el recuadro **«Maqueta · probar como»** cambia entre los cu
 |---|---|
 | Terminal casino | Equipo instalado en el casino: terminal (RUT digitado, emisión del ticket) y propuesta de ticket |
 | Funcionario | «Mi casino»: menú de la semana, selección del menú mensual (normal, hipocalórico o vegano), avisos de los días que no almorzará, almuerzos con invitados y reporte CSV |
-| Jefe Casino | Menú semanal, planificación de raciones, reportes, detalle de ingresos, personas habilitadas (grado y tramo), configuración, cierres del casino e información (estadísticas) |
+| Jefe Casino | Menú semanal, planificación de raciones, reportes, comensales (personas habilitadas e ingresos en una sola vista), configuración, cierres del casino e información (estadísticas) |
 | Jefa de Bienestar | Información (estadísticas agregadas), emisión de reportes y cierres del casino |
 
 **Terminal del casino:** la persona digita su RUT en un teclado numérico USB y presiona
@@ -31,7 +31,7 @@ ingreso queda marcado «Asistió pese a aviso» en el detalle), habilitación su
 hora está fijada en 13:05 y se cambia en Configuración. La validación con RUT y PIN queda
 para una versión futura.
 
-**Ticket:** sigla CONAF, fecha y lugar; cantidad de almuerzos y menú; nombre completo en mayúsculas, hora e ID único (año y correlativo anual, por ejemplo 2026-004812). El ID se registra en el detalle de ingresos del Jefe Casino, en «Mi casino» del funcionario y en el detalle por ticket del reporte mensual; el detalle de ingresos permite buscar por ID.
+**Ticket:** sigla CONAF, fecha y lugar; cantidad de almuerzos y menú; nombre completo en mayúsculas, hora e ID único (año y correlativo anual, por ejemplo 2026-004812). El ID se registra en «Comensales» del Jefe Casino, en «Mi casino» del funcionario y en el detalle por ticket del reporte mensual; «Comensales» permite buscar por ID y abre a la persona.
 
 **Mi casino (funcionario):** en este orden, el menú de la semana publicado por el Jefe Casino
 (entrada, plato normal, hipocalórico y vegano, y postre); «Selecciona tu menú mensual», una
@@ -43,6 +43,16 @@ menú y monto). El aviso de ausencia sirve para planificar las raciones y no blo
 persona cambia de planes y digita su RUT, almuerza igual y su aviso se anula solo. Solo se
 descuentan los almuerzos consumidos. Los almuerzos con
 invitados se descuentan al funcionario según su tramo.
+
+**Comensales (Jefe Casino):** une las antiguas pestañas «Detalle de ingresos» y «Personas
+habilitadas». Una fila por persona con tramo, forma de pago, almuerzos y último ingreso del
+período (hoy, semana, mes o fechas), búsqueda por nombre, RUT, unidad o ID de ticket, y filtros
+(con o sin almuerzos, anulados, registro manual, sin tramo, efectivo mensual, suspendidas). Al
+abrir una persona se ven sus tickets (reimprimir y anular los del día) y se cambian su tramo,
+forma de pago y habilitación. Menús: «Registrar» (ingreso manual, venta en efectivo, visita
+institucional, planilla de contingencia), «Personas» (agregar, carga masiva, cambio de menú por
+excepción) y «Reportes» en CSV (ingresos del período, nómina de habilitados, ficha por persona,
+externos y visitas). Al pie, los externos y visitas del período.
 
 **Planificación (Jefe Casino):** próximos 10 días hábiles con habilitados, ausencias
 avisadas, menú normal, hipocalórico y vegano, almuerzos de invitados, raciones planificadas y
@@ -56,11 +66,11 @@ habilitadas, para el mes actual o el siguiente, con motivo y registro de quién 
 
 **Propuestas a las preguntas del Jefe Casino (02-11-2026), rotuladas en la maqueta:**
 - *Venta en efectivo* (externos o acompañantes) y *visita institucional* con cargo a la
-  Dirección Ejecutiva, en Detalle de ingresos: ticket con su marca, sin descuento por planilla.
+  Dirección Ejecutiva, desde «Registrar» en Comensales: ticket con su marca, sin descuento por planilla.
   En la venta en efectivo el sistema asigna un folio correlativo anual (`EF-AAAA-NNNN`), que se
   imprime en el ticket como comprobante de pago y aparece en el reporte de caja.
   Valores de ejemplo en Configuración.
-- *Forma de pago* por persona en Personas habilitadas (Planilla o Efectivo mensual), para
+- *Forma de pago* por persona en Comensales (Planilla o Efectivo mensual), para
   personal en convenio como FAO; queda fuera del descuento y tiene su propio reporte.
 - *Planilla de contingencia*: si el sistema completo no está disponible, se descarga una
   planilla en blanco y luego se carga al sistema.

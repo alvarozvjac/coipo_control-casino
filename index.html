@@ -188,6 +188,11 @@ ol.campos span{color:var(--muted);font-size:14px}
 .ticket .kv{display:flex;justify-content:space-between;gap:8px}
 .demo td,.demo th{padding:6px 10px;font-size:13px}
 
+#v-comensales>*{min-width:0}.com-row{cursor:pointer}.com-row:hover td{background:var(--sunken)}.com-row.abierta td{background:var(--sunken);border-bottom:0}
+.com-sub>td{background:var(--sunken);padding:4px 14px 14px}.com-ficha{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:13px;margin:4px 0 10px}.com-ficha span b{font-weight:600}
+.com-tk{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);border-radius:8px}.com-tk th,.com-tk td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}.com-tk th{font-size:11px;color:var(--muted);font-weight:600}
+.com-abrir{background:none;border:0;font:inherit;font-size:16px;cursor:pointer;color:var(--muted);padding:2px 6px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:640px){.com>thead>tr>th:nth-child(2),.com>tbody>.com-row>td:nth-child(2),.com>thead>tr>th:nth-child(3),.com>tbody>.com-row>td:nth-child(3),.com>thead>tr>th:nth-child(7),.com>tbody>.com-row>td:nth-child(7){display:none}.com-tk th:nth-child(2),.com-tk td:nth-child(2),.com-tk th:nth-child(5),.com-tk td:nth-child(5),.com-tk th:nth-child(6),.com-tk td:nth-child(6){display:none}.com-sub .tablebox{max-width:calc(100vw - 60px)}.com-sub>td{padding:4px 8px 12px}.com-acc>.row{width:100%}.com-acc .menu-wrap{flex:1}.com-acc .menu-wrap>.btn{width:100%}}
 .inline-confirm{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .inline-confirm input{font-size:13px;padding:5px 8px;width:180px}
 .bars{display:flex;align-items:flex-end;gap:4px;height:120px;padding-top:8px;border-bottom:1px solid var(--line)}
@@ -362,33 +367,54 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 </section>
 
 <!-- DETALLE -->
-<section class="view" id="v-detalle" data-label="Detalle de ingresos" hidden>
-  <div><h2>Detalle de ingresos al casino</h2><p class="lead">Cada ingreso con nombre completo, RUT, hora y forma de validación. Los tickets del día se pueden reimprimir o anular con motivo.</p></div>
-  <div class="panel" style="display:grid;gap:10px">
-    <div class="row spread"><h3>Registro manual de contingencia</h3><span class="muted small">Si falla la terminal o la impresora: se registra desde este equipo y queda marcado como manual.</span></div>
+<section class="view" id="v-comensales" data-label="Comensales" hidden>
+  <div><h2>Comensales</h2><p class="lead">Quién puede almorzar y quién almorzó. Cada persona aparece con su tramo, su forma de pago y sus almuerzos del período; ábrala para ver sus tickets, reimprimir o anular, y cambiar su tramo, forma de pago o habilitación.</p></div>
+  <div class="panel row com-bar" style="align-items:end">
+    <div class="row" style="gap:6px"><button class="btn small" data-rango="hoy">Hoy</button><button class="btn small" data-rango="semana">Esta semana</button><button class="btn small" data-rango="mes">Este mes</button></div>
+    <label class="f">Desde<input type="date" id="detDesde"></label>
+    <label class="f">Hasta<input type="date" id="detHasta"></label>
+    <label class="f" style="flex:1;min-width:200px">Buscar<input id="detQ" placeholder="Nombre, RUT, unidad o ID de ticket" autocomplete="off"></label>
+    <label class="f">Mostrar<select id="comFiltro"><option value="">Todas las personas</option><option value="con">Con almuerzos en el período</option><option value="sin">Sin almuerzos en el período</option><option value="anul">Con tickets anulados</option><option value="manual">Con registro manual</option><option value="sintramo">Sin tramo asignado</option><option value="efm">Pagan en efectivo mensual</option><option value="susp">Suspendidas</option></select></label>
+  </div>
+  <div class="row spread com-acc">
+    <span id="detCount" class="small muted"></span>
+    <div class="row" style="gap:8px">
+      <div class="menu-wrap"><button class="btn primary" data-dd="reg" aria-haspopup="menu" aria-expanded="false">Registrar ▾</button>
+        <div class="menu-pop" data-pop="reg" role="menu" hidden>
+          <button role="menuitem" data-abre="regManual"><b>Ingreso manual</b><small>Si falla la terminal o la impresora</small></button>
+          <button role="menuitem" data-abre="regExtras" data-ex="Efectivo"><b>Venta en efectivo</b><small>Externos o acompañantes · folio automático · propuesta</small></button>
+          <button role="menuitem" data-abre="regExtras" data-ex="Visita"><b>Visita institucional</b><small>Con cargo a la Dirección Ejecutiva · propuesta</small></button>
+          <button role="menuitem" data-abre="regCont"><b>Planilla de contingencia</b><small>Si el sistema completo no está disponible · propuesta</small></button>
+        </div></div>
+      <div class="menu-wrap"><button class="btn" data-dd="per" aria-haspopup="menu" aria-expanded="false">Personas ▾</button>
+        <div class="menu-pop" data-pop="per" role="menu" hidden>
+          <button role="menuitem" data-abre="nuevoForm"><b>Agregar persona</b><small>Queda habilitada de inmediato</small></button>
+          <button role="menuitem" data-abre="masivaForm"><b>Carga masiva</b><small>Filas copiadas desde Excel</small></button>
+          <button role="menuitem" data-abre="menuExcForm"><b>Cambio de menú por excepción</b><small>Ingreso nuevo o indicación médica</small></button>
+        </div></div>
+      <div class="menu-wrap"><button class="btn" data-dd="crep" aria-haspopup="menu" aria-expanded="false">Reportes ▾</button>
+        <div class="menu-pop" data-pop="crep" role="menu" hidden>
+          <button role="menuitem" data-crep="ing"><b>Ingresos del período (CSV)</b><small>Todos los tickets del período elegido</small></button>
+          <button role="menuitem" data-crep="nom"><b>Nómina de habilitados (CSV)</b><small>Calidad, grado, tramo, valor, forma de pago y estado</small></button>
+          <button role="menuitem" data-crep="ficha"><b>Ficha por persona (CSV)</b><small>Tickets de la persona abierta en la tabla</small></button>
+          <button role="menuitem" data-crep="ext"><b>Externos y visitas (CSV)</b><small>Ventas con folio y visitas del período</small></button>
+        </div></div>
+    </div>
+  </div>
+  <span id="comMsg" class="small"></span>
+  <div class="panel" id="regManual" hidden style="display:grid;gap:10px">
+    <div class="row spread"><h3>Ingreso manual</h3><button type="button" class="btn small" data-cerrar>Cerrar</button></div>
+    <p class="small muted" style="margin:0">Si falla la terminal o la impresora: se registra desde este equipo y queda marcado como manual.</p>
     <form id="manualForm" class="row" style="align-items:end">
       <label class="f">RUT<input id="manRut" placeholder="12.345.678-5" autocomplete="off" style="width:170px"></label>
       <label class="f">Motivo<select id="manMotivo"><option>Falla de terminal</option><option>Falla de impresora</option><option>Corte de energía o de red</option><option>Otro</option></select></label>
       <button class="btn primary" type="submit">Registrar y emitir ticket</button>
       <span id="manMsg" class="small"></span>
     </form>
-    <details class="cont"><summary>Si el sistema completo no está disponible: planilla de papel y carga posterior <span class="pill neu">Propuesta</span></summary>
-      <div style="display:grid;gap:10px;margin-top:10px">
-        <p class="small muted" style="margin:0">1) Imprima la planilla y registre a mano RUT, nombre, hora y firma de cada persona. 2) Cuando el sistema vuelva, cargue la planilla aquí: cada fila queda como registro manual con motivo «Planilla de contingencia» y entra al descuento del mes.</p>
-        <div class="row"><button type="button" class="btn small" id="contPlanilla">Descargar planilla en blanco (CSV)</button></div>
-        <form id="contForm" novalidate class="row" style="align-items:end">
-          <label class="f">Día de la planilla<input type="date" id="contFecha"></label>
-          <label class="f" style="flex:1;min-width:260px">Filas: RUT;hora (una por línea)<textarea id="contTxt" rows="3">15.998.877-5;13:10
-16.789.123-3;13:22</textarea></label>
-          <button class="btn" type="submit">Cargar planilla</button>
-        </form>
-        <span id="contMsg" class="small"></span>
-      </div>
-    </details>
   </div>
-  <div class="panel" style="display:grid;gap:12px">
-    <div class="row spread"><div><h3>Almuerzos sin descuento por planilla <span class="pill neu">Propuesta</span></h3><p class="small muted" style="margin:2px 0 0">Para personas externas o acompañantes que pagan en efectivo, y para visitas de la Dirección Ejecutiva. Se emite un ticket con su marca y no se descuenta a ningún funcionario. En la venta en efectivo, el sistema asigna un folio correlativo anual (EF-año-número) que se imprime en el ticket como comprobante de pago. Valores de ejemplo: los define Bienestar.</p></div>
-      <div class="seg" role="group" id="exTipo"><button type="button" data-ex="Efectivo" aria-pressed="true">Venta en efectivo</button><button type="button" data-ex="Visita" aria-pressed="false">Visita institucional</button></div></div>
+  <div class="panel" id="regExtras" hidden style="display:grid;gap:12px">
+    <div class="row spread"><div><h3>Almuerzos sin descuento por planilla <span class="pill neu">Propuesta</span></h3><p class="small muted" style="margin:2px 0 0">Para externos o acompañantes que pagan en efectivo, y para visitas de la Dirección Ejecutiva. No se descuenta a ningún funcionario. En la venta en efectivo el sistema asigna un folio correlativo anual (EF-año-número), impreso en el ticket como comprobante de pago. Valores de ejemplo: los define Bienestar.</p></div>
+      <div class="row" style="gap:8px"><div class="seg" role="group" id="exTipo"><button type="button" data-ex="Efectivo" aria-pressed="true">Venta en efectivo</button><button type="button" data-ex="Visita" aria-pressed="false">Visita institucional</button></div><button type="button" class="btn small" data-cerrar>Cerrar</button></div></div>
     <form id="exForm" novalidate class="row" style="align-items:end">
       <label class="f" style="flex:1;min-width:200px"><span id="exNomL">Nombre del comensal</span><input id="exNom" autocomplete="off" placeholder="Ej.: Visitante del SAG"></label>
       <label class="f">Almuerzos<select id="exCant"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
@@ -397,17 +423,53 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
       <button class="btn primary" type="submit">Registrar y emitir ticket</button>
     </form>
     <span id="exMsg" class="small"></span>
-    <div><b class="small">Registrados hoy</b><ul class="avisos" id="exHoy" style="margin-top:6px"></ul></div>
   </div>
-  <div class="panel row" style="align-items:end">
-    <label class="f">Desde<input type="date" id="detDesde"></label>
-    <label class="f">Hasta<input type="date" id="detHasta"></label>
-    <label class="f" style="flex:1;min-width:200px">Buscar<input id="detQ" placeholder="Nombre, RUT, unidad o ID de ticket" autocomplete="off"></label>
-    <label class="f">Estado<select id="detEstado"><option value="">Todos</option><option>Válido</option><option>Anulado</option></select></label>
-    <div class="row" style="gap:6px"><button class="btn small" data-rango="hoy">Hoy</button><button class="btn small" data-rango="semana">Esta semana</button><button class="btn small" data-rango="mes">Este mes</button></div>
+  <div class="panel" id="regCont" hidden style="display:grid;gap:10px">
+    <div class="row spread"><h3>Planilla de contingencia <span class="pill neu">Propuesta</span></h3><button type="button" class="btn small" data-cerrar>Cerrar</button></div>
+    <p class="small muted" style="margin:0">Si el sistema completo no está disponible: 1) imprima la planilla y registre a mano RUT, nombre, hora y firma de cada persona; 2) cuando el sistema vuelva, cárguela aquí. Cada fila queda como registro manual con motivo «Planilla de contingencia» y entra al descuento del mes.</p>
+    <div class="row"><button type="button" class="btn small" id="contPlanilla">Descargar planilla en blanco (CSV)</button></div>
+    <form id="contForm" novalidate class="row" style="align-items:end">
+      <label class="f">Día de la planilla<input type="date" id="contFecha"></label>
+      <label class="f" style="flex:1;min-width:260px">Filas: RUT;hora (una por línea)<textarea id="contTxt" rows="3">15.998.877-5;13:10
+16.789.123-3;13:22</textarea></label>
+      <button class="btn" type="submit">Cargar planilla</button>
+    </form>
+    <span id="contMsg" class="small"></span>
   </div>
-  <div class="row spread"><span id="detCount" class="small muted"></span><button class="btn" id="detCopiar">Copiar detalle</button></div>
-  <div class="tablebox"><table><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th class="num">Almuerzos</th><th>Nombre completo</th><th>RUT</th><th>Unidad</th><th>Validación</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="detBody"></tbody></table></div>
+  <form class="panel" id="nuevoForm" hidden>
+    <div class="row spread"><h3>Agregar persona</h3><button type="button" class="btn small" data-cerrar>Cerrar</button></div>
+    <div class="row" style="margin-top:10px;align-items:end">
+      <label class="f">RUT<input id="nRut" placeholder="12.345.678-5" style="width:160px" autocomplete="off"></label>
+      <label class="f" style="flex:1;min-width:200px">Nombre completo<input id="nNombre" autocomplete="off"></label>
+      <label class="f">Unidad<input id="nUnidad" style="width:200px" autocomplete="off"></label>
+      <label class="f">Calidad jurídica<select id="nTipo"><option>Dotación</option><option>Plazo fijo</option><option>Honorarios</option></select></label>
+      <label class="f">Grado<input id="nGrado" type="number" min="1" max="30" style="width:90px"></label>
+      <label class="f" id="nTramoL" hidden>Tramo<select id="nTramo"><option value="">Asignar después</option><option value="1">Tramo 1</option><option value="2">Tramo 2</option><option value="3">Tramo 3</option></select></label>
+      <button class="btn primary" type="submit">Guardar</button>
+    </div>
+    <p class="small muted" id="nMsg" style="margin:8px 0 0">Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT.</p>
+  </form>
+  <form class="panel" id="masivaForm" hidden>
+    <div class="row spread"><h3>Carga masiva</h3><button type="button" class="btn small" data-cerrar>Cerrar</button></div>
+    <p class="small muted" style="margin:4px 0 8px">Pegue filas copiadas desde Excel: RUT, nombre, unidad, calidad jurídica (Dotación, Plazo fijo u Honorarios) y grado (separadas por tabulación o punto y coma). Solo Dotación tiene grado; para Plazo fijo y Honorarios el tramo se asigna después en la tabla.</p>
+    <textarea id="masivaTxt" rows="4">16.459.212-K;Ejemplo Persona Uno;Gerencia de Finanzas;Dotación;13
+9.877.512-9;Ejemplo Persona Dos;Fiscalía;PLAZO FIJO;</textarea>
+    <div class="row" style="margin-top:8px"><button class="btn primary" type="submit">Validar e importar</button><span id="masivaMsg" class="small"></span></div>
+  </form>
+  <form class="panel" id="menuExcForm" novalidate hidden style="display:grid;gap:10px">
+    <div><div class="row spread"><h3>Cambio de menú por excepción</h3><button type="button" class="btn small" data-cerrar>Cerrar</button></div><p class="small muted" style="margin:2px 0 0">Para casos justificados fuera del plazo del funcionario, como un ingreso nuevo o una indicación médica. No registre diagnósticos: basta el motivo general.</p></div>
+    <div class="row" style="align-items:end">
+      <label class="f">RUT<input id="meRut" placeholder="12.345.678-5" style="width:160px" autocomplete="off"></label>
+      <label class="f">Mes<select id="meMes"></select></label>
+      <label class="f">Menú<select id="meMenu"></select></label>
+      <label class="f">Motivo<select id="meMotivo"><option>Ingreso nuevo</option><option>Indicación médica</option><option>Otro</option></select></label>
+      <button class="btn primary" type="submit">Registrar cambio</button>
+    </div>
+    <span id="meMsg" class="small"></span>
+    <div class="tablebox"><table><thead><tr><th>Registrado</th><th>Persona</th><th>Mes</th><th>Cambio</th><th>Motivo</th></tr></thead><tbody id="meBody"></tbody></table></div>
+  </form>
+  <div class="tablebox"><table class="com"><thead><tr><th>Nombre completo</th><th>RUT</th><th>Unidad</th><th>Tramo</th><th>Pago</th><th class="num">Almuerzos</th><th>Último ingreso</th><th>Estado</th><th aria-label="Abrir"></th></tr></thead><tbody id="comBody"></tbody></table></div>
+  <div class="panel" style="display:grid;gap:8px"><div class="row spread"><h3>Externos y visitas del período</h3><span class="small muted" id="comExtN"></span></div><ul class="avisos" id="comExt"></ul></div>
 </section>
 
 <!-- CIERRES -->
@@ -431,46 +493,6 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 </section>
 
 <!-- HABILITADOS -->
-<section class="view" id="v-habilitados" data-label="Personas habilitadas" hidden>
-  <div><h2>Personas habilitadas</h2><p class="lead">Solo quien está habilitado puede obtener ticket. El Jefe Casino habilita, suspende y asigna el tramo a quienes no tienen grado.</p></div>
-  <div class="row spread">
-    <input id="habBuscar" placeholder="Buscar por nombre, RUT o unidad" style="flex:1;max-width:360px">
-    <div class="row"><button class="btn" id="btnNuevo">Agregar persona</button><button class="btn" id="btnMasiva">Carga masiva</button><button class="btn" id="btnMenuExc">Cambio de menú por excepción</button></div>
-  </div>
-  <form class="panel" id="nuevoForm" hidden>
-    <h3>Agregar persona</h3>
-    <div class="row" style="margin-top:10px;align-items:end">
-      <label class="f">RUT<input id="nRut" placeholder="12.345.678-5" style="width:160px" autocomplete="off"></label>
-      <label class="f" style="flex:1;min-width:200px">Nombre completo<input id="nNombre" autocomplete="off"></label>
-      <label class="f">Unidad<input id="nUnidad" style="width:200px" autocomplete="off"></label>
-      <label class="f">Calidad jurídica<select id="nTipo"><option>Dotación</option><option>Plazo fijo</option><option>Honorarios</option></select></label>
-      <label class="f">Grado<input id="nGrado" type="number" min="1" max="30" style="width:90px"></label>
-      <label class="f" id="nTramoL" hidden>Tramo<select id="nTramo"><option value="">Asignar después</option><option value="1">Tramo 1</option><option value="2">Tramo 2</option><option value="3">Tramo 3</option></select></label>
-      <button class="btn primary" type="submit">Guardar</button>
-    </div>
-    <p class="small muted" id="nMsg" style="margin:8px 0 0">Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT.</p>
-  </form>
-  <form class="panel" id="masivaForm" hidden>
-    <h3>Carga masiva</h3>
-    <p class="small muted" style="margin:4px 0 8px">Pegue filas copiadas desde Excel: RUT, nombre, unidad, calidad jurídica (Dotación, Plazo fijo u Honorarios) y grado (separadas por tabulación o punto y coma). Solo Dotación tiene grado; para Plazo fijo y Honorarios el tramo se asigna después en la tabla.</p>
-    <textarea id="masivaTxt" rows="4">16.459.212-K;Ejemplo Persona Uno;Gerencia de Finanzas;Dotación;13
-9.877.512-9;Ejemplo Persona Dos;Fiscalía;PLAZO FIJO;</textarea>
-    <div class="row" style="margin-top:8px"><button class="btn primary" type="submit">Validar e importar</button><span id="masivaMsg" class="small"></span></div>
-  </form>
-  <form class="panel" id="menuExcForm" novalidate hidden style="display:grid;gap:10px">
-    <div><h3>Cambio de menú por excepción</h3><p class="small muted" style="margin:2px 0 0">Para casos justificados fuera del plazo del funcionario, como un ingreso nuevo o una indicación médica. No registre diagnósticos: basta el motivo general.</p></div>
-    <div class="row" style="align-items:end">
-      <label class="f">RUT<input id="meRut" placeholder="12.345.678-5" style="width:160px" autocomplete="off"></label>
-      <label class="f">Mes<select id="meMes"></select></label>
-      <label class="f">Menú<select id="meMenu"></select></label>
-      <label class="f">Motivo<select id="meMotivo"><option>Ingreso nuevo</option><option>Indicación médica</option><option>Otro</option></select></label>
-      <button class="btn primary" type="submit">Registrar cambio</button>
-    </div>
-    <span id="meMsg" class="small"></span>
-    <div class="tablebox"><table><thead><tr><th>Registrado</th><th>Persona</th><th>Mes</th><th>Cambio</th><th>Motivo</th></tr></thead><tbody id="meBody"></tbody></table></div>
-  </form>
-  <div class="tablebox"><table><thead><tr><th>Nombre</th><th>RUT</th><th>Unidad</th><th>Calidad</th><th>Grado</th><th>Tramo</th><th>Forma de pago</th><th>Habilitado</th></tr></thead><tbody id="habBody"></tbody></table></div>
-</section>
 
 <!-- REPORTES -->
 <section class="view" id="v-reportes" data-label="Reportes" hidden>
@@ -510,7 +532,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <p class="small muted" style="margin:14px 0 0">Los cambios se aplican de inmediato en la terminal. Cada persona puede obtener un solo ticket al día (los almuerzos con invitados van en ese mismo ticket). El plazo del menú mensual es un valor de ejemplo que define Bienestar; los avisos de ausencia e invitaciones se aceptan hasta las 23:59 del día anterior. La hora simulada permite probar la regla de horario sin esperar al mediodía.</p>
   </div>
   <div class="panel" style="display:grid;gap:12px">
-    <div><h3>Valor del almuerzo por tramo</h3><p class="small muted" style="margin:2px 0 0">El tramo se define por el grado del funcionario. Quienes no tienen grado (plazo fijo y honorarios) reciben el tramo que asigna el Jefe Casino en «Personas habilitadas».</p></div>
+    <div><h3>Valor del almuerzo por tramo</h3><p class="small muted" style="margin:2px 0 0">El tramo se define por el grado del funcionario. Quienes no tienen grado (plazo fijo y honorarios) reciben el tramo que asigna el Jefe Casino en «Comensales».</p></div>
     <div class="tablebox"><table><thead><tr><th>Tramo</th><th>Desde grado</th><th>Hasta grado</th><th>Valor del almuerzo (CLP, ejemplo)</th><th class="num">Personas</th></tr></thead><tbody id="tramosBody"></tbody></table></div>
     <p class="small" id="tramosMsg" style="margin:0"></p>
     <p class="small muted" style="margin:0">Un cambio de valor aplica a los almuerzos que se registren desde ese momento. Los ya registrados conservan el valor con que se emitieron.</p>
@@ -535,7 +557,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
         <li><div><b>Almuerzos y menú</b><span>Cantidad de almuerzos («1 ALMUERZO», «2 ALMUERZOS» cuando hay invitados) y, en letra grande, el menú elegido para el mes: normal, hipocalórico o vegano, para que el personal lo sirva sin preguntar.</span></div></li>
         <li><div><b>Nombre completo</b><span>En mayúsculas y letra normal (sin negrita), para que el personal del casino confirme que quien entrega el ticket es su titular.</span></div></li>
         <li><div><b>Hora de emisión</b><span>Bajo el nombre, en letra mediana sin negrita.</span></div></li>
-        <li><div><b>ID único</b><span>Año y correlativo anual (por ejemplo, 2026-004812). Queda registrado en el detalle de ingresos del Jefe Casino, en «Mi casino» del funcionario y en el reporte mensual, para resolver reclamos. Una copia reimpresa conserva el mismo ID.</span></div></li>
+        <li><div><b>ID único</b><span>Año y correlativo anual (por ejemplo, 2026-004812). Queda registrado en «Comensales» del Jefe Casino, en «Mi casino» del funcionario y en el reporte mensual, para resolver reclamos. Una copia reimpresa conserva el mismo ID.</span></div></li>
       </ol></div>
       <div class="panel"><h3>Especificaciones de impresión</h3><ul class="tight">
         <li>Papel térmico de 80 mm, ancho de impresión de 72 mm (48 caracteres por línea).</li>
@@ -839,7 +861,7 @@ const nextN=()=>todays().length+1;
 const valid=(a,b)=>R.filter(r=>r.estado==="Válido"&&r.fecha>=a&&r.fecha<=b);
 
 /* ---- Perfiles y pestañas ---- */
-const PERF={casino:{nombre:"Jefe Casino",views:["menusem","plan","reportes","detalle","habilitados","configuracion","cierres","estadisticas"]},
+const PERF={casino:{nombre:"Jefe Casino",views:["menusem","plan","reportes","comensales","configuracion","cierres","estadisticas"]},
             bienestar:{nombre:"Jefa de Bienestar",views:["estadisticas","reportes","cierres"]},
             funcionario:{nombre:"Funcionario",views:["micasino"]},
             terminal:{nombre:"Terminal casino",views:["terminal","ticket"]}};
@@ -850,7 +872,7 @@ function buildTabs(){tabs.innerHTML="";PERF[perfil].views.forEach(id=>{const v=$
 function show(id,push){if(!PERF[perfil].views.includes(id))id=PERF[perfil].views[0];current=id;
   views.forEach(v=>v.hidden=v.id!=="v-"+id);tabs.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.id===id));
   if(push)try{history.replaceState(null,"","#"+id)}catch(e){}
-  ({estadisticas:renderEst,detalle:renderDet,reportes:renderRepo,habilitados:renderHab,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan,menusem:renderMenuSem})[id]?.();renderAlertas()}
+  ({estadisticas:renderEst,comensales:renderCom,reportes:renderRepo,terminal:renderScreen,ticket:renderTk,configuracion:renderTramos,cierres:renderCierres,micasino:renderMi,plan:renderPlan,menusem:renderMenuSem})[id]?.();renderAlertas()}
 const USR={casino:{n:"Rodrigo Salinas Vera",r:"Jefe Casino"},bienestar:{n:"María Fernanda Ortiz Lagos",r:"Jefa de Bienestar"},get funcionario(){return{n:P[4].nombre,r:"Funcionario/a"}},terminal:{n:"Terminal del casino",r:"Equipo del casino · Oficina Central"}};
 function pintarPerfil(){$("#perfilChips").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.perfil===perfil));$("#whoName").textContent=USR[perfil].n;$("#whoRol").textContent=USR[perfil].r}
 pintarPerfil();
@@ -985,20 +1007,10 @@ $("#demoList").addEventListener("click",e=>{const b=e.target.closest("button[dat
   const k=b.dataset.rut;let i=0;
   const tick=()=>{if(i<k.length){T.rut+=k[i++];renderScreen();setTimeout(tick,60)}else{checkRut();renderDemo()}};tick()});
 /* ---- Habilitados ---- */
-function renderHab(){
-  const q=$("#habBuscar").value.trim().toLowerCase();const qr=cleanRut(q);
-  const list=P.filter(p=>!q||p.nombre.toLowerCase().includes(q)||p.unidad.toLowerCase().includes(q)||(qr&&p.key.includes(qr)));
-  $("#habBody").innerHTML=list.map(p=>{const i=P.indexOf(p);
-    return `<tr><td>${esc(p.nombre)}</td><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.unidad)}</td><td>${esc(p.tipo)}</td><td class="num">${p.grado??"—"}</td>
-    <td>${p.grado!=null?`<span class="pill neu">Tramo ${tramoDe(p)??"?"}</span>`:`<select id="trm${i}" data-trm="${i}" class="${p.tramoManual?"":"sel-warn"}" aria-label="Tramo de ${esc(p.nombre)}"><option value="">Asignar…</option>${cfg.tramos.map(t=>`<option value="${t.n}" ${p.tramoManual===t.n?"selected":""}>Tramo ${t.n}</option>`).join("")}</select>`}</td>
-    <td><select data-pago="${i}" aria-label="Forma de pago de ${esc(p.nombre)}">${["Planilla","Efectivo mensual"].map(o=>`<option ${p.pago===o?"selected":""}>${o}</option>`).join("")}</select></td>
-    <td><label class="row" style="gap:6px"><input type="checkbox" id="hab${i}" data-hab="${i}" ${p.hab?"checked":""}> ${p.hab?"Sí":"No"}</label></td></tr>`}).join("")||`<tr><td colspan="8" class="muted">Sin resultados.</td></tr>`;
-}
-$("#habBuscar").addEventListener("input",renderHab);
-$("#habBody").addEventListener("change",e=>{if(e.target.dataset.pago!==undefined){const p=P[e.target.dataset.pago];p.pago=e.target.value;toast(`${p.nombre}: ${p.pago==="Planilla"?"descuento por planilla":"paga en efectivo cada mes"}`);return}if(e.target.dataset.trm!==undefined){const p=P[e.target.dataset.trm];p.tramoManual=Number(e.target.value)||null;renderHab();toast(p.tramoManual?`${p.nombre}: tramo ${p.tramoManual} asignado`:"Tramo quitado");return}const i=e.target.dataset.hab;if(i!==undefined){P[i].hab=e.target.checked;renderHab();renderDemo();toast(P[i].hab?"Persona habilitada":"Habilitación suspendida")}});
-$("#btnNuevo").onclick=()=>{$("#nuevoForm").hidden=!$("#nuevoForm").hidden;$("#masivaForm").hidden=true;$("#menuExcForm").hidden=true};
-$("#btnMasiva").onclick=()=>{$("#masivaForm").hidden=!$("#masivaForm").hidden;$("#nuevoForm").hidden=true;$("#menuExcForm").hidden=true};
-$("#btnMenuExc").onclick=()=>{const f=$("#menuExcForm");f.hidden=!f.hidden;$("#nuevoForm").hidden=true;$("#masivaForm").hidden=true;if(!f.hidden)renderMenuExc()};
+$("#comBody").addEventListener("change",e=>{const t=e.target;
+  if(t.dataset.pago!==undefined){const p=P[t.dataset.pago];p.pago=t.value;renderCom();toast(`${p.nombre}: ${p.pago==="Planilla"?"descuento por planilla":"paga en efectivo cada mes"}`);return}
+  if(t.dataset.trm!==undefined){const p=P[t.dataset.trm];p.tramoManual=Number(t.value)||null;renderCom();toast(p.tramoManual?`${p.nombre}: tramo ${p.tramoManual} asignado`:"Tramo quitado");return}
+  if(t.dataset.hab!==undefined){const p=P[t.dataset.hab];p.hab=t.checked;renderCom();renderDemo();toast(p.hab?"Persona habilitada":"Habilitación suspendida")}});
 function renderMenuExc(){const cm=ymOf(TODAY),nm=ymNext(cm);const lab=ym=>`${cap(MES[+ym.slice(5)-1])} ${ym.slice(0,4)}`;const v=$("#meMes").value;
   $("#meMes").innerHTML=[cm,nm].map(ym=>`<option value="${ym}">${lab(ym)}${ym===cm?" (mes actual)":""}</option>`).join("");if(v)$("#meMes").value=v;
   if(!$("#meMenu").options.length)$("#meMenu").innerHTML=MENUS.map(m=>`<option>${m}</option>`).join("");
@@ -1021,10 +1033,10 @@ function addPerson(rut,nombre,unidad,tipo,grado,tramo){const key=cleanRut(rut);i
 $("#nuevoForm").addEventListener("submit",e=>{e.preventDefault();const sinG=["Honorarios","Plazo fijo"].includes($("#nTipo").value);if(!sinG&&!$("#nGrado").value){$("#nMsg").innerHTML='<span style="color:var(--bad)">Indique el grado: define el tramo del almuerzo.</span>';return}
   const err=addPerson($("#nRut").value,$("#nNombre").value.trim(),$("#nUnidad").value.trim(),$("#nTipo").value,sinG?null:$("#nGrado").value,$("#nTramo").value);
   const m=$("#nMsg");if(err){m.innerHTML=`<span style="color:var(--bad)">No se pudo guardar: ${err}.</span>`;return}
-  m.innerHTML=`<span style="color:var(--ok)">Persona agregada y habilitada.</span>`;["#nRut","#nNombre","#nUnidad"].forEach(s=>$(s).value="");renderHab();renderDemo()});
+  m.innerHTML=`<span style="color:var(--ok)">Persona agregada y habilitada.</span>`;["#nRut","#nNombre","#nUnidad"].forEach(s=>$(s).value="");renderCom();renderDemo()});
 $("#masivaForm").addEventListener("submit",e=>{e.preventDefault();let ok=0;const errs=[];
   $("#masivaTxt").value.split(/\n/).map(l=>l.trim()).filter(Boolean).forEach((l,i)=>{const c=l.split(/\t|;/).map(x=>x.trim());const er=addPerson(c[0]||"",c[1],c[2],c[3],c[4]||null,null);if(er)errs.push(`fila ${i+1}: ${er}`);else ok++});
-  $("#masivaMsg").innerHTML=`<span style="color:var(--ok)">${ok} importada${ok===1?"":"s"}.</span> ${errs.length?`<span style="color:var(--bad)">${esc(errs.join(" · "))}</span>`:""}`;renderHab();renderDemo()});
+  $("#masivaMsg").innerHTML=`<span style="color:var(--ok)">${ok} importada${ok===1?"":"s"}.</span> ${errs.length?`<span style="color:var(--bad)">${esc(errs.join(" · "))}</span>`:""}`;renderCom();renderDemo()});
 
 /* ---- Estadísticas (ambos perfiles, solo cifras agregadas) ---- */
 const est={tipo:"mes",anc:TODAY};
@@ -1154,7 +1166,7 @@ function renderEst(){
   const arr=[...u].sort((a,b)=>b[1]-a[1]);const mx=arr[0]?.[1]||1;
   $("#estUni").innerHTML=arr.map(([n,v])=>`<div class="hb"><span>${esc(n)}</span><div class="hbbar"><i style="width:${v/mx*100}%"></i></div><b>${v.toLocaleString("es-CL")}</b><em>${Math.round(v/k.n*100)}%</em></div>`).join("")||'<p class="muted" style="margin:0">Sin consumo en el período.</p>';
   renderAfluencia(rows,k);
-  $("#estNota").textContent=perfil==="bienestar"?"Este perfil ve cifras agregadas. El detalle por trabajador está en Reportes, dentro del descuento por planilla.":"El detalle por persona de estos ingresos está en «Detalle de ingresos».";
+  $("#estNota").textContent=perfil==="bienestar"?"Este perfil ve cifras agregadas. El detalle por trabajador está en Reportes, dentro del descuento por planilla.":"El detalle por persona de estos ingresos está en «Comensales».";
 }
 $("#estTipo").addEventListener("click",e=>{const b=e.target.closest("[data-t]");if(!b)return;est.tipo=b.dataset.t;if(est.tipo==="dia"&&!habil(D(est.anc)))est.anc=mover("dia",est.anc,-1);renderEst()});
 $("#estPrev").onclick=()=>{est.anc=mover(est.tipo,est.anc,-1);renderEst()};
@@ -1162,40 +1174,90 @@ $("#estNext").onclick=()=>{est.anc=mover(est.tipo,est.anc,1);if(est.anc>TODAY)es
 $("#estHoy").onclick=()=>{est.anc=TODAY;renderEst()};
 $("#estFecha").addEventListener("change",e=>{if(e.target.value){est.anc=e.target.value>TODAY?TODAY:e.target.value;renderEst()}});
 
-/* ---- Detalle de ingresos (solo Jefe Casino) ---- */
-let anulando=null;const det={desde:TODAY,hasta:TODAY,q:"",estado:""};
-function detRows(){const q=det.q.trim().toLowerCase(),qr=cleanRut(q);
-  return R.filter(r=>r.fecha>=det.desde&&r.fecha<=det.hasta&&(!det.estado||r.estado===det.estado)&&(!q||(r.id||"").includes(q)||(p=>p.nombre.toLowerCase().includes(q)||p.unidad.toLowerCase().includes(q)||(qr.length>2&&p.key.includes(qr)))(byKey(r.key))))
-   .sort((a,b)=>a.fecha===b.fecha?(a.hora<b.hora?1:-1):(a.fecha<b.fecha?1:-1))}
-function renderDet(){renderExtras();
-  $("#detDesde").value=det.desde;$("#detHasta").value=det.hasta;$("#detEstado").value=det.estado;
-  const rows=detRows();const shown=rows.slice(0,300);const val=rows.filter(r=>r.estado==="Válido").length;
-  $("#detCount").textContent=`${rows.length.toLocaleString("es-CL")} registro${rows.length===1?"":"s"} · ${val.toLocaleString("es-CL")} válido${val===1?"":"s"}${rows.length>300?" · se muestran los 300 más recientes; «Copiar detalle» incluye todos":""}`;
-  $("#detBody").innerHTML=shown.map(r=>{const p=byKey(r.key);const i=R.indexOf(r);const hoy=r.fecha===TODAY;
-    const acc=r.estado!=="Válido"?`<span class="small muted">${esc(r.motivo||"")}</span>`:!hoy?'<span class="small muted">—</span>':anulando===i?
-      `<form class="inline-confirm" data-i="${i}"><input id="anMot${i}" placeholder="Motivo de anulación" required><button class="btn small danger">Confirmar</button><button type="button" class="btn small" data-cancel>Cancelar</button></form>`:
-      `<div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn small" data-copia="${i}">Reimprimir</button><button class="btn small danger" data-anular="${i}">Anular</button></div>`;
-    return `<tr class="${r.estado==="Anulado"?"anulado":""}"><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="num">${cantR(r)}</td><td>${esc(p.nombre)}</td><td class="mono">${fmtRut(r.key)}</td><td>${esc(p.unidad)}</td>
-    <td>${r.origen==="Manual"?`<span class="pill warn" title="${esc(r.motivo||"")}">Manual</span>`:`<span class="pill neu">${esc(r.origen)}</span>`}${r.conAviso?' <span class="pill warn" title="Había avisado que no almorzaría; el aviso se anuló al registrar el ingreso">Asistió pese a aviso</span>':""}</td>
-    <td>${r.estado==="Válido"?'<span class="pill ok">Válido</span>':'<span class="pill bad">Anulado</span>'}</td><td>${acc}</td></tr>`}).join("")||`<tr><td colspan="10" class="muted">Sin registros para los filtros elegidos.</td></tr>`;
+/* ---- Comensales (solo Jefe Casino): personas habilitadas + ingresos del período ---- */
+let anulando=null;const det={desde:TODAY,hasta:TODAY,q:"",filtro:"",abiertas:new Set()};
+const enPer=f=>f>=det.desde&&f<=det.hasta;
+function perRows(){return R.filter(r=>enPer(r.fecha))}
+function comLista(){const q=det.q.trim().toLowerCase(),qr=cleanRut(q);const rows=perRows();const por=new Map();rows.forEach(r=>{if(!por.has(r.key))por.set(r.key,[]);por.get(r.key).push(r)});
+  const L=P.map(p=>{const rr=(por.get(p.key)||[]).sort((a,b)=>a.fecha===b.fecha?(a.hora<b.hora?1:-1):(a.fecha<b.fecha?1:-1));const val=rr.filter(r=>r.estado==="Válido");return{p,rr,val,ult:val[0]}})
+   .filter(x=>{const p=x.p;if(q&&!(p.nombre.toLowerCase().includes(q)||p.unidad.toLowerCase().includes(q)||(qr.length>2&&p.key.includes(qr))||x.rr.some(r=>(r.id||"").includes(q))))return false;
+     return({"":1,con:x.val.length,sin:!x.val.length,anul:x.rr.some(r=>r.estado==="Anulado"),manual:x.rr.some(r=>r.origen==="Manual"),sintramo:!tramoDe(p),efm:p.pago==="Efectivo mensual",susp:!p.hab})[det.filtro]});
+  L.sort((a,b)=>a.ult&&b.ult?((b.ult.fecha+b.ult.hora)>(a.ult.fecha+a.ult.hora)?1:-1):a.ult?-1:b.ult?1:a.p.nombre.localeCompare(b.p.nombre,"es"));
+  if(/^\d{4}-\d{6}$/.test(q))L.forEach(x=>{if(x.rr.some(r=>(r.id||"").includes(q)))det.abiertas.add(x.p.key)});
+  return L}
+function accTk(r){const i=R.indexOf(r);const hoy=r.fecha===TODAY;
+  return r.estado!=="Válido"?`<span class="small muted">${esc(r.motivo||"")}</span>`:!hoy?'<span class="small muted">—</span>':anulando===i?
+    `<form class="inline-confirm" data-i="${i}"><input id="anMot${i}" placeholder="Motivo de anulación" required><button class="btn small danger">Confirmar</button><button type="button" class="btn small" data-cancel>Cancelar</button></form>`:
+    `<div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn small" data-copia="${i}">Reimprimir</button><button class="btn small danger" data-anular="${i}">Anular</button></div>`}
+function renderCom(){renderExtras();
+  $("#detDesde").value=det.desde;$("#detHasta").value=det.hasta;$("#detQ").value=det.q;$("#comFiltro").value=det.filtro;
+  const L=comLista();const shown=L.slice(0,300);const nAlm=L.reduce((a,x)=>a+sumCant(x.val),0),nCon=L.filter(x=>x.val.length).length,nAn=L.reduce((a,x)=>a+x.rr.filter(r=>r.estado==="Anulado").length,0);
+  $("#detCount").textContent=`${L.length.toLocaleString("es-CL")} persona${L.length===1?"":"s"} · ${nCon.toLocaleString("es-CL")} almorzaron · ${nAlm.toLocaleString("es-CL")} almuerzo${nAlm===1?"":"s"}${nAn?` · ${nAn} ticket${nAn===1?"":"s"} anulado${nAn===1?"":"s"}`:""}`;
+  $("#comBody").innerHTML=shown.map(({p,rr,val,ult})=>{const i=P.indexOf(p);const ab=det.abiertas.has(p.key);const t=tramoDe(p);
+    const est=[p.hab?'<span class="pill ok">Habilitado</span>':'<span class="pill bad">Suspendido</span>'];
+    if(rr.some(r=>r.origen==="Manual"))est.push('<span class="pill warn">Manual</span>');if(rr.some(r=>r.conAviso))est.push('<span class="pill warn" title="Había avisado que no almorzaría; el aviso se anuló al registrar el ingreso">Asistió pese a aviso</span>');if(rr.some(r=>r.estado==="Anulado"))est.push('<span class="pill bad">Anulado</span>');
+    let h=`<tr class="com-row${ab?" abierta":""}" data-abrir="${p.key}"><td><b>${esc(p.nombre)}</b></td><td class="mono">${fmtRut(p.key)}</td><td>${esc(p.unidad)}</td><td>${t?`<span class="pill neu">T${t}</span>`:'<span class="pill warn">Sin tramo</span>'}</td><td>${p.pago==="Planilla"?"Planilla":"Efectivo"}</td>
+      <td class="num">${sumCant(val)}</td><td class="mono small">${ult?(ult.fecha===TODAY?"hoy ":fmtD(ult.fecha).slice(0,5)+" ")+ult.hora:"—"}</td><td><div class="row" style="gap:4px">${est.join("")}</div></td><td><button class="com-abrir" aria-expanded="${ab}" aria-label="${ab?"Cerrar":"Abrir"} ${esc(p.nombre)}">${ab?"▾":"▸"}</button></td></tr>`;
+    if(ab)h+=`<tr class="com-sub"><td colspan="9"><div class="com-ficha">
+      <span>Calidad: <b>${esc(p.tipo)}</b></span><span>Grado: <b>${p.grado??"—"}</b></span>
+      <span>Tramo: ${p.grado!=null?`<b>Tramo ${t??"?"}</b>`:`<select data-trm="${i}" class="${p.tramoManual?"":"sel-warn"}" aria-label="Tramo de ${esc(p.nombre)}"><option value="">Asignar…</option>${cfg.tramos.map(x=>`<option value="${x.n}" ${p.tramoManual===x.n?"selected":""}>Tramo ${x.n}</option>`).join("")}</select>`}</span>
+      <span>Valor: <b>${t?clp(valorDe(p)):"—"}</b></span>
+      <span>Pago: <select data-pago="${i}" aria-label="Forma de pago de ${esc(p.nombre)}">${["Planilla","Efectivo mensual"].map(o=>`<option ${p.pago===o?"selected":""}>${o}</option>`).join("")}</select></span>
+      <label class="row" style="gap:6px"><input type="checkbox" data-hab="${i}" ${p.hab?"checked":""}> Habilitado</label>
+      <span>Menú del mes: <b>${esc(menuDe(p,TODAY))}</b></span>
+      <button class="btn small" data-ficha="${p.key}">Ficha CSV</button></div>
+      ${rr.length?`<div class="tablebox"><table class="com-tk"><thead><tr><th>ID ticket</th><th>Fecha</th><th>Hora</th><th class="num">Alm.</th><th>Menú</th><th>Validación</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${rr.map(r=>`<tr class="${r.estado==="Anulado"?"anulado":""}"><td class="mono">${r.id}</td><td class="mono">${fmtD(r.fecha)}</td><td class="mono">${r.hora}</td><td class="num">${cantR(r)}</td><td>${esc(r.menu||menuDe(p,r.fecha))}</td>
+        <td>${r.origen==="Manual"?`<span class="pill warn" title="${esc(r.motivo||"")}">Manual</span>`:`<span class="pill neu">${esc(r.origen)}</span>`}${r.conAviso?' <span class="pill warn">Asistió pese a aviso</span>':""}</td><td>${r.estado==="Válido"?'<span class="pill ok">Válido</span>':'<span class="pill bad">Anulado</span>'}</td><td>${accTk(r)}</td></tr>`).join("")}</tbody></table></div>`:'<p class="small muted" style="margin:0">Sin tickets en el período.</p>'}</td></tr>`;
+    return h}).join("")+(L.length>300?`<tr><td colspan="9" class="small muted">Se muestran 300 de ${L.length}. Use la búsqueda o el filtro.</td></tr>`:"")||`<tr><td colspan="9" class="muted">Sin personas para los filtros elegidos.</td></tr>`;
+  const ex=EXTRAS.filter(x=>enPer(x.fecha)).sort((a,b)=>a.id<b.id?1:-1);
+  $("#comExtN").textContent=ex.length?`${ex.reduce((a,x)=>a+x.cant,0)} almuerzos · ${clp(ex.filter(x=>x.tipo==="Efectivo").reduce((a,x)=>a+x.cant*x.valor,0))} en efectivo · ${clp(ex.filter(x=>x.tipo==="Visita").reduce((a,x)=>a+x.cant*x.valor,0))} en visitas`:"";
+  $("#comExt").innerHTML=ex.map(x=>`<li><span><span class="pill ${x.tipo==="Efectivo"?"warn":"neu"}">${x.tipo==="Efectivo"?"Efectivo":"Visita"}</span> <b>${esc(x.nombre)}</b> · ${x.cant} almuerzo${x.cant>1?"s":""} · ${clp(x.cant*x.valor)} · ${x.tipo==="Efectivo"?"Folio ":""}${esc(x.ref)} · ${x.fecha===TODAY?"hoy":fmtD(x.fecha)} ${x.hora} · <span class="mono">${x.id}</span></span></li>`).join("")||'<li class="muted">Sin registros en el período.</li>';
 }
-["detDesde","detHasta"].forEach(id=>$("#"+id).addEventListener("change",e=>{det[id==="detDesde"?"desde":"hasta"]=e.target.value||TODAY;if(det.desde>det.hasta)[det.desde,det.hasta]=[det.hasta,det.desde];renderDet()}));
-$("#detQ").addEventListener("input",e=>{det.q=e.target.value;renderDet()});
-$("#detEstado").addEventListener("change",e=>{det.estado=e.target.value;renderDet()});
-document.querySelectorAll("[data-rango]").forEach(b=>b.onclick=()=>{const r=b.dataset.rango;det.hasta=TODAY;det.desde=r==="hoy"?TODAY:periodo(r,TODAY).a;renderDet()});
-$("#detCopiar").onclick=()=>{const rows=detRows();copiar(["ID ticket\tFecha\tHora\tAlmuerzos\tNombre completo\tRUT\tUnidad\tValidación\tEstado\tMotivo"].concat(rows.map(r=>{const p=byKey(r.key);return[r.id,fmtD(r.fecha),r.hora,cantR(r),p.nombre,fmtRut(r.key),p.unidad,r.origen,r.estado,r.motivo||""].join("\t")})).join("\n"),`${rows.length.toLocaleString("es-CL")} registros copiados. Péguelos en Excel.`)};
-$("#detBody").addEventListener("click",e=>{const b=e.target;
-  if(b.dataset.copia){printTicket(R[+b.dataset.copia],true);toast("Copia enviada a la impresora del casino")}
-  else if(b.dataset.anular){anulando=+b.dataset.anular;renderDet();$("#anMot"+anulando)?.focus()}
-  else if(b.hasAttribute("data-cancel")){anulando=null;renderDet()}});
-$("#detBody").addEventListener("submit",e=>{e.preventDefault();const i=+e.target.dataset.i;const m=$("#anMot"+i).value.trim();if(!m)return;R[i].estado="Anulado";R[i].motivo=m;anulando=null;renderDet();toast("Ticket anulado. No se descontará.")});
+["detDesde","detHasta"].forEach(id=>$("#"+id).addEventListener("change",e=>{det[id==="detDesde"?"desde":"hasta"]=e.target.value||TODAY;if(det.desde>det.hasta)[det.desde,det.hasta]=[det.hasta,det.desde];renderCom()}));
+$("#detQ").addEventListener("input",e=>{det.q=e.target.value;renderCom();const el=$("#detQ");el.focus()});
+$("#comFiltro").addEventListener("change",e=>{det.filtro=e.target.value;renderCom()});
+document.querySelectorAll("[data-rango]").forEach(b=>b.onclick=()=>{const r=b.dataset.rango;det.hasta=TODAY;det.desde=r==="hoy"?TODAY:periodo(r,TODAY).a;renderCom()});
+/* menús desplegables y paneles de registro */
+function cerrarMenus(){document.querySelectorAll("#v-comensales .menu-pop").forEach(m=>m.hidden=true);document.querySelectorAll("#v-comensales [data-dd]").forEach(b=>b.setAttribute("aria-expanded","false"))}
+const PANELES=["regManual","regExtras","regCont","nuevoForm","masivaForm","menuExcForm"];
+function abrirPanel(id){PANELES.forEach(x=>$("#"+x).hidden=x!==id);if(id==="menuExcForm")renderMenuExc();if(id==="regCont"){$("#contFecha").max=TODAY;if(!$("#contFecha").value)$("#contFecha").value=TODAY}
+  const el=$("#"+id);el.scrollIntoView({block:"nearest",behavior:"smooth"});el.querySelector("input:not([readonly]),select,textarea")?.focus({preventScroll:true})}
+$("#v-comensales").addEventListener("click",e=>{const dd=e.target.closest("[data-dd]");
+  if(dd){const pop=$(`[data-pop="${dd.dataset.dd}"]`);const ab=pop.hidden;cerrarMenus();pop.hidden=!ab;dd.setAttribute("aria-expanded",ab);if(ab)pop.querySelector("button").focus();return}
+  const a=e.target.closest("[data-abre]");if(a){cerrarMenus();if(a.dataset.ex){exTipo=a.dataset.ex;$("#exMsg").textContent="";renderExtras()}abrirPanel(a.dataset.abre);return}
+  if(e.target.closest("[data-cerrar]")){e.target.closest(".panel").hidden=true;return}
+  const c=e.target.closest("[data-crep]");if(c){cerrarMenus();comReporte(c.dataset.crep);return}
+  const f=e.target.closest("[data-ficha]");if(f){comReporte("ficha",f.dataset.ficha);return}});
+$("#v-comensales").addEventListener("keydown",e=>{if(e.key==="Escape")cerrarMenus()});
+document.addEventListener("click",e=>{if(!e.target.closest("#v-comensales .menu-wrap"))cerrarMenus()});
+function comReporte(tipo,key){const per=`${fmtD(det.desde)} a ${fmtD(det.hasta)}`,sfx=det.desde===det.hasta?det.desde:`${det.desde}_${det.hasta}`;let filas,nombre;
+  const tkCols=["ID ticket","Fecha","Hora","Almuerzos","Menú","Validación","Estado","Motivo","Valor unitario","Monto"];
+  const tkFila=r=>{const p=byKey(r.key);const v=r.estado==="Válido";return[r.id,fmtD(r.fecha),r.hora,cantR(r),r.menu||menuDe(p,r.fecha),r.origen,r.estado,r.motivo||"",v?montoR(r)/cantR(r):0,v?montoR(r):0]};
+  if(tipo==="ing"){const rr=perRows().sort((a,b)=>a.id<b.id?-1:1);
+    filas=[["Ingresos del período",per],[],["ID ticket","Fecha","Hora","Almuerzos","Nombre completo","RUT","Unidad","Tramo","Forma de pago","Validación","Estado","Motivo","Monto"]].concat(rr.map(r=>{const p=byKey(r.key);return[r.id,fmtD(r.fecha),r.hora,cantR(r),p.nombre,fmtRut(r.key),p.unidad,tramoDe(p)??"",p.pago,r.origen,r.estado,r.motivo||"",r.estado==="Válido"?montoR(r):0]}));nombre=`ingresos_${sfx}.csv`}
+  else if(tipo==="nom"){filas=[["Nómina de habilitados",`Al ${fmtD(TODAY)}`],[],["Nombre completo","RUT","Unidad","Calidad jurídica","Grado","Tramo","Valor por almuerzo","Forma de pago","Habilitado"]].concat(P.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre,"es")).map(p=>[p.nombre,fmtRut(p.key),p.unidad,p.tipo,p.grado??"",tramoDe(p)??"",tramoDe(p)?valorDe(p):"",p.pago,p.hab?"Sí":"No"]));nombre=`nomina_habilitados_${TODAY}.csv`}
+  else if(tipo==="ficha"){if(!key){const ab=[...det.abiertas];const L=comLista();key=ab.length===1?ab[0]:L.length===1?L[0].p.key:null}
+    if(!key){$("#comMsg").innerHTML='<span style="color:var(--warn)">Abra una sola persona en la tabla (o búsquela) y vuelva a elegir «Ficha por persona».</span>';return}
+    const p=byKey(key);const rr=perRows().filter(r=>r.key===key).sort((a,b)=>a.id<b.id?-1:1);const v=rr.filter(r=>r.estado==="Válido");
+    filas=[["Ficha por persona",per],["Nombre completo",p.nombre],["RUT",fmtRut(p.key)],["Unidad",p.unidad],["Calidad jurídica",p.tipo],["Tramo",tramoDe(p)??"Sin tramo"],["Forma de pago",p.pago],["Habilitado",p.hab?"Sí":"No"],[],tkCols].concat(rr.map(tkFila),[["","","Total",sumCant(v),"","","","","",sumaM(v)]]);nombre=`ficha_${cleanRut(p.key)}_${sfx}.csv`}
+  else{const ex=EXTRAS.filter(x=>enPer(x.fecha)).sort((a,b)=>a.id<b.id?-1:1);
+    filas=[["Externos y visitas",per],[],["Tipo","ID ticket","Fecha","Hora","Comensal o visita","Folio o cuenta","Almuerzos","Valor unitario","Monto","Registró"]].concat(ex.map(x=>[x.tipo==="Efectivo"?"Venta en efectivo":"Visita institucional",x.id,fmtD(x.fecha),x.hora,x.nombre,x.ref,x.cant,x.valor,x.cant*x.valor,x.por]),[["","","","","Total","",ex.reduce((a,x)=>a+x.cant,0),"",ex.reduce((a,x)=>a+x.cant*x.valor,0),""]]);nombre=`externos_visitas_${sfx}.csv`}
+  descargarCsv(nombre,csvTxt(filas),"#comMsg")}
+$("#comBody").addEventListener("click",e=>{const b=e.target;
+  if(b.hasAttribute("data-cancel")){anulando=null;renderCom();return}
+  if(b.closest("select,input,form,label,[data-ficha]"))return;
+  if(b.dataset.copia){printTicket(R[+b.dataset.copia],true);toast("Copia enviada a la impresora del casino");return}
+  if(b.dataset.anular){anulando=+b.dataset.anular;renderCom();$("#anMot"+anulando)?.focus();return}
+  if(b.hasAttribute("data-cancel")){anulando=null;renderCom();return}
+  const row=b.closest("[data-abrir]");if(row){const k=row.dataset.abrir;det.abiertas.has(k)?det.abiertas.delete(k):det.abiertas.add(k);renderCom()}});
+$("#comBody").addEventListener("submit",e=>{e.preventDefault();const i=+e.target.dataset.i;const m=$("#anMot"+i).value.trim();if(!m)return;R[i].estado="Anulado";R[i].motivo=m;anulando=null;renderCom();toast("Ticket anulado. No se descontará.")});
 $("#manualForm").addEventListener("submit",e=>{e.preventDefault();const msg=$("#manMsg");const v=$("#manRut").value;
   if(!rutOk(v)){msg.innerHTML='<span style="color:var(--bad)">RUT no válido.</span>';return}
   const p=byKey(cleanRut(v));if(!p){msg.innerHTML='<span style="color:var(--bad)">No está en la nómina de habilitados.</span>';return}
   if(!p.hab){msg.innerHTML='<span style="color:var(--bad)">Habilitación suspendida.</span>';return}
   if(cierreEn(TODAY,hhmm(now()))){msg.innerHTML='<span style="color:var(--warn)">El casino está cerrado en este horario; no se registran almuerzos.</span>';return}
   const ya=todays().filter(r=>r.key===p.key&&r.estado==="Válido");if(ya.length){msg.innerHTML=`<span style="color:var(--warn)">Ya tiene el ticket N° ${ya[0].id} hoy.</span>`;return}
-  const r=emit(p,"Manual",$("#manMotivo").value);$("#manRut").value="";msg.innerHTML=`<span style="color:var(--ok)">Ticket N° ${r.id} emitido para ${esc(p.nombre)}.${r.conAviso?" Tenía aviso de ausencia para hoy: quedó anulado.":""}</span>`;det.desde=det.hasta=TODAY;renderDet()});
+  const r=emit(p,"Manual",$("#manMotivo").value);$("#manRut").value="";msg.innerHTML=`<span style="color:var(--ok)">Ticket N° ${r.id} emitido para ${esc(p.nombre)}.${r.conAviso?" Tenía aviso de ausencia para hoy: quedó anulado.":""}</span>`;det.desde=det.hasta=TODAY;renderCom()});
 $("#manRut").addEventListener("input",e=>{e.target.value=fmtRut(e.target.value)});
 
 /* ---- Propuestas: venta en efectivo, visitas institucionales y planilla de contingencia ---- */
@@ -1205,9 +1267,7 @@ function renderExtras(){$("#exTipo").querySelectorAll("button").forEach(b=>b.set
   const ef=exTipo==="Efectivo";$("#exNomL").textContent=ef?"Nombre del comensal":"Visita (institución o motivo)";$("#exNom").placeholder=ef?"Ej.: Visitante del SAG":"Ej.: Delegación INFOR";
   $("#exRefT").textContent=ef?"Folio (automático)":"Cuenta";$("#exRef").value=ef?folioSig(TODAY):"Dirección Ejecutiva";
   $("#exCostoT").textContent=ef?"A pagar en efectivo":"Con cargo a la cuenta";$("#exCosto").textContent=clp((+$("#exCant").value)*exValor());
-  const hoy=EXTRAS.filter(x=>x.fecha===TODAY);
-  $("#exHoy").innerHTML=hoy.map(x=>`<li><span><span class="pill ${x.tipo==="Efectivo"?"warn":"neu"}">${x.tipo==="Efectivo"?"Efectivo":"Visita"}</span> <b>${esc(x.nombre)}</b> · ${x.cant} almuerzo${x.cant>1?"s":""} · ${clp(x.cant*x.valor)} · ${x.tipo==="Efectivo"?"Folio ":""}${esc(x.ref)} · ${x.hora} · <span class="mono">${x.id}</span></span></li>`).join("")||'<li class="muted">Sin registros hoy.</li>';
-  $("#contFecha").max=TODAY;if(!$("#contFecha").value)$("#contFecha").value=TODAY}
+}
 $("#exTipo").addEventListener("click",e=>{const b=e.target.closest("[data-ex]");if(!b)return;exTipo=b.dataset.ex;$("#exMsg").textContent="";renderExtras()});
 $("#exCant").addEventListener("change",renderExtras);
 $("#exForm").addEventListener("submit",e=>{e.preventDefault();const m=$("#exMsg");const nombre=$("#exNom").value.trim(),ref=exTipo==="Efectivo"?folioSig(TODAY):"Dirección Ejecutiva",cant=+$("#exCant").value;
@@ -1215,7 +1275,7 @@ $("#exForm").addEventListener("submit",e=>{e.preventDefault();const m=$("#exMsg"
   const x={fecha:TODAY,hora:hhmm(now()),tipo:exTipo,nombre,cant,valor:exValor(),ref,por:USR.casino.n,id:nextId(TODAY)};EXTRAS.push(x);
   tkPerson={key:"",nombre};tkId=x.id;tkHora=x.hora;tkCopia=false;tkCant=cant;tkMenu="Normal";tkEtq=exTipo==="Efectivo"?"PAGADO EN EFECTIVO":"VISITA · DIRECCIÓN EJECUTIVA";tkFolio=exTipo==="Efectivo"?ref:"";setPrinter("Ticket emitido","ok");
   m.innerHTML=`<span style="color:var(--ok)">Ticket N° ${x.id} emitido (${exTipo==="Efectivo"?`pagado en efectivo, ${clp(cant*x.valor)}, folio ${ref}`:"visita con cargo a la Dirección Ejecutiva"}).</span>`;
-  $("#exNom").value="";renderExtras();toast("Ticket enviado a la impresora del casino")});
+  $("#exNom").value="";renderCom();toast("Ticket enviado a la impresora del casino")});
 $("#contPlanilla").addEventListener("click",()=>descargarCsv(`planilla_contingencia_${TODAY}.csv`,csvTxt([["Planilla de contingencia · Casino Institucional",`Fecha: ____/____/______`],[],["N°","RUT","Nombre completo","Hora","Firma"]].concat(Array.from({length:40},(_,i)=>[i+1,"","","",""]))),"#contMsg"));
 $("#contForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#contFecha").value,m=$("#contMsg");
   if(!f||f>TODAY){m.innerHTML='<span style="color:var(--bad)">Elija el día de la planilla (hoy o antes).</span>';return}
@@ -1224,7 +1284,7 @@ $("#contForm").addEventListener("submit",e=>{e.preventDefault();const f=$("#cont
     if(!/^\d{1,2}:\d{2}$/.test(hora||"")){errs.push(`fila ${i+1}: hora no válida`);return}
     if(R.some(r=>r.key===p.key&&r.fecha===f&&r.estado==="Válido")){errs.push(`fila ${i+1}: ${p.nombre} ya tiene ticket ese día`);return}
     const iv=invDe(p,f);R.push({n:0,id:nextId(f),fecha:f,hora:hora.padStart(5,"0"),key:p.key,valor:valorDe(p),cant:iv?iv.cant:1,menu:menuDe(p,f),origen:"Manual",estado:"Válido",motivo:"Planilla de contingencia"});ok++});
-  m.innerHTML=`<span style="color:var(--ok)">${ok} registro${ok===1?"":"s"} cargado${ok===1?"":"s"} como «Planilla de contingencia».</span> ${errs.length?`<span style="color:var(--bad)">${esc(errs.join(" · "))}</span>`:""}`;det.desde=det.hasta=f;renderDet()});
+  m.innerHTML=`<span style="color:var(--ok)">${ok} registro${ok===1?"":"s"} cargado${ok===1?"":"s"} como «Planilla de contingencia».</span> ${errs.length?`<span style="color:var(--bad)">${esc(errs.join(" · "))}</span>`:""}`;det.desde=det.hasta=f;renderCom()});
 
 /* ---- Reportes (Jefe Casino emite y envía; Jefa de Bienestar consulta y copia) ---- */
 let repMes=`${YEAR}-${pad(today.getMonth())}`;if(today.getMonth()===0)repMes=`${YEAR}-01`;
@@ -1249,16 +1309,16 @@ function renderRepo(){
   $("#repEstado").innerHTML=`<div>${estado}</div><div class="row" style="flex-direction:column;align-items:flex-end;gap:4px">${acc}<span class="small" id="repMsg"></span></div>`;
   const total=rows.reduce((a,x)=>a+x.monto,0);const sinT=rows.filter(x=>!tramoDe(x.p));
   const porT=cfg.tramos.map(t=>{const rr=rows.filter(x=>tramoDe(x.p)===t.n);return`T${t.n}: ${rr.length}`}).join(" · ");
-  $("#repStats").innerHTML=[["Almuerzos del mes",sumCant(val).toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Personas habilitadas antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
+  $("#repStats").innerHTML=[["Almuerzos del mes",sumCant(val).toLocaleString("es-CL"),""],["Trabajadores con descuento",rows.length,porT+" personas"],["Sin tramo asignado",sinT.length,sinT.length?"asígnelo en Comensales antes de emitir":"todos con tramo"],["Total a descontar",clp(total),""]]
     .map(([a,b,c],i)=>`<div class="stat ${i===2&&sinT.length?"stat-warn":""}"><span>${a}</span><b>${b}</b>${c?`<small>${c}</small>`:""}</div>`).join("");
   // revisión antes de emitir
   const anul=R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Anulado").length,man=val.filter(r=>r.origen==="Manual").length;
   const puedeHab=PERF[perfil].views.includes("habilitados");
   const chk=[[enCurso?"warn":"ok",enCurso?`El mes está en curso (datos al ${fmtD(TODAY)}): conviene emitir después del último día hábil.`:"Mes cerrado: los datos están completos."],
-    [sinT.length?"warn":"ok",sinT.length?`${sinT.length} persona${sinT.length===1?"":"s"} con almuerzos y sin tramo asignado (${sinT.slice(0,3).map(x=>esc(x.p.nombre)).join(", ")}${sinT.length>3?"…":""}): su almuerzo no tiene valor.${puedeHab?' <button class="link" data-ir="habilitados">Asignar tramo</button>':""}`:"Todas las personas con almuerzos tienen tramo asignado."],
+    [sinT.length?"warn":"ok",sinT.length?`${sinT.length} persona${sinT.length===1?"":"s"} con almuerzos y sin tramo asignado (${sinT.slice(0,3).map(x=>esc(x.p.nombre)).join(", ")}${sinT.length>3?"…":""}): su almuerzo no tiene valor.${puedeHab?' <button class="link" data-ir="comensales" data-filtro="sintramo">Asignar tramo</button>':""}`:"Todas las personas con almuerzos tienen tramo asignado."],
     [anul?"info":"ok",anul?`${anul} ticket${anul===1?"":"s"} anulado${anul===1?"":"s"} en el mes: no se descuentan.`:"Sin tickets anulados."],
     ...(()=>{const ef=new Set(R.filter(r=>r.fecha.startsWith(ym)&&r.estado==="Válido"&&byKey(r.key).pago==="Efectivo mensual").map(r=>r.key)).size;return ef?[["info",`${ef} persona${ef===1?"":"s"} con pago en efectivo mensual quedan fuera del descuento: ver «Cobro mensual en efectivo».`]]:[]})(),
-    [man?"info":"ok",man?`${man} registro${man===1?"":"s"} manual${man===1?"":"es"} de contingencia: revise los motivos en Detalle de ingresos.`:"Sin registros manuales."]];
+    [man?"info":"ok",man?`${man} registro${man===1?"":"s"} manual${man===1?"":"es"} de contingencia: revise los motivos en Comensales (filtro «Con registro manual»).`:"Sin registros manuales."]];
   $("#repCheck").innerHTML=chk.map(([k,t])=>`<li class="chk-${k}"><span class="chk-ic" aria-hidden="true">${k==="ok"?"✓":k==="warn"?"!":"i"}</span><span>${t}</span></li>`).join("");
   // desglose por tramo
   const grupos=cfg.tramos.map(t=>({lbl:`Tramo ${t.n}<br><span class="muted small" style="white-space:nowrap">Grados ${t.desde} a ${t.hasta}</span>`,valor:clp(t.valor),xs:rows.filter(x=>tramoDe(x.p)===t.n)}));
@@ -1267,7 +1327,7 @@ function renderRepo(){
   $("#repTramosFoot").innerHTML=`<tr><td><b>Total</b></td><td></td><td class="num"><b>${rows.length}</b></td><td class="num"><b>${sumCant(val).toLocaleString("es-CL")}</b></td><td class="num"><b>${clp(total)}</b></td></tr>`;
 }
 $("#repMesSel").addEventListener("change",e=>{repMes=e.target.value;renderRepo()});
-$("#repCheck").addEventListener("click",e=>{const b=e.target.closest("[data-ir]");if(b)show(b.dataset.ir,true)});
+$("#repCheck").addEventListener("click",e=>{const b=e.target.closest("[data-ir]");if(!b)return;if(b.dataset.filtro){det.filtro=b.dataset.filtro;det.desde=TODAY.slice(0,8)+"01";det.hasta=TODAY}show(b.dataset.ir,true)});
 function repMenu(open){const m=$("#repMenu"),b=$("#repBtn");if(!m)return;m.hidden=!open;b.setAttribute("aria-expanded",open);if(open)m.querySelector("button").focus()}
 $("#repEstado").addEventListener("click",e=>{if(e.target.closest("#repBtn")){repMenu($("#repMenu").hidden);return}
   const it=e.target.closest("[data-rep]");if(!it)return;repMenu(false);const ym=repMes,mes=MES[+ym.slice(5)-1];let filas,nombre;
@@ -1468,7 +1528,7 @@ function reiniciar(){
   Object.assign(est,{tipo:"mes",anc:TODAY});Object.assign(det,{desde:TODAY,hasta:TODAY,q:"",estado:""});$("#detQ").value="";anulando=null;
   repMes=today.getMonth()===0?`${YEAR}-01`:`${YEAR}-${pad(today.getMonth())}`;
   ["#manMsg","#nMsg","#masivaMsg"].forEach(x=>{const e=$(x);if(e)e.textContent=""});$("#nMsg").textContent="Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT.";
-  ["#manRut","#habBuscar","#nRut","#nNombre","#nUnidad"].forEach(x=>{const e=$(x);if(e)e.value=""});
+  ["#manRut","#nRut","#nNombre","#nUnidad"].forEach(x=>{const e=$(x);if(e)e.value=""});
   ["#nuevoForm","#masivaForm","#copyBox","#menuExcForm"].forEach(x=>$(x).hidden=true);["#meRut"].forEach(x=>$(x).value="");$("#meMsg").textContent="";$("#tkCopia").checked=false;
   anulandoC=null;$("#ciMsg").textContent="";$("#ciDetalle").value="";$("#ciDesde").value=TODAY;$("#ciHasta").value=TODAY;$("#ciTipo").value="completo";
   planSel=null;["#miAusMsg","#miInvMsg"].forEach(x=>$(x).textContent="");["#miAusF","#miInvF"].forEach(x=>$(x).value="");
