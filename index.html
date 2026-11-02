@@ -250,7 +250,7 @@ ol.tk-ley li{display:flex;align-items:center;gap:6px;counter-increment:t}
 ol.tk-ley li::before{content:counter(t);width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:700 11px/18px var(--f-ui);text-align:center}
 .tk-lbl{font-weight:700}
 .tk-lbl.ok{color:var(--ok)} .tk-lbl.no{color:var(--bad)} .tk-lbl.pend{color:var(--warn)}
-.ticket.tk-no{opacity:.45;filter:grayscale(1)}
+.ticket.tk-vacio{display:grid;gap:6px;min-height:120px;align-content:center;color:var(--muted);border:1px dashed var(--line);box-shadow:none}
 .stat-warn{border-color:var(--warn);background:var(--warn-soft)}
 tr.row-warn td{background:var(--warn-soft)}
 select.sel-warn{border-color:var(--warn);color:var(--warn);font-weight:700}
@@ -931,8 +931,8 @@ function press(k){
   else if(/^[0-9K]$/.test(k)&&T.rut.length<9){if(k==="K"&&T.rut.length<7)return;if(T.rut.endsWith("K"))return;T.rut+=k}
   renderScreen();
 }
-function result(kind,title,text,nombre){if(kind!=="ok")noEmite(title,!nombre&&kind==="bad");T.step="res";T.result={kind,title,text,nombre};renderScreen();clearTimeout(resetTimer);resetTimer=setTimeout(resetT,kind==="ok"?9000:7000)}
-function resetT(){clearTimeout(resetTimer);Object.assign(T,{step:"rut",rut:"",result:null,err:null});renderScreen()}
+function result(kind,title,text,nombre){if(kind!=="ok")noEmite(title,!nombre&&kind==="bad");T.step="res";T.result={kind,title,text,nombre};renderScreen();verTerminal();clearTimeout(resetTimer);resetTimer=setTimeout(resetT,kind==="ok"?9000:7000)}
+function resetT(){clearTimeout(resetTimer);Object.assign(T,{step:"rut",rut:"",result:null,err:null});renderScreen();printerIdle()}
 /* Reglas: cierre, habilitación, horario y límite diario */
 function reglas(p){
   const ci=cierreEn(TODAY,hhmm(now()));if(ci){result("warn","Casino cerrado",`${esc(horarioC(ci)==="día completo"?"Cerrado todo el día":"Cerrado "+horarioC(ci))} por ${esc(ci.motivo.toLowerCase())}. No se registran almuerzos mientras dure el cierre.`);return false}
@@ -970,7 +970,13 @@ let tkPerson=null,tkHora="12:41",tkCopia=false,tkCant=1,tkMenu="Normal",tkId="";
 function setLbl(t,estado){const l=$("#printerLbl");l.textContent=t;l.className="small tk-lbl "+(estado||"")}
 function setPrinter(lbl,estado){setLbl(lbl,estado);
   const r={n:0,id:tkId,fecha:TODAY,hora:tkPerson?tkHora:"--:--",key:tkPerson?tkPerson.key:"",cant:tkCant,menu:tkMenu,origen:"Terminal"};
-  $("#ticketOut").innerHTML=ticketHTML(r,{persona:tkPerson||{nombre:"Persona no identificada"},anot:false,copia:tkCopia,copiaHora:hhmm(now()),cls:estado==="ok"?"in":estado==="no"?"tk-no":""})}
+  if(estado==="no"){$("#ticketOut").innerHTML=`<div class="ticket tk-vacio"><div class="c"><b>Sin ticket</b></div><div class="c">${esc(lbl.replace(/^No se emite ticket · /,""))}</div><div class="c small">La impresora no emitió nada.</div></div>`;return}
+  $("#ticketOut").innerHTML=ticketHTML(r,{persona:tkPerson||{nombre:"Persona no identificada"},anot:false,copia:tkCopia,copiaHora:hhmm(now()),cls:estado==="ok"?"in":""})}
+/* Impresora en espera: se usa al abrir la terminal y al volver al inicio tras cada persona (el ticket anterior ya se retiró) */
+function printerIdle(){tkPerson=null;tkId="";tkCopia=false;setLbl("En espera · sin ticket en curso","");$("#ticketOut").innerHTML=`<div class="ticket tk-vacio"><div class="c">Esperando el siguiente RUT</div></div>`}
+/* En pantallas chicas, lleva la terminal a la vista si quedó fuera (por ejemplo, al usar el simulador que está más abajo) */
+function verTerminal(){const sc=$(".screen");if(!sc||$("#v-terminal").hidden)return;const r=sc.getBoundingClientRect();const tope=($("nav.tabs")?.getBoundingClientRect().bottom||0)+8;
+  if(r.top<tope-4||r.top>innerHeight*0.55)window.scrollTo({top:scrollY+r.top-tope,behavior:"smooth"})}
 function previewPersona(p,lbl){tkPerson=p;tkId="";tkHora=hhmm(now());tkCopia=false;const iv=invDe(p,TODAY);tkCant=iv?iv.cant:1;tkMenu=menuDe(p,TODAY);setPrinter(lbl,"pend")}
 function noEmite(motivo,sinPersona){tkId="";if(sinPersona){tkPerson=null;tkCopia=false}setPrinter("No se emite ticket · "+motivo,"no")}
 function printTicket(r,copia){tkPerson=byKey(r.key);tkId=r.id||"";tkHora=r.hora;tkCopia=!!copia;tkCant=r.cant||1;tkMenu=r.menu||"Normal";setPrinter(copia?"Copia reimpresa":"Ticket emitido","ok")}
@@ -985,7 +991,7 @@ function renderDemo(){
    `<tr><td>RUT que no está en la nómina</td><td class="mono">${fmtRut("21654321"+dv(21654321))}</td><td><button class="btn small" data-rut="${"21654321"+dv(21654321)}">Digitar RUT</button></td></tr>
     <tr><td>RUT mal digitado</td><td class="mono">${fmtRut("152348712")}</td><td><button class="btn small" data-rut="152348712">Digitar RUT</button></td></tr>`}
 $("#demoList").addEventListener("click",e=>{const b=e.target.closest("button[data-rut]");if(!b)return;
-  if($("#v-terminal").hidden)show("terminal",true);resetT();
+  if($("#v-terminal").hidden)show("terminal",true);resetT();verTerminal();
   const k=b.dataset.rut;let i=0;
   const tick=()=>{if(i<k.length){T.rut+=k[i++];renderScreen();setTimeout(tick,60)}else{checkRut();renderDemo()}};tick()});
 /* ---- Habilitados ---- */
@@ -1441,7 +1447,7 @@ bind.forEach(([s,k,f])=>$(s).addEventListener("input",e=>{cfg[k]=f?f(e.target.va
 /* ---- Reiniciar maqueta ---- */
 function reiniciar(){
   seedAll();miSem=null;msSel=null;confirmPub=false;Object.assign(cfg,copiaCfg());bind.forEach(([sel,k])=>$(sel).value=cfg[k]);
-  clearTimeout(resetTimer);resetT();previewTicket();
+  clearTimeout(resetTimer);resetT();
   Object.assign(est,{tipo:"mes",anc:TODAY});Object.assign(det,{desde:TODAY,hasta:TODAY,q:"",estado:""});$("#detQ").value="";anulando=null;
   repMes=today.getMonth()===0?`${YEAR}-01`:`${YEAR}-${pad(today.getMonth())}`;
   ["#manMsg","#nMsg","#masivaMsg"].forEach(x=>{const e=$(x);if(e)e.textContent=""});$("#nMsg").textContent="Al guardar, la persona queda habilitada y puede registrar su almuerzo con su RUT.";
@@ -1456,7 +1462,7 @@ $("#resetNo").onclick=()=>{$("#resetConfirm").hidden=true;$("#btnReset").hidden=
 $("#resetOk").onclick=()=>{$("#resetConfirm").hidden=true;$("#btnReset").hidden=false;reiniciar()};
 
 $("#ciDesde").value=TODAY;$("#ciHasta").value=TODAY;
-renderDemo();previewTicket();buildTabs();show(location.hash.slice(1),false);
+renderDemo();printerIdle();buildTabs();show(location.hash.slice(1),false);
 })();
 </script>
 
