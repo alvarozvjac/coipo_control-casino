@@ -17,7 +17,7 @@ En el encabezado, el recuadro **«Maqueta · probar como»** cambia entre los cu
 |---|---|
 | Terminal casino | Equipo instalado en el casino: terminal (RUT digitado, emisión del ticket) y propuesta de ticket |
 | Funcionario | «Mi casino»: menú de la semana, selección del menú mensual (normal, hipocalórico o vegano), avisos de los días que no almorzará, almuerzos con invitados y reporte CSV |
-| Jefe Casino | Estadísticas, detalle de ingresos, planificación de raciones, menú semanal, emisión de reportes, cierres del casino, personas habilitadas (grado y tramo) y configuración |
+| Jefe Casino | Menú semanal, planificación de raciones, reportes, detalle de ingresos, personas habilitadas (grado y tramo), configuración, cierres del casino y estadísticas |
 | Jefa de Bienestar | Estadísticas agregadas, emisión de reportes y cierres del casino |
 
 **Terminal del casino:** la persona digita su RUT en un teclado numérico USB y presiona
