@@ -34,8 +34,9 @@ para una versión futura.
 **Ticket:** sigla CONAF, fecha y lugar; cantidad de almuerzos y menú; nombre completo en mayúsculas, hora e ID único (año y correlativo anual, por ejemplo 2026-004812). El ID se registra en el detalle de ingresos del Jefe Casino, en «Mi casino» del funcionario y en el detalle por ticket del reporte mensual; el detalle de ingresos permite buscar por ID.
 
 **Mi casino (funcionario):** en este orden, el menú de la semana publicado por el Jefe Casino
-(entrada, plato normal, hipocalórico y vegano, y postre); «Selecciona tu menú mensual» (normal,
-hipocalórico o vegano, hasta el día 25 del mes anterior); «Avisa los días que no almorzarás»
+(entrada, plato normal, hipocalórico y vegano, y postre); «Selecciona tu menú mensual», una
+tabla compacta con una lista desplegable por mes (normal, hipocalórico o vegano) que se guarda al
+elegir, hasta el día 25 del mes anterior; el mes vencido aparece «Cerrado»; «Avisa los días que no almorzarás»
 (un día o un rango, hasta las 23:59 del día anterior); «Almuerzo con invitados», con el monto
 que se descontará; y el reporte del mes en CSV para Excel (ID de ticket, fecha, hora, almuerzos,
 menú y monto). El aviso de ausencia sirve para planificar las raciones y no bloquea: si la

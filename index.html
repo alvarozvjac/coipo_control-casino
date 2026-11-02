@@ -265,7 +265,10 @@ select.sel-warn{border-color:var(--warn);color:var(--warn);font-weight:700}
 .col.cerr .bar::before{content:""}
 .who-big{font-size:24px;font-weight:700;color:var(--ink);margin:2px 0}
 .kp-note{display:block;font-family:var(--f-ui);font-size:11px;font-weight:400;color:var(--muted)}
-.menu-mes{display:grid;gap:6px}.menu-mes .seg button:disabled{cursor:not-allowed;opacity:.6}
+.mm{width:100%;border-collapse:collapse;font-size:14px}.mm th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:0 8px 6px 0;border-bottom:1px solid var(--line)}
+.mm td{padding:8px 8px 8px 0;border-bottom:1px solid var(--line);vertical-align:middle}.mm tr:last-child td{border-bottom:0}
+.mm select{width:100%;max-width:160px;padding:6px 8px;font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--surface,#fff);color:inherit}.mm select:disabled{opacity:.7;cursor:not-allowed}
+.mm small{display:block;color:var(--muted);margin-top:2px;white-space:nowrap}.mm td:last-child{white-space:nowrap}
 ul.avisos{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 ul.avisos li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;flex-wrap:wrap}
 .inv-form{display:grid;grid-template-columns:minmax(150px,200px) minmax(220px,300px) minmax(200px,1fr) auto;gap:14px;align-items:end}
@@ -556,8 +559,9 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
   </div>
   <div class="grid2">
     <div class="panel" style="display:grid;gap:12px;align-content:start">
-      <div><h3>Selecciona tu menú mensual</h3><p class="small muted" style="margin:2px 0 0">Elige el menú que recibirás todos los días del mes: normal, hipocalórico o vegano. Se elige mes a mes, hasta el día 25 del mes anterior.</p></div>
-      <div id="miMenu" style="display:grid;gap:12px"></div>
+      <div><h3>Selecciona tu menú mensual</h3><p class="small muted" style="margin:2px 0 0">Plazo: día 25 del mes anterior. El cambio se guarda al elegir.</p></div>
+      <table class="mm"><thead><tr><th>Mes</th><th>Menú</th><th>Estado</th></tr></thead><tbody id="miMenu"></tbody></table>
+      <p class="small muted" style="margin:0">Sin elección = <b>Normal</b>. Cambios fuera de plazo (ingreso nuevo, indicación médica): Jefe Casino.</p>
     </div>
     <div class="panel" style="display:grid;gap:12px;align-content:start">
       <div><h3>Avisa los días que no almorzarás</h3><p class="small muted" style="margin:2px 0 0">Si un día no usarás el casino (reunión, terreno, vacaciones), avísalo aquí hasta las 23:59 del día anterior, para que se preparen las raciones justas.</p></div>
@@ -1335,10 +1339,11 @@ function renderMi(){
   const mes=R.filter(r=>r.key===p.key&&r.estado==="Válido"&&r.fecha.startsWith(cm));
   // menú
   const opt=ym=>{const ed=menuEditable(ym);const v=MENU[p.key+"|"+ym]||"Normal";const ex=MENU_EXC.filter(x=>x.key===p.key&&x.ym===ym).pop();const def=!MENU[p.key+"|"+ym];
-    return `<div class="menu-mes"><b>${cap(MES[+ym.slice(5)-1])} ${ym.slice(0,4)}</b><div class="seg" role="group">${MENUS.map(m=>`<button type="button" data-menu="${ym}|${m}" aria-pressed="${v===m}" ${ed?"":"disabled"}>${m}</button>`).join("")}</div>
-    <small class="muted">${ex?`Cambiado por el Jefe Casino el ${esc(ex.cuando.slice(0,10))} (${esc(ex.motivo.toLowerCase())}). `:""}${def?"Aún no eliges: quedas con menú normal. ":""}${ed?`Puedes elegir o cambiar hasta el ${fmtD(menuLimite(ym))}.`:`Ya no se puede cambiar (plazo: ${fmtD(menuLimite(ym))}).`}</small></div>`};
+    const lbl=`${cap(MES[+ym.slice(5)-1])} ${ym.slice(0,4)}`;
+    return `<tr><td><b>${cap(MES[+ym.slice(5)-1])}</b><small>${ym.slice(0,4)}</small></td><td><select data-menu="${ym}" aria-label="Menú de ${lbl}" ${ed?"":"disabled"}>${MENUS.map(m=>`<option ${v===m?"selected":""}>${m}</option>`).join("")}</select>${def&&ed?'<small>Sin elegir</small>':""}</td>
+    <td>${ed?`<span class="pill ok">Abierto</span><small>hasta el ${fmtD(menuLimite(ym)).slice(0,5)}</small>`:'<span class="pill neu">Cerrado</span>'}${ex?`<small>Cambiado por el Jefe Casino (${esc(ex.motivo.toLowerCase())})</small>`:""}</td></tr>`};
   let ab=nm;while(!menuEditable(ab))ab=ymNext(ab);const mesesM=[cm,nm];if(ab!==nm)mesesM.push(ab);
-  $("#miMenu").innerHTML=mesesM.map(opt).join("")+`<p class="small muted" style="margin:0">Si no eliges, tu menú es <b>Normal</b>. Si necesitas un cambio fuera de plazo por un caso justificado (ingreso nuevo, indicación médica), pídeselo al Jefe Casino.</p>`;
+  $("#miMenu").innerHTML=mesesM.map(opt).join("");
   // avisos
   const min=avisoMin();["#miAusF","#miInvF"].forEach(s=>{$(s).min=min;if(!$(s).value||$(s).value<min)$(s).value=min});$("#miAusH").min=min;if($("#miAusH").value&&$("#miAusH").value<min)$("#miAusH").value="";
   renderMiSem(p);
@@ -1363,7 +1368,7 @@ async function descargarCsv(nombre,txt,msgSel){const m=$(msgSel);
 $("#miCsv").addEventListener("click",()=>{const p=YO(),ym=$("#miCsvMes").value;const rr=miCsvRows(ym);if(!rr.length)return;
   const filas=[["ID ticket","Fecha","Hora","Almuerzos","Menú","Valor unitario","Monto"]].concat(rr.map(r=>[r.id,fmtD(r.fecha),r.hora,cantR(r),r.menu||menuDe(p,r.fecha),montoR(r)/cantR(r),montoR(r)]),[["","","Total",sumCant(rr),"","",sumaM(rr)]]);
   descargarCsv(`casino_${cleanRut(p.key)}_${ym}.csv`,csvTxt(filas),"#miCsvMsg")});
-$("#miMenu").addEventListener("click",e=>{const b=e.target.closest("[data-menu]");if(!b||b.disabled)return;const[ym,m]=b.dataset.menu.split("|");MENU[YO().key+"|"+ym]=m;renderMi();toast(`Menú ${m.toLowerCase()} registrado para ${MES[+ym.slice(5)-1]}`)});
+$("#miMenu").addEventListener("change",e=>{const b=e.target.closest("select[data-menu]");if(!b||b.disabled)return;const ym=b.dataset.menu,m=b.value;MENU[YO().key+"|"+ym]=m;renderMi();toast(`Menú ${m.toLowerCase()} registrado para ${MES[+ym.slice(5)-1]}`)});
 function validarDia(f,msgSel){const m=$(msgSel);
   if(!f){m.innerHTML='<span style="color:var(--bad)">Elige una fecha.</span>';return false}
   if(f<avisoMin()){m.innerHTML=`<span style="color:var(--bad)">Se puede avisar hasta las 23:59 del día anterior: el primer día disponible es el ${fmtD(avisoMin())}.</span>`;return false}
@@ -1475,6 +1480,4 @@ $("#ciDesde").value=TODAY;$("#ciHasta").value=TODAY;
 renderDemo();printerIdle();buildTabs();show(location.hash.slice(1),false);
 })();
 </script>
-
-</body>
-</html>
+</body></html>
