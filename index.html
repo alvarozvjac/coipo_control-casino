@@ -526,7 +526,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
     <div class="stats" id="repStats"></div>
     <div class="grid2" style="gap:16px">
       <div style="display:grid;gap:8px;align-content:start"><h3>Revisión antes de emitir</h3><ul class="checks" id="repCheck"></ul></div>
-      <div style="display:grid;gap:8px;align-content:start"><h3>Desglose por tramo</h3>
+      <div style="display:grid;gap:8px;align-content:start"><h3>Desglose por nivel</h3>
         <div class="tablebox"><table><thead><tr><th>Nivel</th><th class="num">Valor</th><th class="num">Personas</th><th class="num">Almuerzos</th><th class="num">Monto</th></tr></thead><tbody id="repTramos"></tbody><tfoot id="repTramosFoot"></tfoot></table></div>
         <p class="small muted" style="margin:0">El detalle por trabajador y por ticket va en el «Reporte descuento mensual».</p></div>
     </div>
@@ -664,7 +664,7 @@ ul.tight{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
 <div class="panel" id="copyBox" hidden style="margin-top:20px"><div class="row spread"><h3>Texto para copiar</h3><button class="btn small" id="copyClose">Cerrar</button></div><p class="small muted">Seleccione todo (Ctrl+A) y cópielo (Ctrl+C) para pegarlo en Excel.</p><textarea id="copyTxt" rows="8" readonly></textarea></div>
 </main>
 <footer class="pie"><div class="wrap">
-  <span><b>Maqueta de validación.</b> Personas, RUT, grados, valores y registros son ficticios; nada se guarda: al recargar vuelve al estado inicial.</span>
+  <span><b>Maqueta de validación.</b> Personas, RUT, niveles y registros son ficticios; los valores por nivel son los informados por Bienestar; nada se guarda: al recargar vuelve al estado inicial.</span>
   <span class="row" style="gap:8px"><button class="link" id="btnReset" type="button">Reiniciar datos de prueba</button><span class="inline-confirm" id="resetConfirm" hidden><span class="small">¿Borrar los cambios y volver a los datos de prueba?</span><button class="btn small danger" id="resetOk" type="button">Reiniciar</button><button class="btn small" id="resetNo" type="button">Cancelar</button></span></span>
 </div></footer>
 <div class="toast" id="toast" hidden></div>
@@ -1498,7 +1498,7 @@ function renderRepo(){
     [man?"info":"ok",man?`${man} registro${man===1?"":"s"} manual${man===1?"":"es"} de contingencia: revise los motivos en Comensales (filtro «Con registro manual»).`:"Sin registros manuales."]];
   $("#repCheck").innerHTML=chk.map(([k,t])=>`<li class="chk-${k}"><span class="chk-ic" aria-hidden="true">${k==="ok"?"✓":k==="warn"?"!":"i"}</span><span>${t}</span></li>`).join("");
   // desglose por tramo
-  const grupos=cfg.tramos.map(t=>({lbl:`Nivel ${t.n}<br><span class="muted small" style="white-space:nowrap">Imponible ${rangoNiv(t)}</span>`,valor:clp(t.valor),xs:rows.filter(x=>tramoDe(x.p)===t.n)}));
+  const grupos=cfg.tramos.map(t=>({lbl:`Nivel ${t.n}<br><span class="muted small">Imponible ${rangoNiv(t)}</span>`,valor:clp(t.valor),xs:rows.filter(x=>tramoDe(x.p)===t.n)}));
   if(sinT.length)grupos.push({lbl:'<span class="pill warn">Sin nivel</span>',valor:"—",xs:sinT,warn:true});
   $("#repTramos").innerHTML=grupos.map(g=>`<tr class="${g.warn?"row-warn":""}"><td>${g.lbl}</td><td class="num">${g.valor}</td><td class="num">${g.xs.length}</td><td class="num">${g.xs.reduce((a,x)=>a+x.n,0).toLocaleString("es-CL")}</td><td class="num">${clp(g.xs.reduce((a,x)=>a+x.monto,0))}</td></tr>`).join("");
   $("#repTramosFoot").innerHTML=`<tr><td><b>Total</b></td><td></td><td class="num"><b>${rows.length}</b></td><td class="num"><b>${sumCant(val).toLocaleString("es-CL")}</b></td><td class="num"><b>${clp(total)}</b></td></tr>`;
