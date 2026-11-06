@@ -9,6 +9,8 @@ Iniciativa CON005.
 > Demostración no operacional. Personas, RUT, niveles y registros son ficticios; los valores del almuerzo por nivel y el vale extra son los informados por Bienestar (marzo 2026). Lo que se haga en la maqueta no se guarda: al recargar la página vuelve al
 > estado inicial.
 
+**Vista celular:** en computador, el botón «Vista celular» de la cabecera muestra la maqueta dentro de un marco de teléfono de 390 × 844 px, para presentarla sin abrir las herramientas del navegador. Se cierra con «Cerrar» o Esc. En un teléfono real el botón no aparece.
+
 ## Cómo probarla
 
 En el encabezado, el recuadro **«Maqueta · probar como»** cambia entre los cuatro perfiles.
