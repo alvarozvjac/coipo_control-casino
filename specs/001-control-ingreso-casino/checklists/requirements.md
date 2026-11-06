@@ -13,8 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain — quedan 3 (FR-028 Región Metropolitana, FR-029 valor
-  FAO, FR-030 custodia del efectivo)
+- [x] No [NEEDS CLARIFICATION] markers remain — FR-028 a FR-030 resueltos el 2026-11-06
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -34,6 +33,6 @@
 
 - La mención a Excel (FR-008, FR-019) se mantiene como requisito del usuario (destino de los
   archivos), no como decisión técnica.
-- Las 3 preguntas abiertas corresponden a «Pendientes de definición» del Manual de usuario de la
-  maqueta; requieren respuesta de Bienestar y Finanzas antes de `/speckit-plan`.
+- Las 3 preguntas abiertas (pendientes de definición del Manual de usuario) se resolvieron el
+  2026-11-06; ver sección Clarifications de la spec.
 - Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`

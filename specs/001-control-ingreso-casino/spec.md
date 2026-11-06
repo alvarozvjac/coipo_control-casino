@@ -222,6 +222,8 @@ nivel y que Reportes deja de advertirlo.
 - Cierre registrado mientras hay personas en fila: la terminal deja de emitir desde ese momento.
 - Planilla de contingencia con filas duplicadas o de personas con ticket ese día: se rechazan por
   fila.
+- Corte de conexión de la terminal: sigue emitiendo con la última nómina recibida; un cambio de
+  habilitación o un cierre registrado durante el corte no llega a la terminal hasta reconectar.
 - Funcionario que ve en su reporte un almuerzo que no tomó: debe avisar al Jefe Casino antes del
   cierre del mes.
 
@@ -297,20 +299,34 @@ nivel y que Reportes deja de advertirlo.
 - **FR-026**: Cada perfil MUST acceder solo a sus funciones: Terminal casino (terminal y propuesta de
   ticket), Funcionario (Mi casino), Jefe Casino (menú, planificación, reportes, comensales,
   configuración, cierres, información) y Jefa de Bienestar (información, reportes, cierres).
+- **FR-031**: El Funcionario, el Jefe Casino y la Jefa de Bienestar MUST iniciar sesión con un
+  usuario y una clave propios del sistema del casino; cada cuenta MUST estar asociada a un único
+  perfil y, para el Funcionario, a su RUT de la nómina. La terminal del casino MUST operar sin sesión
+  personal y solo permitir la identificación por RUT. El Jefe Casino MUST crear las cuentas y
+  restablecer las claves; cada creación, bloqueo o restablecimiento MUST registrar quién, cuándo y a
+  qué cuenta, y ese registro MUST poder consultarlo la Jefa de Bienestar. El Jefe Casino MUST NOT
+  poder ver las claves.
+- **FR-032**: Los tickets, registros de ingreso y demás registros del casino MUST conservarse sin
+  plazo de eliminación mientras exista el sistema; MUST NOT eliminarse automáticamente.
+- **FR-033**: Si la terminal pierde la conexión con el sistema central, MUST seguir validando el RUT
+  contra la última nómina recibida y emitiendo tickets; MUST guardar los tickets emitidos y
+  sincronizarlos al recuperar la conexión, marcados «Registrado sin conexión». Al sincronizar, el
+  sistema MUST detectar los tickets duplicados de una misma persona y día y presentarlos al Jefe
+  Casino para resolverlos.
 - **FR-027**: Todos los perfiles MUST tener acceso a un Manual de usuario con el flujo del proceso,
   reglas, contingencia y preguntas frecuentes.
 
-**Definiciones pendientes con impacto en alcance y cobro**
+**Usuarios de otras dependencias, convenios y efectivo**
 
-- **FR-028**: Los usuarios de la Región Metropolitana fuera de Oficina Central MUST tener la condición
-  [NEEDS CLARIFICATION: ¿pueden usar el casino de Oficina Central, con qué valores y bajo qué
-  habilitación? Pendiente de Bienestar].
-- **FR-029**: El personal en convenio (FAO) con forma de pago Efectivo mensual MUST pagar
-  [NEEDS CLARIFICATION: ¿qué valor por almuerzo se le cobra: el de algún nivel, el vale extra u otro?
-  Pendiente de Bienestar].
-- **FR-030**: El efectivo de ventas y cobros mensuales MUST custodiarse y rendirse según
-  [NEEDS CLARIFICATION: ¿quién custodia el efectivo, con qué periodicidad se rinde y ante quién?
-  Pendiente de Bienestar y Finanzas].
+- **FR-028**: Los funcionarios de la Región Metropolitana que no trabajan en Oficina Central MUST
+  poder habilitarse para el casino de Oficina Central con los mismos niveles y valores que el resto
+  de los funcionarios.
+- **FR-029**: Al personal en convenio (FAO) con forma de pago Efectivo mensual MUST cobrársele el
+  valor del nivel que le corresponda; su nivel MUST cargarse igual que el de los demás trabajadores
+  y su cobro MUST ir en el reporte de cobro mensual en efectivo, no en el descuento por planilla.
+- **FR-030**: El Jefe Casino MUST custodiar el efectivo de las ventas en efectivo y de los cobros
+  mensuales en efectivo, y MUST rendirlo a Finanzas una vez al mes con el reporte de caja del mes
+  como respaldo.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -320,7 +336,7 @@ nivel y que Reportes deja de advertirlo.
   de vigencia; vale extra con su fecha de vigencia.
 - **Carga mensual de niveles**: mes, RUT y nivel informados por Remuneraciones.
 - **Ticket (ingreso)**: ID anual, persona, fecha, hora, almuerzos (titular + invitados), menú, valor
-  aplicado, origen (terminal, manual, contingencia), estado (válido o anulado) con motivo, marca de
+  aplicado, origen (terminal, terminal sin conexión, manual, contingencia), estado (válido o anulado) con motivo, marca de
   asistencia pese a aviso.
 - **Venta en efectivo / visita institucional**: folio EF o marca de visita, cantidad, vale extra,
   responsable del registro.
@@ -331,6 +347,29 @@ nivel y que Reportes deja de advertirlo.
   borrador o publicado.
 - **Cierre del casino**: fecha, horario, motivo, detalle, autor, estado; alerta al otro perfil.
 - **Configuración del servicio**: servicio, ubicación, horario, plazos.
+- **Cuenta de usuario**: usuario, clave (nunca visible ni exportable), perfil asignado, RUT asociado
+  en el caso del Funcionario, estado (activa o bloqueada).
+
+## Clarifications
+
+### Session 2026-11-06
+
+- Q: ¿Pueden los usuarios de la Región Metropolitana fuera de Oficina Central usar el casino, y con
+  qué valores? → A: Sí, con los mismos niveles y valores (FR-028).
+- Q: ¿Qué valor por almuerzo paga el personal FAO con efectivo mensual? → A: El valor del nivel que
+  le corresponda (FR-029).
+- Q: ¿Quién custodia el efectivo y cómo se rinde? → A: El Jefe Casino lo custodia y lo rinde a
+  Finanzas cada mes con el reporte de caja (FR-030).
+- Q: ¿Cómo inician sesión el Funcionario, el Jefe Casino y la Jefa de Bienestar? → A: Con un usuario
+  y una clave propios del sistema del casino (FR-031).
+- Q: ¿Por cuánto tiempo se conservan los tickets y registros de ingreso? → A: Sin plazo de
+  eliminación (FR-032).
+- Q: ¿Qué pasa con los ingresos si la terminal pierde la conexión con el sistema central? → A: Sigue
+  emitiendo, guarda los tickets y los sincroniza al volver, marcados «Registrado sin conexión»
+  (FR-033).
+- Q: ¿Cuántas terminales y cuántos almuerzos diarios se esperan? → A: 1 terminal, hasta 200
+  almuerzos al día (SC-009, Assumptions).
+- Q: ¿Quién crea las cuentas de usuario y restablece las claves? → A: El Jefe Casino (FR-031).
 
 ## Success Criteria *(mandatory)*
 
@@ -351,6 +390,8 @@ nivel y que Reportes deja de advertirlo.
   los datos y exportaciones).
 - **SC-008**: El 90 % de los funcionarios completa la elección de menú o un aviso de ausencia en el
   primer intento, sin ayuda.
+- **SC-009**: Con una sola terminal, el casino registra hasta 200 almuerzos en un día y la fila de
+  ingreso no supera 10 minutos de espera en la franja de 15 minutos más concurrida.
 
 ## Assumptions
 
@@ -360,9 +401,13 @@ nivel y que Reportes deja de advertirlo.
 - Plazo del menú mensual (día 25) es un valor de ejemplo que define Bienestar y es configurable.
 - Horario de referencia: 12:30 a 15:00.
 - Remuneraciones entrega cada mes un archivo RUT;nivel antes de emitir el reporte de descuento.
-- La terminal es un equipo del casino con teclado numérico USB e impresora de tickets.
+- La terminal es un único equipo del casino con teclado numérico USB e impresora de tickets;
+  volumen esperado de hasta 200 almuerzos al día.
 - La validación con RUT y PIN, la integración automática con el sistema de remuneraciones y la
   biometría quedan fuera de alcance (versión futura o descartadas).
+- Riesgo de cumplimiento: conservar datos personales sin plazo (FR-032) MUST validarse con la
+  línea de Gobernanza de Datos y Fiscalía frente al principio de limitación del plazo de
+  conservación de la Ley N° 21.719 antes de pasar a producción.
 - Dependencias abiertas, sin bloquear la spec: autorización y presupuesto de visitas institucionales
   (Dirección Ejecutiva y Finanzas) y lugar y plazo de la planilla de contingencia (Informática).
 - Fuentes: solicitud del Servicio de Bienestar (13-08-2026), preguntas del Jefe Casino (02-11-2026),
