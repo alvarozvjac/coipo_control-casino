@@ -13,7 +13,25 @@ Iniciativa CON005.
 
 ## Cómo probarla
 
-En el encabezado, el recuadro **«Maqueta · probar como»** cambia entre los cuatro perfiles.
+**Página de inicio e ingreso.** La maqueta abre en una página de inicio que explica quién usa
+el sistema y cómo se ingresa. El botón **«Ingresar con mi cuenta CONAF»** lleva a una
+**simulación del IAM** (`iam.conaf.cl`), el inicio de sesión único que ya usan en producción
+otros sistemas de la UIA: misma tarjeta, campos Usuario y Contraseña y mensaje «Usuario o
+contraseña incorrectos». Es solo una simulación: no se conecta al IAM, no envía datos a ningún
+lugar y únicamente acepta las cuentas ficticias de prueba (no escriba su contraseña real):
+
+| Perfil | Usuario (RUT ficticio) | Contraseña de prueba |
+|---|---|---|
+| Funcionario (Valentina Araya Cortés) | 18.345.210-K | `Almuerzo.2026` |
+| Jefe Casino (Rodrigo Salinas Vera) | 13.456.789-9 | `Casino.2026` |
+| Jefa de Bienestar (María Fernanda Ortiz Lagos) | 12.987.654-9 | `Bienestar.2026` |
+
+El panel «Cuentas de prueba» de la misma pantalla las completa con un clic. El perfil queda
+según la cuenta con que se ingresa, y «Cerrar sesión» vuelve a la página de inicio.
+
+**El terminal del casino no tiene inicio de sesión:** es el equipo instalado en el casino y se
+abre en su propia dirección, `…/coipo_control-casino/#terminal` (también desde el enlace
+«Equipo del casino: abrir el terminal» de la página de inicio).
 
 | Perfil | Qué se puede probar |
 |---|---|
@@ -47,7 +65,7 @@ descuentan los almuerzos consumidos. Los almuerzos con
 invitados se descuentan al funcionario con un vale extra por invitado.
 
 **Manual de usuario (PDF):** botón «Manual de usuario (PDF)» en la cabecera, visible en todos los
-perfiles. Descarga un único PDF (16 páginas, A4) con introducción, diagrama de flujo del proceso,
+perfiles. Descarga un único PDF (18 páginas, A4) con introducción, ingreso al sistema, diagrama de flujo del proceso,
 los cuatro perfiles con sus funcionalidades y capturas, reglas y valores, y contingencia y
 preguntas frecuentes. El PDF va incluido dentro de `index.html`, por lo que funciona sin conexión.
 
@@ -118,6 +136,15 @@ la terminal no emite tickets. Al abrir como Jefe Casino aparece una alerta de ej
 enviada por la Jefa de Bienestar.
 
 **Reiniciar datos de prueba**, en el pie de página, vuelve todo al estado inicial.
+
+## Estándar visual de la flota COIPO
+
+La maqueta se revisó contra `identidad/ESTANDAR_UI.md` de `coipo_master_produccion`: banner
+institucional con el título en su zona y versión corta bajo 560 px (§8.2), alto mínimo 68 px,
+verde institucional #064928, foco visible con contraste 3:1, chips y textos con contraste
+4,5:1, movimiento reducido (`prefers-reduced-motion`), áreas táctiles de 44 px, puntos de
+quiebre estándar (559,98 / 767,98 / 899,98 px) y reflujo sin desplazamiento horizontal a
+320 px. Pendiente: tema oscuro (UI-3).
 
 ## Contenido del repositorio
 
