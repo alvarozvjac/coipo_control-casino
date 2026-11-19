@@ -23,13 +23,20 @@ Iniciativa CON005.
   anterior, al valor de su nivel.
 - **No inscritos** de Oficina Central y Región Metropolitana: la terminal los reconoce y cada
   almuerzo se cobra con el vale extra ($6.000), descontado el mes siguiente o pagado en caja.
+  El Jefe Casino indica, ticket por ticket en Comensales, si el vale se pagó en caja (efectivo o
+  transferencia); si no lo marca, se descuenta.
   Se anotan el lunes, al publicarse la minuta semanal, para que el casino planifique.
 - **Contrato en trámite:** la persona elige pagar cada almuerzo en caja o acumularlo; al
   marcar el contrato como vigente, lo acumulado se descuenta el mes siguiente junto con la
   primera suscripción.
 - **Visitas de la Dirección Ejecutiva:** se pagan con «Cargo CONAF».
+- **Despacho a la Dirección Ejecutiva:** el Jefe Casino registra solo la cantidad de
+  almuerzos despachados; se cobran con «Cargo CONAF» al valor del vale extra.
 - **Venta en caja:** efectivo o transferencia a la cuenta del casino (con N° de operación);
-  el folio digital `EF-AAAA-NNNN` reemplaza el talonario de papel.
+  el folio digital `EF-AAAA-NNNN` reemplaza el talonario de papel. El **depósito del efectivo**
+  en la cuenta del casino (fecha, monto y N° de comprobante) se registra en Comensales →
+  Registrar, que muestra el efectivo aún sin depositar y avisa al superar $100.000; reemplaza
+  la planilla Excel.
 
 Quedan como **opciones configurables** en Configuración → «Reglas de cobro», hasta que
 Bienestar las confirme: el plazo del aviso de ausencia (24 horas antes del inicio del
@@ -112,7 +119,7 @@ período (hoy, semana, mes o fechas), búsqueda por nombre, RUT, unidad o ID de 
 inscritos, contrato en trámite, suspendidas). Al abrir una persona se ven sus tickets (reimprimir
 y anular los del día) y se cambian su nivel, forma de pago, modalidad de cobro, situación del
 contrato y habilitación. Arriba, tres tarjetas de selección: «Registrar» (ingreso manual, venta en caja, visita
-con Cargo CONAF, planilla de contingencia), «Personas» (agregar, carga masiva, cambio de menú por
+con Cargo CONAF, despacho a la Dirección Ejecutiva, depósito del efectivo, planilla de contingencia), «Personas» (agregar, carga masiva, cambio de menú por
 excepción) y «Reportes» en CSV (ingresos del período, nómina de habilitados, ficha por persona,
 externos y visitas). Al pie, los externos y visitas del período.
 
@@ -136,8 +143,9 @@ habilitadas, para el mes actual o el siguiente, con motivo y registro de quién 
   personal en convenio como FAO; queda fuera del descuento y tiene su propio reporte.
 - *Planilla de contingencia*: si el sistema completo no está disponible, se descarga una
   planilla en blanco y luego se carga al sistema.
-- Reportes nuevos: cobro mensual en efectivo, caja (ventas en efectivo y transferencias) y
-  visitas con Cargo CONAF.
+- Reportes nuevos: cobro mensual en efectivo, caja (ventas en efectivo y transferencias,
+  vales de no inscritos pagados en caja y depósitos del mes) y Cargo CONAF (visitas y
+  despachos a la Dirección Ejecutiva).
 
 **Menú semanal (Jefe Casino):** cada lunes publica la minuta de la semana (entrada, plato
 normal, hipocalórico y vegano, y postre), que reemplaza el envío de la
