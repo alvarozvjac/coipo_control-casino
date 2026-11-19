@@ -6,7 +6,11 @@ Iniciativa CON005.
 
 **Ver la maqueta:** https://alvarozvjac.github.io/coipo_control-casino/
 
-> Demostración no operacional. Personas, RUT, niveles y registros son ficticios; los valores del almuerzo por nivel y el vale extra son los informados por Bienestar (marzo 2026). Lo que se haga en la maqueta no se guarda: al recargar la página vuelve al
+> Demostración no operacional. Personas, RUT, niveles y registros son ficticios. La escala de
+> los datos de prueba (unas 200 personas inscritas, 88 % de Oficina Central y 12 % de la Región
+> Metropolitana, dos tercios de Dotación, un tercio de Plazo fijo y algunos de Faena) se tomó
+> del resumen agregado de los descuentos de casino en SIGPER de enero a octubre de 2026, sin
+> nombres ni RUT; los valores del almuerzo por nivel y el vale extra son los informados por Bienestar (marzo 2026). Lo que se haga en la maqueta no se guarda: al recargar la página vuelve al
 > estado inicial.
 
 **Vista celular:** en computador, el botón «Vista celular» de la cabecera muestra la maqueta dentro de un marco de teléfono de 390 × 844 px, para presentarla sin abrir las herramientas del navegador. Se cierra con «Cerrar» o Esc. En un teléfono real el botón no aparece.
@@ -172,7 +176,7 @@ revisar bajas) y descarta los sueldos sin mostrarlos ni guardarlos. La lectura d
 .xlsx queda para cuando se conozca el formato del archivo. Reportes advierte si faltan los
 niveles del mes. El **informe mensual de licencias médicas** se carga en Configuración con
 RUT y fechas, sin diagnóstico.
-Las calidades jurídicas son Dotación, Plazo fijo y Honorarios.
+Las calidades jurídicas son Dotación, Plazo fijo, Faena y Honorarios.
 
 **Cierres del casino:** al registrar o anular un cierre (clima, mantención, catástrofe,
 corte de suministro u otro), el otro perfil recibe una alerta. Durante un cierre vigente
